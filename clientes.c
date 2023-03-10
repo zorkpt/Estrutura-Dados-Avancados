@@ -1,14 +1,41 @@
-#include "funcoes.h"
-#include <stdio.h>
+#include "clientes.h"
 #include <stdlib.h>
+#include <stdio.h>
 #include <string.h>
+
 
 int limpaSTDIN(){
     int valor;
     while((valor = getchar()) != '\n' && valor != EOF);    
 }
 
-int verificarInt(int valor){
+int VerificaNif(struct NodeClientes* head, int nif) {
+    struct NodeClientes* current = head;
+    while (current != NULL) {
+        if (current->cliente.nif == nif) {
+            printf("Já existe um cliente com o NIF: %d.\nInsere outro:\n", nif);
+            return 1;
+        }
+        current = current->proximo;
+    }
+    return 0;
+}
+
+int VerificaUser(struct NodeClientes* head, char *login) {
+    struct NodeClientes* current = head;
+    while (current != NULL) {
+
+        if (strcmp(current->cliente.login,login)==0) {
+            printf("Já existe um cliente com esse nome de utilizador.\nInsere outro.\n");
+            return 1;
+        }
+        current = current->proximo;
+    }
+    return 0;
+}
+
+int verificarInt(){
+    int valor;
         while (scanf("%d",&valor)== 0) {
         printf("Insere um número válido.\n");
         limpaSTDIN();
@@ -24,145 +51,184 @@ int verificarFloat(float valor){
     return valor;
 }
 
-char VerificarNomeUtilizador(Clientes *clientes, int totalClientes,char nomeUtilizador[]){
-    
-    for(int i = 0 ; i < totalClientes ; i++){
-        if(strcmp(clientes[i].login,nomeUtilizador)==0){
-            printf("Já existe um nome de utilizador com esse nome.\nEscolha outro: ");
-            return 0;
-        }
-    } 
-        return 1;
-
-}
-
-int LerCliente(Clientes *clientes, int totalClientes){
-    int escolha;
-    int nif,res;
-    float saldo;
-
-    char nome[50], morada[50], nomeUtilizador[50], palavraPasse[50];
-    printf("A adicionar novo cliente.\n");
-    printf("NIF: ");
-    nif = verificarInt(nif);
-    printf("\nNome: ");
-    scanf("%s",nome);
-    printf("\nMorada: ");
-    scanf("%s",morada);
-    printf("\nEfetuar carremento de saldo?\n1.Sim\n2.Não\n");
-    escolha = verificarInt(escolha);
-
-    if(escolha == 1){
-        printf("\nQuantidade? ");
-        saldo = verificarFloat(saldo);
-    }else saldo=0;
-
-    printf("Nome de Utilizador? \n");
-
-    while(1){
-        limpaSTDIN();
-        scanf("%s",nomeUtilizador); 
-        if(VerificarNomeUtilizador(clientes, totalClientes,nomeUtilizador)) break;
+int InserirCliente(struct NodeClientes** headRef, struct Clientes cliente) {
+     // Aloca memoria um novo NodeClientes e aloca os seus campos
+    struct NodeClientes* newNode = (struct NodeClientes*) malloc(sizeof(struct NodeClientes));
+    if (!newNode) {
+        // verificação alocação de memória
+        return 0;
     }
+    newNode->cliente = cliente;
+    newNode->proximo = NULL;
 
-    printf("Palavra-Passe? ");
-    scanf("%s",palavraPasse);
-
-    totalClientes = (EscreverCliente(clientes, totalClientes, nif, nome, morada, saldo, nomeUtilizador, palavraPasse));
-    return totalClientes;
-    
-}
-
-int EscreverCliente(Clientes *clientes, int totalClientes, int nif, char nome[], char morada[], float saldo, char nomeUtilizador[], char palavraPass[]) {
-    clientes[totalClientes].nif = nif;
-    strcpy(clientes[totalClientes].nome,nome);
-    strcpy(clientes[totalClientes].morada,morada);
-    clientes[totalClientes].saldo = saldo;
-    strcpy(clientes[totalClientes].login,nomeUtilizador);
-    strcpy(clientes[totalClientes].password,palavraPass);
-    totalClientes++;
-    return totalClientes;
-}
-
-int EscreveClienteEditado(Clientes *clientes, int indexCliente, char nome[], char morada[], float saldo){
-    strcpy(clientes[indexCliente].nome,nome);
-    strcpy(clientes[indexCliente].morada,morada);
-    clientes[indexCliente].saldo = saldo;
+     // Se a Lista estiver vazia o novo node torna-se o head
+    if (*headRef == NULL) {
+        *headRef = newNode;
+    } else {
+        // Senão, itera pela lista até chegar ao fim
+        struct NodeClientes* current = *headRef;
+        while (current->proximo != NULL) {
+            current = current->proximo;
+        }
+        // Define o próximo pointer do ultimo node para o novo node
+        current->proximo = newNode;
+    }
+    // Cliente adicionado
     return 1;
 }
 
-
-int VerificaNif(Clientes *clientes, int totalClientes, int nif){
-    scanf("%d",&nif);
-    int indexCliente;
-    for(int i=0; i< totalClientes; i++){
-        if(nif==clientes[i].nif){
-            indexCliente = i;
-            return indexCliente;
-        }
+void MostrarClientes(struct NodeClientes* head) {
+if (head == NULL) {
+        printf("A Lista está vazia.\n");
+        
     }
-    return -1;
+     struct NodeClientes* current = head;
+    while (current != NULL) {
+        printf("%d\t%s\t%s\t%.2f€\t%s\t%s\n",
+               current->cliente.nif,
+               current->cliente.nome,
+               current->cliente.morada,
+               current->cliente.saldo,
+               current->cliente.login,
+               current->cliente.password);
+        current = current->proximo;
+    }
 }
 
-int EditarCliente(Clientes *clientes, int totalClientes){
-    int nif, indexCliente;
-    char nome[50], morada[50],username[50],password[50];
-    float saldo;
+int RemoverCliente(struct NodeClientes **head, int nif) {
+    struct NodeClientes *current = *head;
+    struct NodeClientes *previous = NULL;
 
-    printf("Inserir NIF do cliente a editar: ");
-    indexCliente = VerificaNif(clientes,totalClientes,nif);
-    if(indexCliente==-1){
+    // Percorre a lista até dar match do NIF
+    while (current != NULL && current->cliente.nif != nif) {
+        previous = current;
+        current = current->proximo;
+    }
+    // Se for encontrado, removemos da lista
+    if (current != NULL) {
+        // Se o node for o head da lista, damos update ao pointer do head
+        if (previous == NULL) {
+            *head = current->proximo;
+        }
+        // Senão, o node anterior passa apontar para o proximo, dando skip ao atual
+        else {
+            previous->proximo = current->proximo;
+        }
+        free(current);
+        return 1;
+    } else {
         return 0;
     }
-
-    printf("A editar o cliente:\nNIF:%d\nNome:%s\nMorada:%s\nSaldo:%f",clientes[indexCliente].nif,clientes[indexCliente].nome,clientes[indexCliente].morada,clientes[indexCliente].saldo);
-    printf("\nNome:\n");
-    scanf("%s",nome);
-    printf("Morada?\n");
-    scanf("%s",morada);
-    printf("Saldo?\n");
-    saldo = verificarFloat(saldo);
-    printf("Nome de utlizador?\n");
-
-    if(EscreveClienteEditado(clientes,indexCliente,nome,morada,saldo)) return 1;
-    
 }
 
-int ProcurarCliente(Clientes *clientes, int totalClientes){
-    int nif,indexCliente;
-    printf("Inserir NIF do cliente: ");
-    indexCliente = VerificaNif(clientes,totalClientes,nif);
-    if(indexCliente==-1){
-        return 0;
+int EditarCliente(struct NodeClientes *head, int nif) {
+    struct NodeClientes *current = head;
+    struct Clientes clienteTemp;
+
+    // Search for the client with the given NIF
+    while (current != NULL) {
+        if (current->cliente.nif == nif) {
+            printf("\n\nCliente encontrado:\n");
+            printf("Nome: %s\n", current->cliente.nome);
+            printf("NIF: %d\n", current->cliente.nif);
+            printf("Morada: %s\n", current->cliente.morada);
+            printf("Saldo: %f\n", current->cliente.saldo);
+            printf("Login: %s\n", current->cliente.login);
+            printf("\n");
+
+            // Ask user for confirmation to edit the client
+            limpaSTDIN();
+            char resposta;
+            printf("Editar este cliente? (S/N): ");
+            scanf("%c", &resposta);
+            if (resposta == 'S' || resposta == 's') {
+                // Get new client information from user
+                printf("\nInsira os dados do novo cliente:\n");
+                printf("Nome: ");
+                getchar();
+                scanf("%[^\n]", clienteTemp.nome);
+                printf("Morada: ");
+                getchar();
+                scanf("%[^\n]", clienteTemp.morada);
+                printf("Login: ");
+                getchar();
+                scanf("%[^\n]", clienteTemp.login);
+                printf("Password: ");
+                getchar();
+                scanf("%[^\n]", clienteTemp.password);    
+
+                //Guarda o nif e saldo atual sem pedir atualizacao
+                clienteTemp.nif = current->cliente.nif;
+                clienteTemp.saldo = current->cliente.saldo; 
+
+                // Update the client's information
+                current->cliente = clienteTemp;
+                return 1;
+            } else {
+                return 0;
+            }
+        }
+        current = current->proximo;
     }
-    
-    printf("\nNome:%s\nNIF:%d\nMorada:%s\nSaldo:%f",clientes[indexCliente].nome,clientes[indexCliente].nif,clientes[indexCliente].morada,clientes[indexCliente].saldo);
 
+    printf("Cliente com NIF %d não encontrado.\n", nif);
+    return 0;
 }
 
-
-int VerTodosClientes(Clientes *cliente, int totalClientes){
-        for(int i = 0 ; i<totalClientes; i++){
-        printf("%d\t%s\t%s\t\t%.2f\tlogin: %s\t\tpass: %s\n",cliente[i].nif,cliente[i].nome,cliente[i].morada,cliente[i].saldo,cliente[i].login,cliente[i].password);
+int ProcuraCliente(struct NodeClientes* headRef, int nif){
+    struct NodeClientes *current = headRef;
+    
+    // Search for the client with the given NIF
+    while (current != NULL) {
+        if (current->cliente.nif == nif) {
+            printf("\n\nCliente encontrado:\n");
+            printf("Nome: %s\n", current->cliente.nome);
+            printf("NIF: %d\n", current->cliente.nif);
+            printf("Morada: %s\n", current->cliente.morada);
+            printf("Saldo: %f\n", current->cliente.saldo);
+            printf("Login: %s\n", current->cliente.login);
+            printf("\n");
+            return 1;
+        }else return 0;
     }
 }
+int AdicionarCliente(struct NodeClientes* headRef) {
+    struct Clientes clienteTemp;
 
-int EliminarCliente(Clientes *cliente, int totalCliente){
-int nif,index;
-int novoTamanhoArray = totalCliente-1;
-    printf("Introduza o NIF do cliente que pretende eliminar: ");
-    nif = verificarInt(nif);
+    printf("Insira os dados do novo cliente:\n");
+    printf("Nome: ");
+    limpaSTDIN();
+    scanf("%[^\n]", clienteTemp.nome);
 
-    for(int i = 0 ; i < totalCliente ; i++){
-        if(cliente[i].nif == nif){
-            index=i;
-            break;
+    printf("NIF: ");
+while(1){
+    clienteTemp.nif = verificarInt();
+    if(!VerificaNif(headRef,clienteTemp.nif)) {
+        break;
+    } 
+}
+    printf("Morada: ");
+    getchar();
+    scanf("%[^\n]", clienteTemp.morada);
+    printf("Saldo: ");
+    scanf("%f", &clienteTemp.saldo);
+
+    printf("Nome de Utilizador: ");
+    getchar();
+
+    while(1){
+        if(scanf("%[^\n]", clienteTemp.login)){
+            limpaSTDIN();
+            if(!VerificaUser(headRef,clienteTemp.login)) break;
         }
     }
-        cliente[index] = cliente[totalCliente-1];
-        totalCliente--;
-        return totalCliente;
 
-    printf("Não foi encontrado nenhum cliente com o NIF introduzido.\n");
-    return totalCliente;    
+
+    printf("Password: ");
+    getchar();
+    scanf("%[^\n]", clienteTemp.password);
+
+    // Add the new client to the end of the list
+    InserirCliente(&headRef, clienteTemp);
+    printf("Cliente adicionado com sucesso!\n");
 }

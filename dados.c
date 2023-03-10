@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include "funcoes.h"
+#include "transportes.h"
+#include "gestores.h"
+#include "transacoes.h"
+//corrigir
 #define MAX_LINHAS 100
 
 
@@ -10,119 +14,104 @@
 /// @param cliente 
 /// @param nomeFicheiro 
 /// @return 
-int CarregarDados(void *estrutura, enum Estrutura tipoEstrutura, char *nomeFicheiro) {
+int CarregarDados(void* head, enum Estrutura tipoEstrutura, char *nomeFicheiro) {
     FILE *ficheiro;
+    int totalClientes,totalTransportes;
 
     ficheiro = fopen(nomeFicheiro, "r");
     if(ficheiro == NULL){
         printf("Erro ao abrir o ficheiro.");
         return 0;
     }
-    
-    int LerTransportes(Transporte *transporte, FILE *ficheiro);
-    int LerClientes(Clientes *cliente, FILE *ficheiro);
-    int LerGestores(Gestores *gestores, FILE *ficheiro);
-    int LerTransacoes(Transacoes *transacoes, FILE *ficheiro);
 
     switch (tipoEstrutura)
     {
     case CLIENTES:
-        Clientes *cliente = (Clientes*)estrutura;
-        int totalClientes = LerClientesDeFicheiro(cliente,ficheiro);
+        totalClientes =  LerClientesDeFicheiro((struct NodeClientes**)head,ficheiro);
         return totalClientes;
-        break;
     
     case TRANSPORTE:
-        Transporte *transporte = (Transporte*)estrutura;
-        int totalTransportes = LerTransportes(transporte,ficheiro);
+        totalTransportes =  LerTransportesDeFicheiro((struct NodeTransporte**)head,ficheiro);
         return totalTransportes;
-        break;
     
     case GESTORES:
-        Gestores *gestores = (Gestores*)estrutura;
-        int totalGestores = LerGestores(gestores,ficheiro);
+        int totalGestores = LerGestoresDeFicheiro((struct NodeGestores**)head,ficheiro);
         return totalGestores;
 
     case TRANSACOES:
-        Transacoes *transacoes = (Transacoes*)estrutura;
-        int totalTransacoes = LerTransacoes(transacoes,ficheiro);
+        int totalTransacoes = LerTransacoesDeFicheiro((struct NodeTransacoes**)head,ficheiro);
         return totalTransacoes;
     }    
-}
+ }
 
-int LerClientesDeFicheiro(Clientes *cliente, FILE *ficheiro){
+int LerClientesDeFicheiro(struct NodeClientes** headRef, FILE *ficheiro){
     char linha[MAX_LINHAS];
-    int i = 0;
+    struct Clientes temp;
+    int totalClientes = 0;
     while (fgets(linha, MAX_LINHAS, ficheiro) != NULL)
     {
         sscanf(linha,"%d\t%[^\t]\t%[^\t]\t%f\t%[^\t]\t%[^\n]", 
-                                                &cliente[i].nif, 
-                                                cliente[i].nome, 
-                                                cliente[i].morada, 
-                                                &cliente[i].saldo,
-                                                cliente[i].login,
-                                                cliente[i].password);
-        i++;
+                                                &temp.nif, 
+                                                temp.nome, 
+                                                temp.morada, 
+                                                &temp.saldo,
+                                                temp.login,
+                                                temp.password);
+    InserirCliente(headRef, temp);
+    totalClientes++;
     }
-    int totalClientes = i;
-
     return totalClientes;
 }
 
-int LerTransportes(Transporte *transporte, FILE *ficheiro){
+int LerTransportesDeFicheiro(struct NodeTransporte** headRef, FILE *ficheiro){
     char linha[MAX_LINHAS];
-    int i = 0;
+    struct Transporte temp;
+    int totalTransportes = 0;
     while (fgets(linha, MAX_LINHAS, ficheiro) != NULL)
     {
         sscanf(linha,"%d\t%[^\t]\t%d\t%f\t%[^\t]%d", 
-                                                            &transporte[i].id, 
-                                                            transporte[i].tipo, 
-                                                            &transporte[i].nivelBateria, 
-                                                            &transporte[i].preco,
-                                                            transporte[i].localizacao,
-                                                            &transporte[i].estado);
-        i++;
+                                                            &temp.id, 
+                                                            temp.tipo, 
+                                                            &temp.nivelBateria, 
+                                                            &temp.preco,
+                                                            temp.localizacao,
+                                                            &temp.estado);
+        InserirNoFimTransporte(headRef,temp);
+        totalTransportes++;
     }
-    int totalTransportes = i;
 
-    for(int i = 0 ; i<totalTransportes; i++){
-        printf("ID: %d\tTIPO: %s\tBATERIA: %d\t\tPRECO: %.2f\t\tLOCAL:%s\n",transporte[i].id, transporte[i].tipo, transporte[i].nivelBateria, transporte[i].preco,transporte[i].localizacao);
-    }
     return totalTransportes;
 }
 
-int LerGestores(Gestores *gestores, FILE *ficheiro){
+int LerGestoresDeFicheiro(struct NodeGestores** headRef, FILE *ficheiro){
     char linha[MAX_LINHAS];
-    int i = 0;
+    struct Gestores temp;
+    int totalGestores = 0;
     while (fgets(linha, MAX_LINHAS, ficheiro) != NULL)
     {
         sscanf(linha,"%[^\t]\t%s\n", 
-                                                            gestores[i].nome, 
-                                                            gestores[i].password);
-        i++;
-    }
-    int totalGestores = i;
-
-    for(int i = 0 ; i<totalGestores; i++){
-        printf("nome: %s\tpass: %s\n",gestores[i].nome, gestores[i].password);
+                                                            temp.nome, 
+                                                            temp.password);
+        InserirGestor(headRef,temp);
+        totalGestores++;
     }
     return totalGestores;
 }
 
-int LerTransacoes(Transacoes *transacoes, FILE *ficheiro){
+int LerTransacoesDeFicheiro(struct NodeTransacoes** headRef, FILE *ficheiro){
     char linha[MAX_LINHAS];
-    int i = 0;
+    struct Transacoes temp;
+    int totalTransacoes = 0;
     while (fgets(linha, MAX_LINHAS, ficheiro) != NULL)
     {
         sscanf(linha,"%d\t%d\t%d\n", 
-                                &transacoes[i].idClienteAAlugar, 
-                                &transacoes[i].idTransporte,
-                                &transacoes[i].tempoAluguerDecorrido);
-        i++;
+                                &temp.idClienteAAlugar, 
+                                &temp.idTransporte,
+                                &temp.tempoAluguerDecorrido);
+
+        InserirTransacoes(headRef,temp);
+        totalTransacoes++;
     }
-    int totalTransacoes = i;
-    for(int i = 0 ; i<totalTransacoes; i++){
-        printf("id cliente: %d\ttempo decorrido: %d\n",transacoes[i].idClienteAAlugar, transacoes[i].tempoAluguerDecorrido);
-    }
+
     return totalTransacoes;
 }

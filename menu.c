@@ -15,7 +15,7 @@ int menu(){
     printf("6. Ver Trasportes\n");  
     printf("7. Ver Transportes Activos\n");
     printf("8. Histórico Transacções\n");
-    printf("9. Dados Estatisticos Transacções\n");   
+    printf("9. Exportar Dados\n");   
     printf("0. Sair\n");
     printf("Escolhe uma opção: ");
     

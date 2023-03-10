@@ -4,6 +4,8 @@
         "string.h": "c",
         "funcoes.h": "c",
         "stdio.h": "c",
-        "clientes.h": "c"
+        "clientes.h": "c",
+        "transportes.h": "c",
+        "menuutilizador.h": "c"
     }
 }

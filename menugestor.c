@@ -4,28 +4,37 @@
 #include <string.h>
 
 
-int MenuGestor(Clientes *cliente, int totalClientes, Gestores *gestores, int totalGestores, Transporte *transporte, int totalTransporte,Transacoes *transacoes, int totalTransacoes){
+int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGestores, struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes ){
     while(1)
     {   
  int escolha = menu();
         switch (escolha)
         {
         case 1:
-            if(totalClientes = LerCliente(cliente, totalClientes)) printf("\nCliente adicionado.\n");
+            if(AdicionarCliente(headClientes)) printf("Cliente Adicionado.");
+            else printf("Falha ao adicionar Cliente.");
             break;
+
         case 2:
-            if(EditarCliente(cliente,totalClientes)==0) printf("\nNão existe nenhum cliente com esse NIF.\n");
-            else printf("Cliente Editado com sucesso.");
+            int nif;
+            printf("Inserir NIF do Cliente: ");
+            nif = verificarInt();
+            if(EditarCliente(headClientes,nif)) printf("Cliente atualizado com sucesso!\n");
+            else printf("Operação cancelada pelo utilizador.\n");
             break;
         case 3:
-            printf("Total de Clientes é de : %d", totalClientes);
-            totalClientes = EliminarCliente(cliente,totalClientes);
+            printf("Inserir NIF do Cliente: ");
+            nif = verificarInt();
+            if(RemoverCliente(&headClientes,nif)) printf("Cliente com NIF %d eliminado.",nif);
+            else printf("Não foi encontrado nenhum cliente com o NIF: %d",nif);
             break;
         case 4:
-            if(ProcurarCliente(cliente,totalClientes)==0) printf("Não existe nenhum cliente com esse NIF.\n");
+            printf("Inserir NIF do Cliente: ");
+            nif = verificarInt();
+           if(!ProcuraCliente(headClientes,nif)) printf("Não existe nenhum cliente com esse NIF.\n");
             break;
         case 5:
-            VerTodosClientes(cliente,totalClientes);
+            MostrarClientes(headClientes);
             break;
         case 6:
             //VerTodosTransportes(transporte,totalTransporte);
@@ -37,7 +46,15 @@ int MenuGestor(Clientes *cliente, int totalClientes, Gestores *gestores, int tot
             printf("\nPremi 1 . Working.");
             break;
         case 9:
-            printf("\nPremi 1 . Working.");
+            char* nomeFicheiro = LerNomeFicheiro();
+            if (nomeFicheiro == NULL) {
+                printf("Erro: Não foi possivel ler o nome do ficheiro.\n");
+                break;
+            }
+            if(ExportarParaBinario(headClientes,headGestores,headTransportes,headTransacoes,nomeFicheiro)) {
+                printf("Ficheiro %s criado.",nomeFicheiro);
+            }else printf("Não foi possivel exportar os dados para o ficheiro.");
+            
             break;
         case 0:
             printf("\nPremi 1 . Working.");
