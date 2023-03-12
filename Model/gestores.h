@@ -1,11 +1,7 @@
 #ifndef GESTORES_HEADER_GUARD
 #define GESTORES_HEADER_GUARD
-#include "estruturas.h"
-
 
 // ESTRUTURA GESTORES
-
-// ESTRUTURA LISTA CLIENTES
 typedef struct Gestores{
     char nome[50];
     char password[50];

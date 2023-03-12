@@ -1,55 +1,11 @@
 #include "clientes.h"
+#include "../Controller/verificacoes.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 
-int limpaSTDIN(){
-    int valor;
-    while((valor = getchar()) != '\n' && valor != EOF);    
-}
 
-int VerificaNif(struct NodeClientes* head, int nif) {
-    struct NodeClientes* current = head;
-    while (current != NULL) {
-        if (current->cliente.nif == nif) {
-            printf("Já existe um cliente com o NIF: %d.\nInsere outro:\n", nif);
-            return 1;
-        }
-        current = current->proximo;
-    }
-    return 0;
-}
-
-int VerificaUser(struct NodeClientes* head, char *login) {
-    struct NodeClientes* current = head;
-    while (current != NULL) {
-
-        if (strcmp(current->cliente.login,login)==0) {
-            printf("Já existe um cliente com esse nome de utilizador.\nInsere outro.\n");
-            return 1;
-        }
-        current = current->proximo;
-    }
-    return 0;
-}
-
-int verificarInt(){
-    int valor;
-        while (scanf("%d",&valor)== 0) {
-        printf("Insere um número válido.\n");
-        limpaSTDIN();
-    }   
-    return valor;
-}
-
-int verificarFloat(float valor){
-        while (scanf("%f",&valor)== 0) {
-        printf("Insere um número válido.\n");
-        limpaSTDIN();
-    }   
-    return valor;
-}
 
 int InserirCliente(struct NodeClientes** headRef, struct Clientes cliente) {
      // Aloca memoria um novo NodeClientes e aloca os seus campos
@@ -125,7 +81,7 @@ int EditarCliente(struct NodeClientes *head, int nif) {
     struct NodeClientes *current = head;
     struct Clientes clienteTemp;
 
-    // Search for the client with the given NIF
+    // Procura Cliente Pelo NIF
     while (current != NULL) {
         if (current->cliente.nif == nif) {
             printf("\n\nCliente encontrado:\n");
@@ -136,32 +92,32 @@ int EditarCliente(struct NodeClientes *head, int nif) {
             printf("Login: %s\n", current->cliente.login);
             printf("\n");
 
-            // Ask user for confirmation to edit the client
+            // Pergunta por confirmação para editar o cliente
             limpaSTDIN();
             char resposta;
             printf("Editar este cliente? (S/N): ");
             scanf("%c", &resposta);
             if (resposta == 'S' || resposta == 's') {
-                // Get new client information from user
+                // Inserir novos dados:
                 printf("\nInsira os dados do novo cliente:\n");
                 printf("Nome: ");
-                getchar();
+                limpaSTDIN();
                 scanf("%[^\n]", clienteTemp.nome);
                 printf("Morada: ");
-                getchar();
+                limpaSTDIN();
                 scanf("%[^\n]", clienteTemp.morada);
                 printf("Login: ");
-                getchar();
+                limpaSTDIN();
                 scanf("%[^\n]", clienteTemp.login);
                 printf("Password: ");
-                getchar();
+                limpaSTDIN();
                 scanf("%[^\n]", clienteTemp.password);    
 
                 //Guarda o nif e saldo atual sem pedir atualizacao
                 clienteTemp.nif = current->cliente.nif;
                 clienteTemp.saldo = current->cliente.saldo; 
 
-                // Update the client's information
+                // Atuliza a informação do cliente
                 current->cliente = clienteTemp;
                 return 1;
             } else {
@@ -192,6 +148,7 @@ int ProcuraCliente(struct NodeClientes* headRef, int nif){
         }else return 0;
     }
 }
+
 int AdicionarCliente(struct NodeClientes* headRef) {
     struct Clientes clienteTemp;
 
@@ -202,20 +159,18 @@ int AdicionarCliente(struct NodeClientes* headRef) {
 
     printf("NIF: ");
 while(1){
-    clienteTemp.nif = verificarInt();
+    clienteTemp.nif = VerificarInt();
     if(!VerificaNif(headRef,clienteTemp.nif)) {
         break;
     } 
 }
     printf("Morada: ");
-    getchar();
+    limpaSTDIN();
     scanf("%[^\n]", clienteTemp.morada);
     printf("Saldo: ");
-    scanf("%f", &clienteTemp.saldo);
-
+    clienteTemp.saldo = VerificarFloat();
     printf("Nome de Utilizador: ");
-    getchar();
-
+    limpaSTDIN();
     while(1){
         if(scanf("%[^\n]", clienteTemp.login)){
             limpaSTDIN();
@@ -225,7 +180,6 @@ while(1){
 
 
     printf("Password: ");
-    getchar();
     scanf("%[^\n]", clienteTemp.password);
 
     // Add the new client to the end of the list

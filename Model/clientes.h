@@ -1,5 +1,6 @@
 #ifndef CLIENTES_HEADER_GUARD
 #define CLIENTES_HEADER_GUARD
+
 // ESTRUTURA LISTA CLIENTES
 typedef struct Clientes{
     int nif;
@@ -16,10 +17,11 @@ typedef struct NodeClientes
 }NodeClientes;
 
 
-
-int verificarInt();
-
-int limpaSTDIN();
+// // VERIFICAÇÕES
+// int VerificaNif(struct NodeClientes* head, int nif);
+// int VerificarInt();
+// float VerificarFloat();
+// int limpaSTDIN();
 
 // FUNCOES CONFIRMADAS E A FUNCIONAR:
 void MostrarClientes(struct NodeClientes* head);
@@ -28,6 +30,5 @@ int RemoverCliente(struct NodeClientes **head, int nif);
 int EditarCliente(struct NodeClientes *head, int nif);
 int AdicionarCliente(struct NodeClientes* headRef);
 int ProcuraCliente(struct NodeClientes* headRef, int nif);
-int VerificaNif(struct NodeClientes* head, int nif);
 #endif
 

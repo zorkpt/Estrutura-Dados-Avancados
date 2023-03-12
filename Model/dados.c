@@ -1,10 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "funcoes.h"
-#include "transportes.h"
-#include "gestores.h"
-#include "transacoes.h"
+#include "../Controller/funcoes.h"
 //corrigir
 #define MAX_LINHAS 100
 

@@ -6,6 +6,8 @@
         "stdio.h": "c",
         "clientes.h": "c",
         "transportes.h": "c",
-        "menuutilizador.h": "c"
+        "menuutilizador.h": "c",
+        "transacoes.h": "c",
+        "verificacoes.h": "c"
     }
 }

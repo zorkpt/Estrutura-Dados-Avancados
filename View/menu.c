@@ -1,4 +1,4 @@
-#include "funcoes.h"
+#include "../Controller/verificacoes.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,12 +14,12 @@ int menu(){
     printf("5. Ver todos Clientes\n");
     printf("6. Ver Trasportes\n");  
     printf("7. Ver Transportes Activos\n");
-    printf("8. Histórico Transacções\n");
+    printf("8. Procurar Transporte\n");
     printf("9. Exportar Dados\n");   
     printf("0. Sair\n");
     printf("Escolhe uma opção: ");
     
-    escolha = verificarInt(escolha);
+    escolha = VerificarInt(escolha);
 
     return escolha;
 }

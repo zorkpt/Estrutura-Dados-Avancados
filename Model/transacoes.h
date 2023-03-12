@@ -1,6 +1,5 @@
 #ifndef TRANSACOES_HEADER_GUARD
 #define TRANSACOES_HEADER_GUARD
-#include "estruturas.h"
 
 
 typedef struct Transacoes{

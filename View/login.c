@@ -1,4 +1,5 @@
-#include "funcoes.h"
+#include "../Controller/funcoes.h"
+#include "../Controller/verificacoes.h"
 #include <string.h>
 
 int IniciarLogin(struct NodeClientes** clientesHead, struct NodeGestores** gestoresHead) {

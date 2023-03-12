@@ -1,7 +1,0 @@
-#ifndef STRUCT_HEADER_GUARD
-#define STRUCT_HEADER_GUARD
-
-
-
-
-#endif

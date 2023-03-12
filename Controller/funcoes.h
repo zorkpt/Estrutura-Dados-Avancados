@@ -2,15 +2,13 @@
 #define FUNC_HEADER_GUARD
 
 #include <stdio.h>
+#include "../Model/clientes.h"
+#include "../Model/gestores.h"
+#include "../Model/transportes.h"
+#include "../Model/transacoes.h"
+// #include "../View/menuutilizador.h"
+#include "../View/menugestor.h"
 
-#include "estruturas.h"
-#include "clientes.h"
-#include "gestores.h"
-#include "transportes.h"
-#include "transacoes.h"
-
-#include "menuutilizador.h"
-#include "menugestor.h"
 enum Estrutura { CLIENTES, TRANSPORTE, GESTORES, TRANSACOES, TESTE };
 enum TipoUser { GESTOR, CLIENTE };
 
@@ -23,7 +21,6 @@ int LerClientesDeFicheiro(struct NodeClientes** headRef, FILE *ficheiro);
 int LerTransportesDeFicheiro(struct NodeTransporte** headRef, FILE *ficheiro);
 int LerGestoresDeFicheiro(struct NodeGestores** headRef, FILE *ficheiro);
 int LerTransacoesDeFicheiro(struct NodeTransacoes** headRef, FILE *ficheiro);
-//int IniciarLogin(Clientes *clientes, int totalClientes, Gestores *gestores, int totalGestores);
 int menu();
 
 

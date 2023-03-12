@@ -1,4 +1,4 @@
-#include "transacoes.h"
+#include "../Controller/funcoes.h"
 #include <stdlib.h>
 #include <stdio.h>
 

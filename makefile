@@ -1,24 +1,25 @@
 #vars
-INCLUDES = estruturas.h funcoes.h menugestor.h menuutilizador.h clientes.h transportes.h gestores.h transacoes.h
-SOURCES = clientes.c dados.c login.c menu.c menugestor.c menuutilizador.c transportes.c main.c gestores.c transacoes.c exportarparabin.c
-OBJFILES = clientes.o dados.o login.o menu.o menugestor.o menuutilizador.o transportes.o main.o gestores.o transacoes.o exportarparabin.o
+INCLUDES = Model/clientes.h View/menugestor.h View/menuutilizador.h Model/transportes.h Model/gestores.h Model/transacoes.h
+SOURCES = Model/clientes.c Model/dados.c View/login.c View/menu.c View/menugestor.c View/menuutilizador.c Model/transportes.c Controller/main.c Model/gestores.c Model/transacoes.c Controller/exportarparabin.c Controller/verificacoes.c
+OBJFILES = clientes.o dados.o login.o menu.o menugestor.o menuutilizador.o transportes.o main.o gestores.o transacoes.o exportarparabin.o verificacoes.o
 EXEC = main
 
 # regras de sufixo
-.SUFIXES : .c .o .s
+.SUFFIXES : .c .o .s
 
 # como transformar um .c num .o ; $< --nome do ficheiro
 .c.o:
-	gcc -g -c $<
+	gcc -g -c $< -o $@
 
 # como transformar um .s num .o ; $< --nome do ficheiro
 .s.o:
-	gcc -g -c $<
+	gcc -g -c $< -o $@
 
 ${EXEC} : ${OBJFILES}
 	gcc -g -o ${EXEC} ${OBJFILES}
 
 ${OBJFILES} : ${SOURCES} ${INCLUDES}
+	gcc -g -c ${SOURCES}
 
 run: ${EXEC}
 	./${EXEC}
@@ -28,4 +29,3 @@ clean:
 
 debug:
 	gdb -tui ${EXEC}
-	
