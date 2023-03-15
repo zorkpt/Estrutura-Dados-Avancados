@@ -8,15 +8,18 @@
 #include "../Model/transacoes.h"
 // #include "../View/menuutilizador.h"
 #include "../View/menugestor.h"
-
-enum Estrutura { CLIENTES, TRANSPORTE, GESTORES, TRANSACOES, TESTE };
-enum TipoUser { GESTOR, CLIENTE };
+#define MAX_CHAR 50
 
 //login 
 int IniciarLogin(struct NodeClientes** clientesHead, struct NodeGestores** gestoresHead);
 //
 
-int CarregarDados(void* head, enum Estrutura tipoEstrutura, char *nomeFicheiro);
+int CarregarFicheiroClientes(struct NodeClientes** head, char *nomeFicheiro);
+int CarregarFicheiroTransacoes(struct NodeTransacoes** head, char* nomeFicheiro);
+int CarregarFicheiroGestores(struct NodeGestores** head, char* nomeFicheiro);
+int CarregarFicheiroTransportes(struct NodeTransporte** head, char* nomeFicheiro);
+
+
 int LerClientesDeFicheiro(struct NodeClientes** headRef, FILE *ficheiro);
 int LerTransportesDeFicheiro(struct NodeTransporte** headRef, FILE *ficheiro);
 int LerGestoresDeFicheiro(struct NodeGestores** headRef, FILE *ficheiro);

@@ -33,14 +33,14 @@ int InserirCliente(struct NodeClientes** headRef, struct Clientes cliente) {
     return 1;
 }
 
-void MostrarClientes(struct NodeClientes* head) {
-if (head == NULL) {
-        printf("A Lista está vazia.\n");
-        
+int MostrarClientes(struct NodeClientes* head) {
+    if (head == NULL) {
+        return 0;
     }
-     struct NodeClientes* current = head;
+    printf("%-12s %-20s %-30s %-10s %-15s %-15s\n", "NIF", "NOME", "MORADA", "SALDO", "LOGIN", "PASSWORD");
+    struct NodeClientes* current = head;
     while (current != NULL) {
-        printf("%d\t%s\t%s\t%.2f€\t%s\t%s\n",
+        printf("%-12d %-20s %-30s %-10.2f %-15s %-15s\n",
                current->cliente.nif,
                current->cliente.nome,
                current->cliente.morada,
@@ -49,6 +49,7 @@ if (head == NULL) {
                current->cliente.password);
         current = current->proximo;
     }
+    return 1;
 }
 
 int RemoverCliente(struct NodeClientes **head, int nif) {
@@ -77,112 +78,47 @@ int RemoverCliente(struct NodeClientes **head, int nif) {
     }
 }
 
-int EditarCliente(struct NodeClientes *head, int nif) {
-    struct NodeClientes *current = head;
-    struct Clientes clienteTemp;
+int EditarCliente(struct Clientes *cliente) {
+    // insere novos dados do cliente diretamente na lista
+    printf("\nInsira os novos dados do cliente:\n");
+    LerTextoInput("Nome: ", cliente->nome, 50);
+    LerTextoInput("Morada: ", cliente->morada, 50);
+    LerTextoInput("Nome de Utilizador: ", cliente->login, 50);
+    LerTextoInput("Password: ", cliente->password, 50);
+    return 1;
+}
+struct Clientes* ProcuraCliente(struct NodeClientes* headRef, int nif) {
+    struct NodeClientes* current = headRef;
 
-    // Procura Cliente Pelo NIF
     while (current != NULL) {
         if (current->cliente.nif == nif) {
-            printf("\n\nCliente encontrado:\n");
-            printf("Nome: %s\n", current->cliente.nome);
-            printf("NIF: %d\n", current->cliente.nif);
-            printf("Morada: %s\n", current->cliente.morada);
-            printf("Saldo: %f\n", current->cliente.saldo);
-            printf("Login: %s\n", current->cliente.login);
-            printf("\n");
-
-            // Pergunta por confirmação para editar o cliente
-            limpaSTDIN();
-            char resposta;
-            printf("Editar este cliente? (S/N): ");
-            scanf("%c", &resposta);
-            if (resposta == 'S' || resposta == 's') {
-                // Inserir novos dados:
-                printf("\nInsira os dados do novo cliente:\n");
-                printf("Nome: ");
-                limpaSTDIN();
-                scanf("%[^\n]", clienteTemp.nome);
-                printf("Morada: ");
-                limpaSTDIN();
-                scanf("%[^\n]", clienteTemp.morada);
-                printf("Login: ");
-                limpaSTDIN();
-                scanf("%[^\n]", clienteTemp.login);
-                printf("Password: ");
-                limpaSTDIN();
-                scanf("%[^\n]", clienteTemp.password);    
-
-                //Guarda o nif e saldo atual sem pedir atualizacao
-                clienteTemp.nif = current->cliente.nif;
-                clienteTemp.saldo = current->cliente.saldo; 
-
-                // Atuliza a informação do cliente
-                current->cliente = clienteTemp;
-                return 1;
-            } else {
-                return 0;
-            }
+            // Retorna o endereço do cliente encontrado
+            return &current->cliente; 
         }
         current = current->proximo;
     }
-
-    printf("Cliente com NIF %d não encontrado.\n", nif);
-    return 0;
+    return NULL; 
 }
 
-int ProcuraCliente(struct NodeClientes* headRef, int nif){
-    struct NodeClientes *current = headRef;
-    
-    // Search for the client with the given NIF
-    while (current != NULL) {
-        if (current->cliente.nif == nif) {
-            printf("\n\nCliente encontrado:\n");
-            printf("Nome: %s\n", current->cliente.nome);
-            printf("NIF: %d\n", current->cliente.nif);
-            printf("Morada: %s\n", current->cliente.morada);
-            printf("Saldo: %f\n", current->cliente.saldo);
-            printf("Login: %s\n", current->cliente.login);
-            printf("\n");
-            return 1;
-        }else return 0;
-    }
-}
-
-int AdicionarCliente(struct NodeClientes* headRef) {
+struct Clientes AdicionarCliente(struct NodeClientes* headRef) {
     struct Clientes clienteTemp;
-
     printf("Insira os dados do novo cliente:\n");
-    printf("Nome: ");
-    limpaSTDIN();
-    scanf("%[^\n]", clienteTemp.nome);
-
+    LerTextoInput("Nome: ", clienteTemp.nome, 50);
     printf("NIF: ");
-while(1){
-    clienteTemp.nif = VerificarInt();
-    if(!VerificaNif(headRef,clienteTemp.nif)) {
-        break;
-    } 
-}
-    printf("Morada: ");
-    limpaSTDIN();
-    scanf("%[^\n]", clienteTemp.morada);
+    while(1){
+        clienteTemp.nif = VerificarInt();
+        if(!VerificaNif(headRef,clienteTemp.nif)) {
+            printf("Já existe um cliente com o NIF: %d.\nInsere outro:\n", clienteTemp.nif);
+            break;
+        } 
+    }
+    LerTextoInput("Morada: ", clienteTemp.morada, 50);
     printf("Saldo: ");
     clienteTemp.saldo = VerificarFloat();
-    printf("Nome de Utilizador: ");
-    limpaSTDIN();
     while(1){
-        if(scanf("%[^\n]", clienteTemp.login)){
-            limpaSTDIN();
-            if(!VerificaUser(headRef,clienteTemp.login)) break;
-        }
+        LerTextoInput("Nome de Utilizador?", clienteTemp.login, 50);
+        if(!VerificaUser(headRef,clienteTemp.login)) break;
     }
-
-
-    printf("Password: ");
-    scanf("%[^\n]", clienteTemp.password);
-
-    // Add the new client to the end of the list
-    InserirCliente(&headRef, clienteTemp);
-    printf("Cliente adicionado com sucesso!\n");
+    LerTextoInput("Password: ", clienteTemp.password, 50);   
+    return(clienteTemp);
 }

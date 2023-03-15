@@ -8,6 +8,8 @@
         "transportes.h": "c",
         "menuutilizador.h": "c",
         "transacoes.h": "c",
-        "verificacoes.h": "c"
+        "verificacoes.h": "c",
+        "stdlib.h": "c",
+        "gestores.h": "c"
     }
 }

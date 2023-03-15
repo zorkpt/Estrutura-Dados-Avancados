@@ -3,9 +3,10 @@
 
 
 typedef struct Transacoes{
+    int idTransacao;
     int idClienteAAlugar;
     int idTransporte;
-    int tempoAluguerDecorrido;
+    int tempoAlugado;
 } Transacoes;
 
 typedef struct NodeTransacoes
@@ -15,8 +16,11 @@ typedef struct NodeTransacoes
 }NodeTransacoes;
 
 
-void InserirTransacoes(struct NodeTransacoes** headRef, struct Transacoes transacoes);
-void MostrarTransacoes(struct NodeTransacoes* head);
-
+int InserirTransacoes(struct NodeTransacoes** headRef, struct Transacoes transacoes);
+int MostrarTransacoes(struct NodeTransacoes* head);
+int MostrarTransacoesCliente(struct NodeTransacoes* head, int idCliente);
+int EditarTransacao(struct Transacoes * transacao);
+int RemoverTransacao(struct NodeTransacoes **head, int idTransacao);
+struct Transacoes* ProcurarTransacao(struct NodeTransacoes* head, int idTransacao);
 
 #endif

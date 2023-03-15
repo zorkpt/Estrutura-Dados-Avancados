@@ -15,29 +15,37 @@ int ExportarParaBinario(struct NodeClientes* listaClientes,
                         struct NodeTransacoes* listaTransacoes, 
                         const char* nomeFicheiro) {
 
-    // Open the file in binary mode for writing
+    // Abre ou cria o ficheiro binario
     FILE* file = fopen(nomeFicheiro, "wb");
     if (file == NULL) {
         return 0;
     }
 
-    // Write the data from the linked lists to the file
+    // Escreve Conteudo das listas para binario
+    
     struct NodeClientes* current = listaClientes;
+    
     while (current != NULL) {
         fwrite(&current->cliente, sizeof(struct NodeClientes), 1, file);
         current = current->proximo;
     }
+    
     struct NodeGestores* current2 = listaGestores;
+    
     while (current != NULL) {
         fwrite(&current2->gestor, sizeof(struct NodeGestores), 1, file);
         current2 = current2->proximo;
     }
+    
     struct NodeTransporte* current3 = listaTransporte;
+    
     while (current != NULL) {
         fwrite(&current3->transporte, sizeof(struct NodeTransporte), 1, file);
         current3 = current3->proximo;
     }
+    
     struct NodeTransacoes* current4 = listaTransacoes;
+    
     while (current != NULL) {
         fwrite(&current4->transacoes, sizeof(struct NodeTransacoes), 1, file);
         current4 = current4->proximo;
@@ -55,11 +63,8 @@ char* LerNomeFicheiro() {
         return NULL;
     }
 
-    // Prompt the user for the file name
     printf("Insere o nome do ficheiro: ");
-    // previne que o utilizador insira mais que 255 caracteres
     scanf("%255s", nomeFicheiro);
-
 
     return nomeFicheiro;
 }

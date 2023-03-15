@@ -12,7 +12,6 @@ int VerificaNif(struct NodeClientes* head, int nif) {
     struct NodeClientes* current = head;
     while (current != NULL) {
         if (current->cliente.nif == nif) {
-            printf("Já existe um cliente com o NIF: %d.\nInsere outro:\n", nif);
             return 1;
         }
         current = current->proximo;
@@ -33,22 +32,31 @@ int VerificaUser(struct NodeClientes* head, char *login) {
     return 0;
 }
 
-// int VerificarInt(){
-//     int valor;
-//         while (scanf("%d",&valor)== 0) {
-//         printf("Insere um número válido.\n");
-//         limpaSTDIN();
-//     }   
-//     return valor;
-// }
+int VerificaGestor(struct NodeGestores* head, char *login) {
+    struct NodeGestores* current = head;
+    while (current != NULL) {
+
+        if (strcmp(current->gestor.nome,login)==0) {
+            return 1;
+        }
+        current = current->proximo;
+    }
+    return 0;
+}
+
 
 float VerificarFloat(){
-    float valor;
-        while (scanf("%f",&valor)== 0) {
-        printf("Insere um número válido.\n");
-        limpaSTDIN();
-    }   
-    return valor;
+  float resultado = 0;
+  char buffer[1024] = {0};
+
+  while (1) {
+    fgets(buffer, 1024, stdin);
+    if (sscanf(buffer, "%f", &resultado) == 1) {
+      return resultado;
+    } else if (buffer[0] != '\n') {
+      printf("Insere um numero válido: ");
+    }
+  }
 }
 
 
@@ -60,20 +68,38 @@ int VerificarInt() {
     fgets(buffer, 1024, stdin);
     if (sscanf(buffer, "%d", &resultado) == 1) {
       return resultado;
-    }   
-    printf("Insere um numero inteiro: ");
+    } else if (buffer[0] != '\n') {
+      printf("Insere um numero inteiro: ");
+    }
   }
 }
+
 
 
 int VerificaIdTransportes(struct NodeTransporte* head, int id) {
     struct NodeTransporte* current = head;
     while (current != NULL) {
         if (current->transporte.id == id) {
-            printf("Já existe um Transporte com esse ID: %d.\nInsere outro:\n", id);
             return 0;
         }
         current = current->proximo;
     }
     return 1;
+}
+
+
+int LerTextoInput(char *texto, char *resultado, int max_length) {
+    printf("%s", texto);
+    while (1) {
+        fgets(resultado, max_length, stdin);
+        int len = strlen(resultado);
+        if (len > 0 && resultado[len-1] == '\n') {
+            resultado[len-1] = '\0';
+        }
+        if (strlen(resultado) > 0) {
+            return 1;
+        } else {
+            printf("Entrada Inválida.\n%s", texto);
+        }
+    }
 }

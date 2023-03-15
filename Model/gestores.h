@@ -16,6 +16,8 @@ typedef struct NodeGestores
 
 
 // novas e confirmadas
-void InserirGestor(struct NodeGestores** headRef, struct Gestores gestor);
-void MostrarGestores(struct NodeGestores* head);
+int InserirGestor(struct NodeGestores** headRef, struct Gestores gestor);
+int MostrarGestores(struct NodeGestores* head);
+struct Gestores AdicionarGestor(struct NodeGestores* headRef);
+int RemoverGestor(struct NodeGestores **head, char nome[]);
 #endif

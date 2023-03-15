@@ -17,18 +17,12 @@ typedef struct NodeClientes
 }NodeClientes;
 
 
-// // VERIFICAÇÕES
-// int VerificaNif(struct NodeClientes* head, int nif);
-// int VerificarInt();
-// float VerificarFloat();
-// int limpaSTDIN();
-
 // FUNCOES CONFIRMADAS E A FUNCIONAR:
-void MostrarClientes(struct NodeClientes* head);
+int MostrarClientes(struct NodeClientes* head);
 int InserirCliente(struct NodeClientes** headRef, struct Clientes cliente);
 int RemoverCliente(struct NodeClientes **head, int nif);
-int EditarCliente(struct NodeClientes *head, int nif);
-int AdicionarCliente(struct NodeClientes* headRef);
-int ProcuraCliente(struct NodeClientes* headRef, int nif);
+int EditarCliente(struct Clientes *cliente);
+struct Clientes AdicionarCliente(struct NodeClientes* headRef);
+struct Clientes* ProcuraCliente(struct NodeClientes* headRef, int nif);
 #endif
 

@@ -3,10 +3,15 @@
 #include "transportes.h"
 #include <stdlib.h>
 #include <stdio.h>
+#define MAX_STRING 100
 
 
 
-void InserirNoFimTransporte(struct NodeTransporte** headRef, struct Transporte transporte) {
+/// @brief 
+/// @param headRef 
+/// @param transporte 
+/// @return 
+int InserirTransporte(struct NodeTransporte** headRef, struct Transporte transporte) {
     struct NodeTransporte* newNode = (struct NodeTransporte*) malloc(sizeof(struct NodeTransporte));
     newNode->transporte = transporte;
     newNode->proximo = NULL;
@@ -22,14 +27,14 @@ void InserirNoFimTransporte(struct NodeTransporte** headRef, struct Transporte t
     }
 }
 
-void MostrarTransportes(struct NodeTransporte* head) {
-if (head == NULL) {
-        printf("Não existem Transportes para mostrar.\n");
-        
+int MostrarTransportes(struct NodeTransporte* head) {
+    if (head == NULL) {
+        return 0;
     }
-     struct NodeTransporte* current = head;
+    printf("%-5s %-20s %-10s %-10s %-20s %-10s\n", "ID", "TIPO", "BATERIA", "PRECO", "LOCALIZACAO", "ESTADO");
+    struct NodeTransporte* current = head;
     while (current != NULL) {
-        printf("%d\t%s\t%d\t%.2f\t%s\t%d\n",
+        printf("%-5d %-20s %-10d %-10.2f %-20s %-10d\n",
                current->transporte.id,
                current->transporte.tipo,
                current->transporte.nivelBateria,
@@ -38,6 +43,7 @@ if (head == NULL) {
                current->transporte.estado);
         current = current->proximo;
     }
+    return 1;
 }
 
 int RemoverTransporte(struct NodeTransporte **head, int id) {
@@ -81,79 +87,44 @@ int TransporteEncontrado(struct NodeTransporte* head){
 
 }
 
-int EditarTransporte(struct NodeTransporte *head, int id){
-    struct NodeTransporte *current = head;
-    struct Transporte transporteTemp;
+int EditarTransporte(struct Transporte *transporte, int id){
 
-    // Procura Cliente Pelo NIF
-    while (current != NULL) {
-        if (current->transporte.id == id) {
-            TransporteEncontrado(current);
-            // Pergunta por confirmação para editar o cliente
-            limpaSTDIN();
-            char resposta;
-            printf("Editar este cliente? (S/N): ");
-            scanf("%c", &resposta);
-            if (resposta == 'S' || resposta == 's') {
-                // Inserir novos dados:
-                printf("\nInsira os dados do novo cliente:\n");
-                printf("Tipo: ");
-                limpaSTDIN();
-                scanf("%[^\n]", transporteTemp.tipo);
-                printf("Bateria: ");
-                limpaSTDIN();
-                transporteTemp.nivelBateria = VerificarInt();
-                printf("Preço por Hora: ");
-                limpaSTDIN();
-                transporteTemp.preco = VerificarFloat();
-                printf("Localização: ");
-                limpaSTDIN();
-                scanf("%[^\n]", transporteTemp.localizacao);    
-                printf("Estado do transporte: ");
-                limpaSTDIN();
-                transporteTemp.estado = VerificarInt();
+    printf("\nNovos Dados do transporte:\n");
+    LerTextoInput("Tipo?",transporte->tipo, MAX_STRING);
+    printf("Bateria: ");
+    transporte->nivelBateria = VerificarInt();
+    printf("Preço por Hora: ");
+    transporte->preco = VerificarFloat();
+    LerTextoInput("Localização?",transporte->localizacao, MAX_STRING);
+    printf("Estado do transporte: ");
+    transporte->estado = VerificarInt();
 
-                //Guarda o ID sem pedir atualizacao
-                transporteTemp.id = current->transporte.id;
+    //Guarda o ID sem pedir atualizacao
+    transporte->id = id;
+    return 1;
+    }
 
-                // Atuliza a informação do cliente
-                current->transporte = transporteTemp;
-                return 1;
-            } else {
-                return 0;
-            }
-        }
-        current = current->proximo;
-}
-}
-
-int ProcurarTransporte(struct NodeTransporte* headRef, int id ){
+struct Transporte* ProcurarTransporte(struct NodeTransporte* headRef, int id ){
     struct NodeTransporte *current = headRef;
 
     while (current != NULL) {
         if (current->transporte.id == id) {
-            printf("\n\nTransporte encontrado:\n");
-            printf("ID: %d\n", current->transporte.id);
-            printf("Tipo: %s\n", current->transporte.tipo);
-            printf("Bateria: %d\n", current->transporte.nivelBateria);
-            printf("Preço Por Hora: %f\n", current->transporte.preco);
-            printf("Localização: %s\n", current->transporte.localizacao);
-            printf("Estado: %d\n", current->transporte.estado);
-            printf("\n");
-            return 1;
+            return &current->transporte;
         }
         current = current->proximo;
     }
-    return 0;
+    return NULL;
 }
 
 int VerTransportesDisponiveis(struct NodeTransporte* headTransporte, struct NodeTransacoes* headTransacoes) {
     struct NodeTransporte* current = headTransporte;
+    //cabeçalho
+    printf("ID\tTIPO\t\tBATERIA\t\tPRECO\t\tLOCAL\n");
     while (current != NULL) {
         struct NodeTransacoes* currentTransacoes = headTransacoes;
         while (currentTransacoes != NULL) {
             if (current->transporte.id == currentTransacoes->transacoes.idTransporte) {
-                printf("ID: %d\tTIPO: %s\tBATERIA: %d\t\tPRECO: %.2f\t\tLOCAL:%s\n",current->transporte.id, current->transporte.tipo, current->transporte.nivelBateria, current->transporte.preco,current->transporte.localizacao);
+                printf("%d\t%s\t%d\t%.2f\t%s\n",current->transporte.id, current->transporte.tipo, current->transporte.nivelBateria, current->transporte.preco,current->transporte.localizacao);
             }
             currentTransacoes = currentTransacoes->proximo;
         }
@@ -161,28 +132,93 @@ int VerTransportesDisponiveis(struct NodeTransporte* headTransporte, struct Node
     }
 }
 
-int EscreveTransporte(struct NodeTransporte* headTransporte) {
+struct Transporte EscreveTransporte(struct NodeTransporte* headTransporte) {
     struct Transporte transporteTemp;
     printf("ID: ");
-
     transporteTemp.id = VerificarInt();
     while (VerificaIdTransportes(headTransporte, transporteTemp.id) == 0) {
         transporteTemp.id = VerificarInt();
     }
-
-    printf("Tipo: ");
-    limpaSTDIN();
-    fgets(transporteTemp.tipo, 50, stdin);
+    LerTextoInput("Tipo?", transporteTemp.tipo, MAX_STRING);
     printf("Nivel de Bateria: ");
     transporteTemp.nivelBateria = VerificarInt();
     printf("Preco: ");
     transporteTemp.preco = VerificarFloat();
-    printf("Localizacao: ");
-    limpaSTDIN();
-    fgets(transporteTemp.localizacao, 50, stdin);
+    LerTextoInput("Localizacao?", transporteTemp.localizacao, MAX_STRING);
     printf("Estado: ");
     transporteTemp.estado = VerificarInt();
-    InserirNoFimTransporte(&headTransporte, transporteTemp);
-    return 0;
+    return transporteTemp;
 }
 
+int CopiarLista(struct NodeTransporte *head, struct NodeTransporte **copiedHead) {
+    if (head == NULL) {
+        return 0;
+    }
+
+    while (head != NULL) {
+        struct NodeTransporte *newNode = (struct NodeTransporte *)malloc(sizeof(struct NodeTransporte));
+        newNode->transporte = head->transporte;
+        newNode->proximo = NULL;
+
+        if (*copiedHead == NULL) {
+            *copiedHead = newNode;
+        } else {
+            struct NodeTransporte *current = *copiedHead;
+            while (current->proximo != NULL) {
+                current = current->proximo;
+            }
+            current->proximo = newNode;
+        }
+        head = head->proximo;
+    }
+
+    return 1;
+}
+
+int OrdenarListaDecrescente(struct NodeTransporte *head) {
+    if (head == NULL) {
+        return 0;
+    }
+
+    struct NodeTransporte *current, *nextNode;
+    for (current = head; current != NULL; current = current->proximo) {
+        for (nextNode = current->proximo; nextNode != NULL; nextNode = nextNode->proximo) {
+            if (current->transporte.nivelBateria < nextNode->transporte.nivelBateria) {
+                struct Transporte temp = current->transporte;
+                current->transporte = nextNode->transporte;
+                nextNode->transporte = temp;
+            }
+        }
+    }
+
+    return 1;
+}
+
+int MostrarTransportesOrdenados(struct NodeTransporte *head) {
+    if (head == NULL) {
+        return 0;
+    }
+
+    struct NodeTransporte *copiedHead = NULL;
+    if (!CopiarLista(head, &copiedHead)) {
+        return 0;
+    }
+
+    if (!OrdenarListaDecrescente(copiedHead)) {
+        return 0;
+    }
+
+    if (!MostrarTransportes(copiedHead)) {
+        return 0;
+    }
+
+    // Free copied list
+    struct NodeTransporte *current;
+    while (copiedHead != NULL) {
+        current = copiedHead;
+        copiedHead = copiedHead->proximo;
+        free(current);
+    }
+
+    return 1;
+}
