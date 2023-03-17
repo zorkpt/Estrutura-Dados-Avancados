@@ -1,8 +1,8 @@
-#include "../Controller/funcoes.h"
-#include "../Controller/verificacoes.h"
-#include "transportes.h"
+#include "../Headers/transportes.h"
+#include "../Headers/verificacoes.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 #define MAX_STRING 100
 
 
@@ -104,6 +104,22 @@ int EditarTransporte(struct Transporte *transporte, int id){
     return 1;
     }
 
+int EditarTransporteID(struct NodeTransporte *headTransporte, int id){ 
+    struct NodeTransporte* current = headTransporte;
+
+    while (headTransporte != NULL) {
+            if (headTransporte->transporte.id == id) {
+                headTransporte->transporte.estado = 1;
+                return 1;
+                }
+        headTransporte = headTransporte->proximo;
+    }
+    return 0;
+}
+
+
+
+
 struct Transporte* ProcurarTransporte(struct NodeTransporte* headRef, int id ){
     struct NodeTransporte *current = headRef;
 
@@ -115,19 +131,37 @@ struct Transporte* ProcurarTransporte(struct NodeTransporte* headRef, int id ){
     }
     return NULL;
 }
+struct NodeTransporte* ProcurarTransportesPorLocal(struct NodeTransporte* headTransportes, const char* local) {
+    struct NodeTransporte* resultHead = NULL;
+    struct NodeTransporte* currentNode = headTransportes;
 
-int VerTransportesDisponiveis(struct NodeTransporte* headTransporte, struct NodeTransacoes* headTransacoes) {
+    while (currentNode != NULL) {
+        if (strcmp(currentNode->transporte.localizacao, local) == 0) {
+            // Add the current transportation to the result list.
+            struct NodeTransporte* newNode = (struct NodeTransporte*)malloc(sizeof(struct NodeTransporte));
+            newNode->transporte = currentNode->transporte;
+            newNode->proximo = resultHead;
+            resultHead = newNode;
+        }
+        currentNode = currentNode->proximo;
+    }
+
+    return resultHead;
+}
+
+int VerTransportesDisponiveis(struct NodeTransporte* headTransporte) {
     struct NodeTransporte* current = headTransporte;
     //cabeçalho
-    printf("ID\tTIPO\t\tBATERIA\t\tPRECO\t\tLOCAL\n");
+    printf("%-8s%-20s%-10s%-10s%-30s\n", "ID", "TIPO", "BATERIA", "PRECO/HORA", "LOCAL");    
     while (current != NULL) {
-        struct NodeTransacoes* currentTransacoes = headTransacoes;
-        while (currentTransacoes != NULL) {
-            if (current->transporte.id == currentTransacoes->transacoes.idTransporte) {
-                printf("%d\t%s\t%d\t%.2f\t%s\n",current->transporte.id, current->transporte.tipo, current->transporte.nivelBateria, current->transporte.preco,current->transporte.localizacao);
-            }
-            currentTransacoes = currentTransacoes->proximo;
-        }
+            if (current->transporte.estado == 0) {
+                printf("%-8d%-20s%-10d%-10.2f%-30s\n", 
+                    current->transporte.id, 
+                    current->transporte.tipo, 
+                    current->transporte.nivelBateria, 
+                    current->transporte.preco,
+                    current->transporte.localizacao
+                ); }
         current = current->proximo;
     }
 }
@@ -222,3 +256,23 @@ int MostrarTransportesOrdenados(struct NodeTransporte *head) {
 
     return 1;
 }
+
+
+
+
+
+
+float CustoTotalAluguer(struct Transporte* transporte, int tempoAluguer) {
+    float tempoAluguerHoras = tempoAluguer / 60.0; // Convert minutos em horas
+    return transporte->preco * tempoAluguerHoras;
+}
+
+
+int AlugarTransporteDisponivel(struct Transporte* transporte) {
+    if (transporte->estado == 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
+

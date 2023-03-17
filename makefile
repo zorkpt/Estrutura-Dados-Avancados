@@ -1,5 +1,5 @@
 #vars
-INCLUDES = Model/clientes.h View/menugestor.h View/menuutilizador.h Model/transportes.h Model/gestores.h Model/transacoes.h
+INCLUDES = Headers/clientes.h Headers/menugestor.h Headers/menuutilizador.h Headers/transportes.h Headers/gestores.h Headers/transacoes.h
 SOURCES = Model/clientes.c Model/dados.c View/login.c View/menu.c View/menugestor.c View/menuutilizador.c Model/transportes.c Controller/main.c Model/gestores.c Model/transacoes.c Controller/exportarparabin.c Controller/verificacoes.c
 OBJFILES = clientes.o dados.o login.o menu.o menugestor.o menuutilizador.o transportes.o main.o gestores.o transacoes.o exportarparabin.o verificacoes.o
 EXEC = main

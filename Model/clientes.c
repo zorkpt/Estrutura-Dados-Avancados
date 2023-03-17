@@ -1,11 +1,8 @@
-#include "clientes.h"
-#include "../Controller/verificacoes.h"
+#include "../Headers/verificacoes.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-
-
-
+#define MAX_STRING 100
 
 int InserirCliente(struct NodeClientes** headRef, struct Clientes cliente) {
      // Aloca memoria um novo NodeClientes e aloca os seus campos
@@ -108,9 +105,9 @@ struct Clientes AdicionarCliente(struct NodeClientes* headRef) {
     while(1){
         clienteTemp.nif = VerificarInt();
         if(!VerificaNif(headRef,clienteTemp.nif)) {
-            printf("Já existe um cliente com o NIF: %d.\nInsere outro:\n", clienteTemp.nif);
             break;
-        } 
+        }else printf("Já existe um cliente com o NIF: %d.\nInsere outro:\n", clienteTemp.nif);
+
     }
     LerTextoInput("Morada: ", clienteTemp.morada, 50);
     printf("Saldo: ");
@@ -121,4 +118,30 @@ struct Clientes AdicionarCliente(struct NodeClientes* headRef) {
     }
     LerTextoInput("Password: ", clienteTemp.password, 50);   
     return(clienteTemp);
+}
+
+int TemSaldoSuficiente(struct Clientes* cliente, float custoTotal) {
+    return cliente->saldo >= custoTotal;
+}
+
+int AlterarSenha(struct Clientes* cliente, char novaSenha[]) {
+
+    if (cliente == NULL) {
+        return 0;
+    }
+    // Copia nova senha para o cliente
+    if(strcpy(cliente->password, novaSenha)) {
+        return 1;
+    } else {
+        return 0;
+    }
+    
+}
+
+int RealizarDeposito(struct Clientes* cliente, float valor) {
+    if (cliente == NULL) {
+        return 0;
+    }
+    cliente->saldo += valor;
+    return 1;
 }

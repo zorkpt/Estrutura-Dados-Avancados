@@ -1,8 +1,9 @@
-#include "../Controller/funcoes.h"
-#include "../Controller/verificacoes.h"
+#include "../Headers/verificacoes.h"
 #include <string.h>
+#include <stdio.h>
+#define MAX_CHAR 100
 
-int IniciarLogin(struct NodeClientes** clientesHead, struct NodeGestores** gestoresHead) {
+int IniciarLogin(struct NodeClientes** clientesHead, struct NodeGestores** gestoresHead, int* nifClienteLogado) {
     char utilizador[MAX_CHAR];
     char password[MAX_CHAR];
     while (1) {
@@ -15,6 +16,7 @@ int IniciarLogin(struct NodeClientes** clientesHead, struct NodeGestores** gesto
         while (currentCliente != NULL) {
             if (strcmp(utilizador, currentCliente->cliente.login) == 0 && strcmp(password, currentCliente->cliente.password) == 0) {
                 printf("Login efetuado com sucesso. Bem-vindo %s\n", currentCliente->cliente.nome);
+                *nifClienteLogado = currentCliente->cliente.nif;
                 // Abre Menu Clientes
                 return 1;
             }

@@ -1,13 +1,14 @@
 #ifndef VERIFICACOES_HEADER_GUARD
 #define VERIFICACOES_HEADER_GUARD
-#include "../Model/transportes.h"
-#include "../Model/clientes.h"
-#include "../Model/transacoes.h"
-#include "../Model/gestores.h"
+#pragma once
+#include "transportes.h"
+#include "clientes.h"
+#include "gestores.h"
+#include "transacoes.h"
+
 
 int VerificarInt();
 int VerificaIdTransportes(struct NodeTransporte* head, int id);
-int limpaSTDIN();
 int VerificaNif(struct NodeClientes* head, int nif);
 int VerificaUser(struct NodeClientes* head, char *login);
 float VerificarFloat();

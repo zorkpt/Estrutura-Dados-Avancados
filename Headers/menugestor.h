@@ -1,6 +1,7 @@
 #ifndef MENUGESTOR_HEADER_GUARD
 #define MENUGESTOR_HEADER_GUARD
-#include "../Controller/funcoes.h"
+#pragma once
+#include "verificacoes.h"
 
 int MenuGestor(struct NodeClientes* headClientes, 
                struct NodeGestores* headGestores, 

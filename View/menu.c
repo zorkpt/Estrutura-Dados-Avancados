@@ -1,10 +1,10 @@
-#include "../Controller/verificacoes.h"
+#include "../Headers/verificacoes.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 
-int menu(){
+int listaMenuGestor(){
     int escolha;
     printf("\nSoftware de Gestão frota Smart City.\n");
     printf(" ------- CLIENTES -------- \n");
@@ -20,7 +20,7 @@ int menu(){
     printf("14. Localizar Transporte\n");
     printf("15. Ver todos Transportes\n");
     printf("16. Ver todos Transportes disponiveis\n");
-    printf("17. Ver todos Transportes Sorted por Autonomia");
+    printf("17. Ver todos Transportes Sorted por Autonomia\n");
     printf(" ------- GESTORES -------- \n");
     printf("21. Adicionar Gestor\n");
     printf("22. Eliminar Gestor\n");
@@ -38,4 +38,20 @@ int menu(){
     return escolha;
 }
 
+
+int ListaMenuCliente(){
+    int escolha;
+    printf("\nSmart City\n");
+    printf("1. Visualizar meios de mobilidade elétrica disponíveis por ordem decrescente de autonomia\n");
+    printf("2. Visualizar meios de mobilidade elétrica disponíveis por geocódigo\n");
+    printf("3. Alugar um meio de mobilidade elétrica\n");
+    printf("4. Terminar Viagem\n");    
+    printf("5. Visualizar histórico de alugueres\n");
+    printf("6. Consultar Saldo\n");
+    printf("7. Realizar depósito\n");
+    printf("8. Alterar Senha\n");
+    printf("9. Sair\n");
+    escolha = VerificarInt(escolha);
+    return escolha;
+}
 

@@ -10,6 +10,7 @@
         "transacoes.h": "c",
         "verificacoes.h": "c",
         "stdlib.h": "c",
-        "gestores.h": "c"
+        "gestores.h": "c",
+        "menugestor.h": "c"
     }
 }

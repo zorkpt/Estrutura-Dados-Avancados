@@ -1,5 +1,5 @@
-#include "../Controller/funcoes.h"
-#include "../Controller/verificacoes.h"
+#include "../Headers/gestores.h"
+#include "../Headers/verificacoes.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>

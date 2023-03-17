@@ -1,5 +1,6 @@
-#include "../Controller/funcoes.h"
-#include "../Controller/verificacoes.h"
+#include "../Headers/menugestor.h"
+#include "../Headers/funcoes.h"
+#include "../Headers/verificacoes.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -12,7 +13,7 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
     while(1)
     {   
         int nif;
-        int escolha = menu();
+        int escolha = listaMenuGestor();
         switch (escolha)
         {
         case 1:
@@ -111,7 +112,7 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             if(!MostrarTransportes(headTransportes)) printf("Não existem transportes registados.");
             break;
         case 16:
-            VerTransportesDisponiveis(headTransportes,headTransacoes);
+            VerTransportesDisponiveis(headTransportes);
             break;
         case 17:
             MostrarTransportesOrdenados(headTransportes);
@@ -128,7 +129,7 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             break;
             break;
         case 22:
-            char nomeGestor[MAX_CHAR];
+            char nomeGestor[MAX_LENGTH];
             LerTextoInput("Inserir nome do Gestor: ",nomeGestor,MAX_LENGTH);
             if(RemoverGestor(&headGestores,nomeGestor)) printf("Gestor %s Eliminado.",nomeGestor);
             else printf("Não foi encontrado nenhum Gestor: %s",nomeGestor);
@@ -168,19 +169,21 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             else printf("Transação com o ID: %d eliminada.",idTransacao);
             break;
         case 0:
-            char* nomeFicheiro = LerNomeFicheiro();
-            if (nomeFicheiro == NULL) {
-                printf("Erro: Não foi possivel ler o nome do ficheiro.\n");
-                break;
-            }
-            if(ExportarParaBinario(headClientes,headGestores,headTransportes,headTransacoes,nomeFicheiro)) {
-                printf("Ficheiro %s criado.",nomeFicheiro);
-            }else printf("Não foi possivel exportar os dados para o ficheiro.");
-            
+            if (!ExportarClientes(headClientes)) {
+                printf("Erro ao exportar dados dos Clientes.\n");
+            }else printf("Clientes exportados com sucesso.\n");
+            if (!ExportarGestores(headGestores)) {
+                printf("Erro ao exportar dados dos Gestores.\n");
+            }else printf("Gestores exportados com sucesso.\n");
+            if (!ExportarTransportes(headTransportes)) {
+                printf("Erro ao exportar dados dos Transportes.\n");
+            }else printf("Transportes exportados com sucesso.\n");
+            if (!ExportarTransacoes(headTransacoes)) {
+                printf("Erro ao exportar dados das Transações.\n");
+            }else printf("Transacoes exportados com sucesso.\n");
             break;
-
         default:
-            printf("\nInsere uma opção de 0 a 9\n");
+            printf("\nInsere uma das opções mostradas.\n");
             break;        
         }
     }

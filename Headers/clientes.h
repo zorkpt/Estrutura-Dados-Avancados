@@ -24,5 +24,8 @@ int RemoverCliente(struct NodeClientes **head, int nif);
 int EditarCliente(struct Clientes *cliente);
 struct Clientes AdicionarCliente(struct NodeClientes* headRef);
 struct Clientes* ProcuraCliente(struct NodeClientes* headRef, int nif);
+int TemSaldoSuficiente(struct Clientes* cliente, float custoTotal);
+int AlterarSenha(struct Clientes* cliente, char novaSenha[]);
+int RealizarDeposito(struct Clientes* cliente, float valor);
 #endif
 

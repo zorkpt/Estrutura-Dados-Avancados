@@ -1,12 +1,6 @@
 #include <stdio.h>
-#include "../Controller/verificacoes.h"
 #include <string.h>
-
-
-int limpaSTDIN(){
-    int valor;
-    while((valor = getchar()) != '\n' && valor != EOF);    
-}
+#include "../Headers/verificacoes.h"
 
 int VerificaNif(struct NodeClientes* head, int nif) {
     struct NodeClientes* current = head;

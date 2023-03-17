@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "../Controller/funcoes.h"
+#include "../Headers/funcoes.h"
 // Número maximo de caracteres que cada linha pode conter
 #define MAX_LINHA 100
 

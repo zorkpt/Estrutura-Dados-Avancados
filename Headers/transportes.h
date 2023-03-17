@@ -1,6 +1,8 @@
 #ifndef TRANSPORTES_HEADER_GUARD
 #define TRANSPORTES_HEADER_GUARD
-#include "../Model/transacoes.h"
+#pragma once
+#include "clientes.h"
+
 
 // ESTRUTURA TRANSPORTES
 typedef struct Transporte{
@@ -21,7 +23,7 @@ typedef struct NodeTransporte
 
 int InserirTransporte(struct NodeTransporte** headRef, struct Transporte transporte);
 int MostrarTransportes(struct NodeTransporte* head);
-int VerTransportesDisponiveis(struct NodeTransporte* head, struct NodeTransacoes* headTransacoes);
+int VerTransportesDisponiveis(struct NodeTransporte* headTransporte);
 struct Transporte EscreveTransporte(struct NodeTransporte* headTransporte);
 struct Transporte* ProcurarTransporte(struct NodeTransporte* headRef, int id );    
 int RemoverTransporte(struct NodeTransporte **head, int id);
@@ -30,4 +32,10 @@ int CopiarLista(struct NodeTransporte *head, struct NodeTransporte **copiedHead)
 int OrdenarListaDecrescente(struct NodeTransporte *head);
 int MostrarTransportes(struct NodeTransporte *head);
 int MostrarTransportesOrdenados(struct NodeTransporte *head);
+struct NodeTransporte* ProcurarTransportesPorLocal(struct NodeTransporte* headTransportes, const char* local);
+float CustoTotalAluguer(struct Transporte* transporte, int tempoAluguer);
+int AlugarTransporteDisponivel(struct Transporte* transporte);
+int EditarTransporteID(struct NodeTransporte *headTransporte, int id);
+
+
 #endif
