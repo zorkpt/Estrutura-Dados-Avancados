@@ -1,3 +1,14 @@
+/**
+ * @file importexport.c
+ * @author Hugo Poças
+ * @brief 
+ * @version 0.1
+ * @date 18-03-2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #ifndef EXPORTAR_HEADER_GUARD
 #define EXPORTAR_HEADER_GUARD
 #include <stdio.h>
@@ -20,6 +31,13 @@
 #define csvTransportes "Data/Csv/transportes.csv"
 #define csvTransacoes "Data/Csv/transacoes.csv"
 
+
+/// @brief Se todos os ficheiros CSV forem carregados com sucesso, retorna 1, caso contrário, retorna 0.
+/// @param headClientes 
+/// @param headTransportes 
+/// @param headGestores 
+/// @param headTransacoes 
+/// @return 
 int CarregarCSV(struct NodeClientes** headClientes, struct NodeTransporte** headTransportes, 
                  struct NodeGestores** headGestores, struct NodeTransacoes** headTransacoes) {
     if (CarregarFicheiroClientes(headClientes, csvClientes) &&
@@ -30,6 +48,15 @@ int CarregarCSV(struct NodeClientes** headClientes, struct NodeTransporte** head
     }
     return 0;
 }
+
+
+/// @brief Carrega dados de ficheiros binários, caso não existam, carrega dados de ficheiros CSV.
+/// @param headClientes Pointer para o header da lista de clientes.
+/// @param headTransportes Pointer para o header da lista de transportes.
+/// @param headGestores Pointer para o header da lista de gestores.
+/// @param headTransacoes Pointer para o header da lista de transacoes.
+/// @return Retorna 1 se os dados forem carregados com sucesso, retorna 
+///         0 se os dados forem carregados de ficheiros CSV, retorna -1 se os dados não forem carregados.
 int CarregarDados(struct NodeClientes** headClientes, struct NodeTransporte** headTransportes, 
                  struct NodeGestores** headGestores, struct NodeTransacoes** headTransacoes) {
     if (CarregarBinarioClientes(headClientes) &&
@@ -45,6 +72,10 @@ int CarregarDados(struct NodeClientes** headClientes, struct NodeTransporte** he
     }
 }
 
+
+/// @brief Exporta a lista de clientes para um fichero binário.
+/// @param listaClientes Pointer para o header da lista de clientes.
+/// @return Retorna 1 se a exportação for bem sucedida, caso contrário, retorna 0.
 int ExportarClientes(struct NodeClientes* listaClientes) {
     FILE* file = fopen(ficheiroClientes, "wb");
     if (file == NULL) {
@@ -60,6 +91,9 @@ int ExportarClientes(struct NodeClientes* listaClientes) {
     return 1;
 }
 
+/// @brief Exporta a lista de gestores para um fichero binário.
+/// @param listaGestores Pointer para o header da lista de gestores.
+/// @return Retorna 1 se a exportação for bem sucedida, caso contrário, retorna 0.
 int ExportarGestores(struct NodeGestores* listaGestores) {
     FILE* file = fopen(ficheiroGestores, "wb");
     if (file == NULL) {
@@ -75,6 +109,9 @@ int ExportarGestores(struct NodeGestores* listaGestores) {
     return 1;
 }
 
+/// @brief Exporta a lista de transportes para um fichero binário.
+/// @param listaTransporte Pointer para o header da lista de transportes.
+/// @return Retorna 1 se a exportação for bem sucedida, caso contrário, retorna 0.
 int ExportarTransportes(struct NodeTransporte* listaTransporte) {
     FILE* file = fopen(ficheiroTransportes, "wb");
     if (file == NULL) {
@@ -90,6 +127,9 @@ int ExportarTransportes(struct NodeTransporte* listaTransporte) {
     return 1;
 }
 
+/// @brief Exporta a lista de transacoes para um fichero binário.
+/// @param listaTransacoes Pointer para o header da lista de transacoes.
+/// @return Retorna 1 se a exportação for bem sucedida, caso contrário, retorna 0.
 int ExportarTransacoes(struct NodeTransacoes* listaTransacoes) {
     FILE* file = fopen(ficheiroTransacoes, "wb");
     if (file == NULL) {
@@ -105,6 +145,9 @@ int ExportarTransacoes(struct NodeTransacoes* listaTransacoes) {
     return 1;
 }
 
+/// @brief Carrega dados de clientes de um ficheiro binário.
+/// @param headClientes Pointer para o header da lista de clientes.
+/// @return Retorna 1 se os dados forem carregados com sucesso, caso contrário, retorna 0.
 int CarregarBinarioClientes(struct NodeClientes** headClientes) {
     FILE* file = fopen(ficheiroClientes, "rb");
     if (file == NULL) {
@@ -112,6 +155,7 @@ int CarregarBinarioClientes(struct NodeClientes** headClientes) {
     }
 
     struct NodeClientes nodeCliente;
+    // Lê node a node do ficheiro binário e insere na lista.
     while (fread(&nodeCliente, sizeof(struct NodeClientes), 1, file) == 1) {
         InserirCliente(headClientes, nodeCliente.cliente);
     }
@@ -120,6 +164,9 @@ int CarregarBinarioClientes(struct NodeClientes** headClientes) {
     return 1;
 }
 
+/// @brief Carrega dados de transportes de um ficheiro binário.
+/// @param headTransportes Pointer para o header da lista de transportes.
+/// @return Retorna 1 se os dados forem carregados com sucesso, caso contrário, retorna 0.
 int CarregarBinarioTransportes(struct NodeTransporte** headTransportes) {
     FILE* file = fopen(ficheiroTransportes, "rb");
     if (file == NULL) {
@@ -127,6 +174,7 @@ int CarregarBinarioTransportes(struct NodeTransporte** headTransportes) {
     }
 
     struct NodeTransporte nodeTransporte;
+    // Lê node a node do ficheiro binário e insere na lista.
     while (fread(&nodeTransporte, sizeof(struct NodeTransporte), 1, file) == 1) {
         InserirTransporte(headTransportes, nodeTransporte.transporte);
     }
@@ -135,6 +183,9 @@ int CarregarBinarioTransportes(struct NodeTransporte** headTransportes) {
     return 1;
 }
 
+/// @brief Carrega dados de gestores de um ficheiro binário.
+/// @param headGestores Pointer para o header da lista de gestores.
+/// @return Retorna 1 se os dados forem carregados com sucesso, caso contrário, retorna 0.
 int CarregarBinarioGestores(struct NodeGestores** headGestores) {
     FILE* file = fopen(ficheiroGestores, "rb");
     if (file == NULL) {
@@ -142,6 +193,7 @@ int CarregarBinarioGestores(struct NodeGestores** headGestores) {
     }
 
     struct NodeGestores nodeGestor;
+    // Lê node a node do ficheiro binário e insere na lista.
     while (fread(&nodeGestor, sizeof(struct NodeGestores), 1, file) == 1) {
         InserirGestor(headGestores, nodeGestor.gestor);
     }
@@ -150,6 +202,9 @@ int CarregarBinarioGestores(struct NodeGestores** headGestores) {
     return 1;
 }
 
+/// @brief Carrega dados de transacoes de um ficheiro binário.
+/// @param headTransacoes Pointer para o header da lista de transacoes.
+/// @return Retorna 1 se os dados forem carregados com sucesso, caso contrário, retorna 0.
 int CarregarBinarioTransacoes(struct NodeTransacoes** headTransacoes) {
     FILE* file = fopen(ficheiroTransacoes, "rb");
     if (file == NULL) {

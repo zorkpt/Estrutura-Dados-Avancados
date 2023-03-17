@@ -1,8 +1,24 @@
+/**
+ * @file login.c
+ * @author Hugo Poças
+ * @brief 
+ * @version 0.1
+ * @date 18-03-2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include "../Headers/verificacoes.h"
 #include <string.h>
 #include <stdio.h>
 #define MAX_CHAR 100
 
+/// @brief Tenta fazer login com o nome de utilizador e palavra-passe fornecidos
+/// @param clientesHead Pointer para o pointer do header da lista de clientes
+/// @param gestoresHead  Pointer para o pointer do header da lista de gestores
+/// @param nifClienteLogado NIF do cliente que fez login
+/// @return  Retorna 1 se o login for efetuado como cliente, retorna 2 se o login for efetuado como gestor, retorna 0 se o login falhar
 int IniciarLogin(struct NodeClientes** clientesHead, struct NodeGestores** gestoresHead, int* nifClienteLogado) {
     char utilizador[MAX_CHAR];
     char password[MAX_CHAR];

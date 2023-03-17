@@ -1,8 +1,23 @@
+/**
+ * @file transacoes.c
+ * @author Hugo Poças
+ * @brief 
+ * @version 0.1
+ * @date 18-03-2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include "../Headers/transacoes.h"
 #include "../Headers/transportes.h"
 #include <stdlib.h>
 #include <stdio.h>
 
+/// @brief Insere uma nova struct de Transacoes na lista de NodeTransacoes
+/// @param headRef Pointer para o head **pointer** da lista de NodeTransacoes
+/// @param transacoes A struct de Transacoes a ser inserida
+/// @return Retorna 1 se a inserção for bem sucedida, 0 caso contrário
 int InserirTransacoes(struct NodeTransacoes** headRef, struct Transacoes transacoes) {
     struct NodeTransacoes* newNode = (struct NodeTransacoes*) malloc(sizeof(struct NodeTransacoes));
     newNode->transacoes = transacoes;
@@ -20,6 +35,9 @@ int InserirTransacoes(struct NodeTransacoes** headRef, struct Transacoes transac
     return 1;
 }
 
+/// @brief Mostra todos as Transações da lista de NodeTransacoes
+/// @param head Pointer para o head da lista de NodeTransacoes
+/// @return Retorna 1 se a lista não estiver vazia, 0 caso contrário
 int MostrarTransacoes(struct NodeTransacoes* head) {
     if (head == NULL) {
         return 0;
@@ -37,6 +55,10 @@ int MostrarTransacoes(struct NodeTransacoes* head) {
     return 1;
 }
 
+/// @brief Mostra as transações de um cliente específico
+/// @param head Pointer para o head da lista de NodeTransacoes
+/// @param idCliente ID do cliente a procurar
+/// @return retorna o número de transações encontradas
 int MostrarTransacoesCliente(struct NodeTransacoes* head, int idCliente) {
     int count = 0;
     if (head == NULL) {
@@ -62,6 +84,10 @@ int MostrarTransacoesCliente(struct NodeTransacoes* head, int idCliente) {
     return count;
 }
 
+/// @brief Procura por uma Transação na lista usando o seu ID
+/// @param headRef Pointer para o head da lista de NodeTransacoes
+/// @param idTransacao ID da transação a procurar
+/// @return Retorna o endereço da transação encontrada, NULL caso contrário
 struct Transacoes* ProcurarTransacao(struct NodeTransacoes* head, int idTransacao) {
     if (head == NULL) {
         return NULL;
@@ -76,6 +102,10 @@ struct Transacoes* ProcurarTransacao(struct NodeTransacoes* head, int idTransaca
     return NULL;
 }
 
+/// @brief Remove uma Transação da lista de NodeTransacoes
+/// @param head Pointer para o head **pointer** da lista de NodeTransacoes
+/// @param idTransacao ID da transação a remover
+/// @return Retorna 1 se a remoção for bem sucedida, 0 caso contrário
 int RemoverTransacao(struct NodeTransacoes **head, int idTransacao) {
     struct NodeTransacoes *current = *head;
     struct NodeTransacoes *previous = NULL;
@@ -99,6 +129,10 @@ int RemoverTransacao(struct NodeTransacoes **head, int idTransacao) {
     return 0;
 }
 
+
+/// @brief Editar os dados de uma transação
+/// @param cliente A struct de Transacoes a ser editada
+/// @return Retorna 1 se a edição for bem sucedida
 int EditarTransacao(struct Transacoes * transacao) {
     printf("\nAltera os dados da transacao %d\n", transacao->idTransacao);
     printf("Tempo alugado: ");
@@ -111,6 +145,9 @@ int EditarTransacao(struct Transacoes * transacao) {
 }
 
 
+/// @brief Determina o proximo ID a ser usado na lista de transacoes
+/// @param headTransacoes Pointer para o head da lista de NodeTransacoes
+/// @return Retorna o proximo ID a ser usado
 int ProximoIDTransacao(struct NodeTransacoes* headTransacoes) {
     int maiorID = 0;
     struct NodeTransacoes* current = headTransacoes;
@@ -125,81 +162,96 @@ int ProximoIDTransacao(struct NodeTransacoes* headTransacoes) {
     return maiorID + 1;
 }
 
+/// @brief Mostra o histórico de alugueres de um cliente
+/// @param headTransacoes Pointer para o head da lista de NodeTransacoes
+/// @param nif NIF do cliente a procurar
+/// @return Retorna o número de alugueres encontrados
 int MostrarHistoricoAlugueres(struct NodeTransacoes* headTransacoes, int nif){
         struct NodeTransacoes* current = headTransacoes;
     int count = 0;
 
-    // Print the table header
+    // Cabeçalho da tabela
     printf("ID Aluguer\tID Cliente\tID Transporte\tTempo Decorrido\n");
-
-    // Iterate through the linked list of transactions
     while (current != NULL) {
         if (current->transacoes.idClienteAAlugar == nif) {
-            printf("%d\t%d\t%d\t%d\n", current->transacoes.idTransacao, current->transacoes.idClienteAAlugar, current->transacoes.idTransporte, current->transacoes.tempoAlugado);
+            printf("%d\t%d\t%d\t%d\n",  current->transacoes.idTransacao, 
+                                        current->transacoes.idClienteAAlugar, 
+                                        current->transacoes.idTransporte, 
+                                        current->transacoes.tempoAlugado);
             count++;
         }
         current = current->proximo;
     }
-
-    // Return the number of rentals found for the given NIF
     return count;
 }
 
 
+/// @brief Verifica se um cliente está num transporte
+/// @param headTransacoes Pointer para o head da lista de NodeTransacoes
+/// @param nif NIF do cliente a procurar
+/// @return Retorna 1 se o cliente estiver num transporte, 0 caso contrário
 int ClienteEmTransporte(struct NodeTransacoes* headTransacoes, int nif) {
     struct NodeTransacoes* current = headTransacoes;
     while (current != NULL) {
         if (current->transacoes.idClienteAAlugar == nif && current->transacoes.ativo == 1) {
-            return 1; // O Cliente está num transporte
+            return 1; 
         }
         current = current->proximo;
     }
-    return 0; // O Cliente não está num transporte
+    return 0; 
 }
 
-int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, int nifClienteLogado) {
-    
-    struct NodeTransacoes* current = headTransacoes;
+/// @brief Termina o aluguer de um transporte a um cliente
+/// @param headTransportes Pointer para o head da lista de NodeTransporte
+/// @param headTransacoes Pointer para o head da lista de NodeTransacoes
+/// @param nifClienteLogado NIF do cliente a terminar o aluguer
+/// @return Retorna 1 se o aluguer for terminado com sucesso, 0 caso contrário
+int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, int nifClienteLogado) { 
+    struct NodeTransacoes* currentTransacao = headTransacoes;
     struct NodeTransporte* currentTransporte = headTransportes;
-    while (current != NULL) {
-        if (current->transacoes.idClienteAAlugar == nifClienteLogado && current->transacoes.ativo == 1) {
-            current->transacoes.ativo = 0;
+    while (currentTransacao != NULL) {
+        if (currentTransacao->transacoes.idClienteAAlugar == nifClienteLogado && currentTransacao->transacoes.ativo == 1) {
+            currentTransacao->transacoes.ativo = 0;
             while (currentTransporte != NULL) {
-                if (currentTransporte->transporte.id == current->transacoes.idTransporte) {
+                if (currentTransporte->transporte.id == currentTransacao->transacoes.idTransporte) {
                     currentTransporte->transporte.estado = 0;
                     return 1;
                 }
                 currentTransporte = currentTransporte->proximo;
             }
-            return 1;
         }
-        current = current->proximo;
+        currentTransacao = currentTransacao->proximo;
     }
     return 0;
 }
 
+/// @brief Atualiza o estado de um transporte
+/// @param cliente struct de Clientes, passada para atualizar o saldo
+/// @param headTransportes Pointer para o head da lista de NodeTransporte, passada para atualizar o estado do transporte
+/// @param headTransacoes Pointer para o head da lista das transacoes, passada para para atualizar o estado da transacao
+/// @param idTransporte ID do transporte a ser atualizado
+/// @param tempoAluguer Tempo de aluguer do transporte
+/// @param custoTotal Custo total do aluguer
+/// @param novoIdTransacao ID para usar na criação da nova transacao
+/// @return  Retorna 1 se o transporte for atualizado com sucesso, 0 caso contrário
 int AtualizarEstadoTransporte(struct Clientes* cliente, struct NodeTransporte* headTransportes, 
                             struct NodeTransacoes* headTransacoes, int idTransporte, 
                             int tempoAluguer, float custoTotal, int novoIdTransacao) {
-    struct Transporte* transporteAlugar = ProcurarTransporte(headTransportes, idTransporte);
-
-
     if(!EditarTransporteID(headTransportes,idTransporte)) {
         return 0;
     }
-    // Create a new transaction
+    // Criada nova transacção
     struct Transacoes novaTransacao;
     novaTransacao.idClienteAAlugar = cliente->nif;
     novaTransacao.idTransporte = idTransporte;
     novaTransacao.tempoAlugado = tempoAluguer;
     novaTransacao.idTransacao = novoIdTransacao;
     novaTransacao.ativo = 1;
-    // Add the new transaction to the transacoes list
+    // adicionar a nova transação á lista
     if(!InserirTransacoes(&headTransacoes, novaTransacao)){
         return 0;
     }else {
-        // Deduct the cost of the transaction from the client's saldo
         cliente->saldo -= custoTotal;
-    return 1;
+        return 1;
     }
 }

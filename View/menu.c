@@ -1,9 +1,22 @@
+/**
+ * @file menu.c
+ * @author Hugo Poças
+ * @brief 
+ * @version 0.1
+ * @date 18-03-2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include "../Headers/verificacoes.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 
+/// @brief Mostra o menu do gestor
+/// @return Retorna a escolha do gestor
 int listaMenuGestor(){
     int escolha;
     printf("\nSoftware de Gestão frota Smart City.\n");
@@ -38,7 +51,8 @@ int listaMenuGestor(){
     return escolha;
 }
 
-
+/// @brief Mostra o menu do cliente
+/// @return Retorna a escolha do cliente
 int ListaMenuCliente(){
     int escolha;
     printf("\nSmart City\n");

@@ -1,3 +1,14 @@
+/**
+ * @file dados.c
+ * @author Hugo Poças
+ * @brief 
+ * @version 0.1
+ * @date 18-03-2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -6,6 +17,10 @@
 #define MAX_LINHA 100
 
 
+/// @brief Carrega dados de clientes de um determinado ficheiro e passa-os para uma lista ligada.
+/// @param head Pointer para o pointer do header da lista de clientes.
+/// @param nomeFicheiro String com o nome do ficheiro que contem os dados dos clientes a ser carregado.
+/// @return Retorna o número de clientes carregados.
 int CarregarFicheiroClientes(struct NodeClientes** head, char *nomeFicheiro){
     FILE *ficheiro;
     ficheiro = fopen(nomeFicheiro, "r");
@@ -15,9 +30,12 @@ int CarregarFicheiroClientes(struct NodeClientes** head, char *nomeFicheiro){
     }
     totalClientes = LerClientesDeFicheiro(head,ficheiro);
     return totalClientes;
-
 }
 
+/// @brief Carrega dados de transportes de um determinado ficheiro e passa-os para uma lista ligada.
+/// @param head Pointer para o pointer do header da lista de transportes.
+/// @param nomeFicheiro String com o nome do ficheiro que contem os dados dos transportes a ser carregado.
+/// @return Retorna o número de transportes carregados.
 int CarregarFicheiroTransportes(struct NodeTransporte** head, char* nomeFicheiro) {
     FILE *ficheiro;
     ficheiro = fopen(nomeFicheiro, "r");
@@ -29,6 +47,10 @@ int CarregarFicheiroTransportes(struct NodeTransporte** head, char* nomeFicheiro
     return totalTransportes;
 }
 
+/// @brief Carrega dados de gestores de um determinado ficheiro e passa-os para uma lista ligada.
+/// @param head Pointer para o pointer do header da lista de gestores.
+/// @param nomeFicheiro String com o nome do ficheiro que contem os dados dos gestores a ser carregado.
+/// @return Retorna o número de gestores carregados.
 int CarregarFicheiroGestores(struct NodeGestores** head, char* nomeFicheiro) {
     FILE *ficheiro;
     ficheiro = fopen(nomeFicheiro, "r");
@@ -40,6 +62,10 @@ int CarregarFicheiroGestores(struct NodeGestores** head, char* nomeFicheiro) {
     return totalGestores;
 }
 
+/// @brief Carrega dados de transações de um determinado ficheiro e passa-os para uma lista ligada.
+/// @param head Pointer para o pointer do header da lista de transações.
+/// @param nomeFicheiro String com o nome do ficheiro que contem os dados dos transações a ser carregado.
+/// @return Retorna o número de transações carregadas.
 int CarregarFicheiroTransacoes(struct NodeTransacoes** head, char* nomeFicheiro){
     FILE *ficheiro;
     ficheiro = fopen(nomeFicheiro, "r");
@@ -51,6 +77,10 @@ int CarregarFicheiroTransacoes(struct NodeTransacoes** head, char* nomeFicheiro)
     return totalTransacoes;
 }
 
+/// @brief Lê os dados dos clientes do ficheiro e passa-os para uma lista ligada.
+/// @param headRef Pointer para o pointer do header da lista de clientes.
+/// @param ficheiro Ficheiro que contem os dados dos clientes a ser carregado.
+/// @return Retorna o número de clientes carregados.
 int LerClientesDeFicheiro(struct NodeClientes** headRef, FILE *ficheiro){
     char linha[MAX_LINHA];
     struct Clientes temp;
@@ -72,6 +102,10 @@ int LerClientesDeFicheiro(struct NodeClientes** headRef, FILE *ficheiro){
     return totalClientes;
 }
 
+/// @brief Lê os dados dos transportes do ficheiro e passa-os para uma lista ligada.
+/// @param headRef Pointer para o pointer do header da lista de transportes.
+/// @param ficheiro Ficheiro que contem os dados dos transportes a ser carregado.
+/// @return Retorna o número de transportes carregados.
 int LerTransportesDeFicheiro(struct NodeTransporte** headRef, FILE *ficheiro){
     char linha[MAX_LINHA];
     struct Transporte temp;
@@ -94,6 +128,10 @@ int LerTransportesDeFicheiro(struct NodeTransporte** headRef, FILE *ficheiro){
     return totalTransportes;
 }
 
+/// @brief Lê os dados dos gestores do ficheiro e passa-os para uma lista ligada.
+/// @param headRef Pointer para o pointer do header da lista de gestores.
+/// @param ficheiro Ficheiro que contem os dados dos gestores a ser carregado.
+/// @return Retorna o número de gestores carregados.
 int LerGestoresDeFicheiro(struct NodeGestores** headRef, FILE *ficheiro){
     char linha[MAX_LINHA];
     struct Gestores temp;
@@ -109,6 +147,10 @@ int LerGestoresDeFicheiro(struct NodeGestores** headRef, FILE *ficheiro){
     return totalGestores;
 }
 
+/// @brief Lê os dados das transações do ficheiro e passa-os para uma lista ligada.
+/// @param headRef Pointer para o pointer do header da lista de transações.
+/// @param ficheiro Ficheiro que contem os dados das transações a ser carregado.
+/// @return Retorna o número de transações carregadas.
 int LerTransacoesDeFicheiro(struct NodeTransacoes** headRef, FILE *ficheiro){
     char linha[MAX_LINHA];
     struct Transacoes temp;

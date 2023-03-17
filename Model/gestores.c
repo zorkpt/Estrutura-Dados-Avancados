@@ -1,3 +1,15 @@
+/**
+ * @file gestores.c
+ * @author Hugo Poças
+ * @brief 
+ * @version 0.1
+ * @date 18-03-2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
+
 #include "../Headers/gestores.h"
 #include "../Headers/verificacoes.h"
 #include <stdlib.h>
@@ -5,6 +17,11 @@
 #include <string.h>
 #define MAX_STRING 100
 
+
+/// @brief Insere uma nova struct de Gestores na lista de NodeGestores
+/// @param headRef Pointer para o head **pointer** da lista de NodeGestores
+/// @param gestor A struct de Gestores a ser inserida
+/// @return Retorna 1 se a inserção for bem sucedida, 0 caso contrário
 int InserirGestor(struct NodeGestores** headRef, struct Gestores gestor) {
     struct NodeGestores* newNode = (struct NodeGestores*) malloc(sizeof(struct NodeGestores));
     newNode->gestor = gestor;
@@ -21,6 +38,9 @@ int InserirGestor(struct NodeGestores** headRef, struct Gestores gestor) {
     }
 }
 
+/// @brief Mostra todos os Gestores da lista de NodeGestores
+/// @param head Pointer para o head da lista de NodeGestores
+/// @return Retorna 1 se a lista não estiver vazia, 0 caso contrário
 int MostrarGestores(struct NodeGestores* head) {
 if (head == NULL) {
 
@@ -33,6 +53,10 @@ if (head == NULL) {
         current = current->proximo;
     }
 }
+
+/// @brief Cria uma nova struct de Gestores com os dados inseridos pelo utilizador e depois validados
+/// @param headRef Ponteiro para a head da lista de Gestores, usado para a verificação de Username
+/// @return Retorna uma struct Gestores com os dados do novo gestor (não adiciona á lista)
 
 struct Gestores AdicionarGestor(struct NodeGestores* headRef) {
     struct Gestores gestoresTemp;
@@ -47,6 +71,10 @@ struct Gestores AdicionarGestor(struct NodeGestores* headRef) {
     return(gestoresTemp);
 }
 
+/// @brief Remove um Gestor da lista de NodeGestores
+/// @param head Pointer para o pointer do head da lista de NodeGestores
+/// @param nome Nome do Gestor a ser removido
+/// @return Retorna 1 se a remoção for bem sucedida, 0 caso contrário
 int RemoverGestor(struct NodeGestores **head, char nome[]) {
     struct NodeGestores *current = *head;
     struct NodeGestores *previous = NULL;

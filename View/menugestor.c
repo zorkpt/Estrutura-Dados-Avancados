@@ -1,3 +1,14 @@
+/**
+ * @file menugestor.c
+ * @author Hugo Poças
+ * @brief 
+ * @version 0.1
+ * @date 18-03-2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include "../Headers/menugestor.h"
 #include "../Headers/funcoes.h"
 #include "../Headers/verificacoes.h"
@@ -8,6 +19,11 @@
 
 
 
+/// @brief Switch case para o menu do gestor
+/// @param headClientes Pointer para o header da lista de clientes
+/// @param headGestores Pointer para o header da lista de gestores
+/// @param headTransportes Pointer para o header da lista de transportes
+/// @param headTransacoes Pointer para o header da lista de transacoes
 int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGestores, struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes ){
     int id;
     while(1)
@@ -81,7 +97,7 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             struct Transporte* transporteEditar;
             printf("Inserir ID do transporte: ");
             id = VerificarInt();
-            if(VerificaIdTransportes(headTransportes,id)==0)
+            if(VerificaIdTransportes(headTransportes,id)==1)
             transporteEditar = ProcurarTransporte(headTransportes, id);
             if (transporteEditar != NULL) {
                 printf("Transporte encontrado:\n");

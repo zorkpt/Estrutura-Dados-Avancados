@@ -1,3 +1,14 @@
+/**
+ * @file menuutilizador.c
+ * @author Hugo Poças
+ * @brief 
+ * @version 0.1
+ * @date 18-03-2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -8,11 +19,11 @@
 
 
 /// @brief Vista e opções destinadas ao utilizador/cliente
-/// @param headClientes 
-/// @param headGestores 
-/// @param headTransportes 
-/// @param headTransacoes 
-/// @param nifClienteLogado 
+/// @param headClientes Pointer para o header da lista de clientes
+/// @param headGestores Pointer para o header da lista de gestores
+/// @param headTransportes Pointer para o header da lista de transportes
+/// @param headTransacoes Pointer para o header da lista de transacoes
+/// @param nifClienteLogado NIF do cliente que está logado
 /// @return 
 int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headGestores, 
                 struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, 
