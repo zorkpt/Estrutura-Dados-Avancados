@@ -3,8 +3,6 @@
 #pragma once
 #include "clientes.h"
 
-
-// ESTRUTURA TRANSPORTES
 typedef struct Transporte{
     int id;
     char tipo[50];

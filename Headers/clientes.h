@@ -18,7 +18,7 @@ typedef struct NodeClientes
 
 
 // FUNCOES CONFIRMADAS E A FUNCIONAR:
-int MostrarClientes(struct NodeClientes* head);
+int MostrarClientes( NodeClientes* head);
 int InserirCliente(struct NodeClientes** headRef, struct Clientes cliente);
 int RemoverCliente(struct NodeClientes **head, int nif);
 int EditarCliente(struct Clientes *cliente);

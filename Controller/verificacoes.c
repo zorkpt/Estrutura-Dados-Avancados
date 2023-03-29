@@ -95,7 +95,7 @@ int VerificarInt() {
         } else if (buffer[0] != '\n') {
             printf("Insere um numero inteiro: ");
         }
-  }
+    }
 }
 
 /// @brief Verifica se um id de transporte existe na lista de transportes.

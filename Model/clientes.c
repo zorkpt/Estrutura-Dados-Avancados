@@ -26,6 +26,7 @@ int InserirCliente(struct NodeClientes** headRef, struct Clientes cliente) {
         // verificação alocação de memória
         return 0;
     }
+    
     // inicializa o novo node com os dados do cliente e proximo pointer a NULL porque vai ser inserido no fim da lista
     novoNode->cliente = cliente;
     novoNode->proximo = NULL;
