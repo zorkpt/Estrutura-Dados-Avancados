@@ -9,8 +9,6 @@
  * 
  */
 
-
-#include "../Headers/gestores.h"
 #include "../Headers/verificacoes.h"
 #include <stdlib.h>
 #include <stdio.h>
@@ -29,14 +27,18 @@ int InserirGestor(struct NodeGestores** headRef, struct Gestores gestor) {
 
     if (*headRef == NULL) {
         *headRef = newNode;
+        return 1;
     } else {
         struct NodeGestores* current = *headRef;
         while (current->proximo != NULL) {
             current = current->proximo;
         }
         current->proximo = newNode;
+        return 1;
     }
+    return 0;
 }
+
 
 /// @brief Mostra todos os Gestores da lista de NodeGestores
 /// @param head Pointer para o head da lista de NodeGestores

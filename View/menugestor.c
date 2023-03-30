@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <string.h>
 #define MAX_LENGTH 100
-
+#define MAX_CHARS 50
 
 
 /// @brief Switch case para o menu do gestor
@@ -34,15 +34,31 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
         {
         case 1:
             struct Clientes clientes;
-            clientes = AdicionarCliente(headClientes);
-            if(InserirCliente(&headClientes, clientes))
+            char nome[MAX_CHARS], morada[MAX_CHARS], login[MAX_CHARS], password[MAX_CHARS];
+            int nif;
+            float saldo;
+
+            printf("Insira os dados do novo cliente:\n");
+            LerTextoInput("Nome: ", nome, MAX_CHARS);
+            printf("NIF: ");
+            nif = VerificarInt();
+            LerTextoInput("Morada: ", morada, MAX_CHARS);
+            printf("Saldo: ");
+            saldo = VerificarFloat();
+            LerTextoInput("Nome de Utilizador: ", login, MAX_CHARS);
+            LerTextoInput("Password: ", password, MAX_CHARS);
+
+            clientes = AdicionarCliente(headClientes, nome, morada, nif, saldo, login, password);
+            if (InserirCliente(&headClientes, clientes))
                 printf("Cliente adicionado com sucesso!\n");
-                else printf("Erro ao adicionar cliente!\n");
+            else
+                printf("Erro ao adicionar cliente!\n");
             break;
 
         case 2:
             struct Clientes* clienteEditar;
-            printf("Inserir NIF do Cliente: ");
+            char nomeEditar[MAX_CHARS], moradaEditar[MAX_CHARS], loginEditar[MAX_CHARS], passwordEditar[MAX_CHARS];
+            printf("Inserir NIF do Cliente: a procurar\n");
             nif = VerificarInt();
             clienteEditar = ProcuraCliente(headClientes, nif);
             if (clienteEditar != NULL) {
@@ -52,8 +68,16 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
                 printf("Morada: %s\n", clienteEditar->morada);
                 printf("Saldo: %0.2f\n", clienteEditar->saldo);
                 printf("Login: %s\n", clienteEditar->login);
-                if(EditarCliente(clienteEditar)) printf("Cliente Editado Com Sucesso!\n"); 
-                else printf("Operação cancelada.");   
+                printf("\nInsira os novos dados do cliente:\n");
+                LerTextoInput("Nome: ", nomeEditar, MAX_CHARS);
+                LerTextoInput("Morada: ", moradaEditar, MAX_CHARS);
+                LerTextoInput("Nome de Utilizador: ", loginEditar, MAX_CHARS);
+                LerTextoInput("Password: ", passwordEditar, MAX_CHARS);
+                if (EditarCliente(clienteEditar, nome, morada, loginEditar, password)) {
+                    printf("Cliente Editado Com Sucesso!\n");
+                } else {
+                    printf("Operação cancelada.");
+                }
             } else {
                 printf("Cliente nao encontrado!\n");
             }

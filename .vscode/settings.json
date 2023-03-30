@@ -12,5 +12,6 @@
         "stdlib.h": "c",
         "gestores.h": "c",
         "menugestor.h": "c"
-    }
+    },
+    "C_Cpp.default.cStandard": "c11"
 }

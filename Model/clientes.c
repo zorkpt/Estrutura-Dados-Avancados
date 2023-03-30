@@ -15,32 +15,48 @@
 #include <string.h>
 #define MAX_STRING 100
 
-/// @brief Insere uma nova struct de Clientes na lista de NodeClientes
+/// @brief Cria um novo node do tipo NodeClientes
+/// @param cliente Estrutura Clientes contendo os dados do cliente a ser atribuído ao novo node
+/// @return Retorna um novo node do tipo NodeClientes
+NodeClientes* criarNodeCliente(Clientes cliente) {
+    NodeClientes* novoNode = (NodeClientes*) malloc(sizeof(NodeClientes));
+    if (!novoNode) {
+        return NULL;
+    }
+
+    novoNode->cliente = cliente;
+    novoNode->proximo = NULL;
+
+    return novoNode;
+}
+
+/// @brief Insere uma nova struct de Clientes na lista de NodeClientes sorted por nif
 /// @param headRef Pointer para o head **pointer** da lista de NodeClientes
 /// @param cliente A struct de Clientes a ser inserida
 /// @return Retorna 1 se a inserção for bem sucedida, 0 caso contrário
 int InserirCliente(struct NodeClientes** headRef, struct Clientes cliente) {
-     // Aloca memoria um novo NodeClientes e aloca os seus campos
-    struct NodeClientes* novoNode = (struct NodeClientes*) malloc(sizeof(struct NodeClientes));
+    // Aloca memoria um novo NodeClientes e aloca os seus campos
+    struct NodeClientes* novoNode = criarNodeCliente(cliente);
     if (!novoNode) {
-        // verificação alocação de memória
+        // Falha ao alocar node na memoria
         return 0;
     }
-    
-    // inicializa o novo node com os dados do cliente e proximo pointer a NULL porque vai ser inserido no fim da lista
-    novoNode->cliente = cliente;
-    novoNode->proximo = NULL;
 
-     // Se a Lista estiver vazia o novo node torna-se o head
-    if (*headRef == NULL) {
-        *headRef = novoNode;
+    // inicializa o novo node com os dados do cliente
+    novoNode->cliente = cliente;
+
+    // Se a Lista estiver vazia ou o NIF do novo cliente for menor que o NIF do primeiro cliente
+    if (*headRef == NULL || (*headRef)->cliente.nif > cliente.nif) {
+        novoNode->proximo = *headRef; // O novo node aponta para o head atual
+        *headRef = novoNode; // O head aponta para o novo node, tornando-o o novo head
     } else {
-        // Senão, itera pela lista até chegar ao fim 
+        // Senão, itera pela lista até encontrar a posição correta
         struct NodeClientes* current = *headRef;
-        while (current->proximo != NULL) {
+        while (current->proximo != NULL && current->proximo->cliente.nif < cliente.nif) {
             current = current->proximo;
         }
-        // Define o próximo pointer do ultimo node para o novo node
+        // Insere o novo node na posição correta
+        novoNode->proximo = current->proximo;
         current->proximo = novoNode;
     }
     // Cliente adicionado
@@ -103,13 +119,12 @@ int RemoverCliente(struct NodeClientes **head, int nif) {
 /// @brief Editar os dados de um cliente
 /// @param cliente A struct de Clientes a ser editada
 /// @return Retorna 1 se a edição for bem sucedida
-int EditarCliente(struct Clientes *cliente) {
+int EditarCliente(struct Clientes *cliente, char *nome, char *morada, char *login, char *password) {
     // insere novos dados do cliente diretamente na lista
-    printf("\nInsira os novos dados do cliente:\n");
-    LerTextoInput("Nome: ", cliente->nome, 50);
-    LerTextoInput("Morada: ", cliente->morada, 50);
-    LerTextoInput("Nome de Utilizador: ", cliente->login, 50);
-    LerTextoInput("Password: ", cliente->password, 50);
+    strcpy(cliente->nome, nome);
+    strcpy(cliente->morada, morada);
+    strcpy(cliente->login, login);
+    strcpy(cliente->password, password);
     return 1;
 }
 
@@ -133,27 +148,15 @@ struct Clientes* ProcuraCliente(struct NodeClientes* headRef, int nif) {
 /// @brief Cria uma nova struct de Clientes com os dados inseridos pelo utilizador e depois validados
 /// @param headRef Ponteiro para a head da lista de clientes, usado para as verificações de NIF e Username
 /// @return Retorna uma struct Clientes com os dados do novo cliente (não adiciona á lista)
-struct Clientes AdicionarCliente(struct NodeClientes* headRef) {
+struct Clientes AdicionarCliente(struct NodeClientes* headRef, char* nome, char* morada, int nif, float saldo, char* login, char* password) {
     struct Clientes clienteTemp;
-    printf("Insira os dados do novo cliente:\n");
-    LerTextoInput("Nome: ", clienteTemp.nome, 50);
-    printf("NIF: ");
-    while(1){
-        clienteTemp.nif = VerificarInt();
-        if(!VerificaNif(headRef,clienteTemp.nif)) {
-            break;
-        }else printf("Já existe um cliente com o NIF: %d.\nInsere outro:\n", clienteTemp.nif);
-
-    }
-    LerTextoInput("Morada: ", clienteTemp.morada, 50);
-    printf("Saldo: ");
-    clienteTemp.saldo = VerificarFloat();
-    while(1){
-        LerTextoInput("Nome de Utilizador?", clienteTemp.login, 50);
-        if(!VerificaUser(headRef,clienteTemp.login)) break;
-    }
-    LerTextoInput("Password: ", clienteTemp.password, 50);   
-    return(clienteTemp);
+    strncpy(clienteTemp.nome, nome, 50);
+    clienteTemp.nif = nif;
+    strncpy(clienteTemp.morada, morada, 50);
+    clienteTemp.saldo = saldo;
+    strncpy(clienteTemp.login, login, 50);
+    strncpy(clienteTemp.password, password, 50);
+    return clienteTemp;
 }
 
 
