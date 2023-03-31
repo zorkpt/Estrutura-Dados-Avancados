@@ -38,7 +38,7 @@ int InserirCliente(struct NodeClientes** headRef, struct Clientes cliente) {
     // Aloca memoria um novo NodeClientes e aloca os seus campos
     struct NodeClientes* novoNode = criarNodeCliente(cliente);
     if (!novoNode) {
-        // Falha ao alocar node na memoria
+        // Verifica se falha ao alocar node na memoria
         return 0;
     }
 

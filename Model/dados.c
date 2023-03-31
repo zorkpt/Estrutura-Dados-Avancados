@@ -94,8 +94,8 @@ int LerClientesDeFicheiro(struct NodeClientes** headRef, FILE *ficheiro){
                                                                 &temp.saldo,
                                                                 temp.login,
                                                                 temp.password)==6){
-            InserirCliente(headRef, temp);
-            totalClientes++;
+            if(InserirCliente(headRef, temp))
+                totalClientes++;
         }
             
     }
@@ -119,8 +119,8 @@ int LerTransportesDeFicheiro(struct NodeTransporte** headRef, FILE *ficheiro){
                                                     &temp.preco,
                                                     temp.localizacao,
                                                     &temp.estado)==6){
-            InserirTransporte(headRef,temp);
-            totalTransportes++;
+            if(InserirTransporte(headRef,temp))
+                totalTransportes++;
         }
             
     }
@@ -139,8 +139,8 @@ int LerGestoresDeFicheiro(struct NodeGestores** headRef, FILE *ficheiro){
     while (fgets(linha, MAX_LINHA, ficheiro) != NULL)
     {
         if(sscanf(linha,"%[^\t]\t%s\n",temp.nome,temp.password)==2){
-            InserirGestor(headRef,temp);
-            totalGestores++;
+            if(InserirGestor(headRef,temp))
+                totalGestores++;
         }
             
     }
@@ -162,8 +162,8 @@ int LerTransacoesDeFicheiro(struct NodeTransacoes** headRef, FILE *ficheiro){
                             &temp.idClienteAAlugar,
                             &temp.idTransporte,
                             &temp.tempoAlugado)==4){
-            InserirTransacoes(headRef,temp);
-            totalTransacoes++;
+            if(InserirTransacoes(headRef,temp))
+                totalTransacoes++;
         }
             
         }

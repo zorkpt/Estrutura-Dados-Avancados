@@ -77,10 +77,6 @@ int MostrarTransacoesCliente(struct NodeTransacoes* head, int idCliente) {
         }
         current = current->proximo;
     }
-    
-    if (count == 0) {
-        return 0;
-    }
     return count;
 }
 
@@ -133,14 +129,10 @@ int RemoverTransacao(struct NodeTransacoes **head, int idTransacao) {
 /// @brief Editar os dados de uma transação
 /// @param cliente A struct de Transacoes a ser editada
 /// @return Retorna 1 se a edição for bem sucedida
-int EditarTransacao(struct Transacoes * transacao) {
-    printf("\nAltera os dados da transacao %d\n", transacao->idTransacao);
-    printf("Tempo alugado: ");
-    scanf("%d", &transacao->tempoAlugado);
-    printf("ID Cliente: ");
-    scanf("%d", &transacao->idClienteAAlugar);
-    printf("ID Transporte: ");
-    scanf("%d", &transacao->idTransporte);
+int EditarTransacao(struct Transacoes * transacao, int tempoAlugado, int idClienteAAlugar, int idTransporte) {
+    transacao->tempoAlugado = tempoAlugado;
+    transacao->idClienteAAlugar = idClienteAAlugar;
+    transacao->idTransporte = idTransporte;
     return 1;
 }
 
@@ -167,9 +159,11 @@ int ProximoIDTransacao(struct NodeTransacoes* headTransacoes) {
 /// @param nif NIF do cliente a procurar
 /// @return Retorna o número de alugueres encontrados
 int MostrarHistoricoAlugueres(struct NodeTransacoes* headTransacoes, int nif){
-        struct NodeTransacoes* current = headTransacoes;
+    struct NodeTransacoes* current = headTransacoes;
+    if (current == NULL) {
+        return 0;
+    }
     int count = 0;
-
     // Cabeçalho da tabela
     printf("ID Aluguer\tID Cliente\tID Transporte\tTempo Decorrido\n");
     while (current != NULL) {

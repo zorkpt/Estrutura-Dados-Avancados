@@ -94,20 +94,14 @@ int RemoverTransporte(struct NodeTransporte **head, int id) {
 /// @brief Edita um Transporte da lista de NodeTransporte
 /// @param transporte struct de Transporte a editar
 /// @param id ID do transporte para manter o mesmo
-/// @return Retorna 1 se a edição for bem sucedida, 0 caso contrário
-int EditarTransporte(struct Transporte *transporte, int id){
-
-    printf("\nNovos Dados do transporte:\n");
-    LerTextoInput("Tipo?",transporte->tipo, MAX_STRING);
-    printf("Bateria: ");
-    transporte->nivelBateria = VerificarInt();
-    printf("Preço por Hora: ");
-    transporte->preco = VerificarFloat();
-    LerTextoInput("Localização?",transporte->localizacao, MAX_STRING);
-    printf("Estado do transporte: ");
-    transporte->estado = VerificarInt();
-
-    //Guarda o ID sem pedir atualizacao
+/// @return Retorna 1 se a edição for bem sucedida, 0 caso contrário      
+int EditarTransporte(struct Transporte *transporte, int id, int estado, int nivelBateria, float preco, char *localizacao, char *tipo){
+    transporte->estado = estado;
+    transporte->nivelBateria = nivelBateria;
+    transporte->preco = preco;
+    strcpy(transporte->localizacao, localizacao);
+    strcpy(transporte->tipo, tipo);
+    //Guarda o ID sem alterar
     transporte->id = id;
     return 1;
 }
@@ -118,7 +112,6 @@ int EditarTransporte(struct Transporte *transporte, int id){
 /// @return Retorna 1 se a edição for bem sucedida, 0 caso contrário
 int EditarTransporteID(struct NodeTransporte *headTransporte, int id){ 
     struct NodeTransporte* current = headTransporte;
-
     while (headTransporte != NULL) {
             if (headTransporte->transporte.id == id) {
                 headTransporte->transporte.estado = 1;
@@ -190,21 +183,14 @@ int VerTransportesDisponiveis(struct NodeTransporte* headTransporte) {
 /// @brief Escreve os dados de um transporte 
 /// @param headTransporte Pointer para o head da lista de NodeTransporte
 /// @return Retorna uma struct Transporte com os dados inseridos
-struct Transporte EscreveTransporte(struct NodeTransporte* headTransporte) {
+struct Transporte EscreveTransporte(struct NodeTransporte* headTransporte, int id, char* tipo, int nivelBateria, float preco, char* localizacao, int estado) {
     struct Transporte transporteTemp;
-    printf("ID: ");
-    transporteTemp.id = VerificarInt();
-    while (VerificaIdTransportes(headTransporte, transporteTemp.id) == 1) {
-        transporteTemp.id = VerificarInt();
-    }
-    LerTextoInput("Tipo?", transporteTemp.tipo, MAX_STRING);
-    printf("Nivel de Bateria: ");
-    transporteTemp.nivelBateria = VerificarInt();
-    printf("Preco: ");
-    transporteTemp.preco = VerificarFloat();
-    LerTextoInput("Localizacao?", transporteTemp.localizacao, MAX_STRING);
-    printf("Estado: ");
-    transporteTemp.estado = VerificarInt();
+    transporteTemp.id = id;
+    strcpy(transporteTemp.tipo, tipo);
+    transporteTemp.nivelBateria = nivelBateria;
+    transporteTemp.preco = preco;
+    strcpy(transporteTemp.localizacao, localizacao);
+    transporteTemp.estado = estado;
     return transporteTemp;
 }
 

@@ -22,7 +22,7 @@ typedef struct NodeTransacoes
 int InserirTransacoes(struct NodeTransacoes** headRef, struct Transacoes transacoes);
 int MostrarTransacoes(struct NodeTransacoes* head);
 int MostrarTransacoesCliente(struct NodeTransacoes* head, int idCliente);
-int EditarTransacao(struct Transacoes* transacao);
+int EditarTransacao(struct Transacoes * transacao, int tempoAlugado, int idClienteAAlugar, int idTransporte);
 int RemoverTransacao(struct NodeTransacoes **head, int idTransacao);
 struct Transacoes* ProcurarTransacao(struct NodeTransacoes* head, int idTransacao);
 int ProximoIDTransacao(struct NodeTransacoes* headTransacoes);

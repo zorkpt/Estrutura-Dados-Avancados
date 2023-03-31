@@ -12,7 +12,6 @@
 #include "../Headers/verificacoes.h"
 #include <string.h>
 #include <stdio.h>
-#define MAX_CHAR 100
 
 /// @brief Tenta fazer login com o nome de utilizador e palavra-passe fornecidos
 /// @param clientesHead Pointer para o pointer do header da lista de clientes

@@ -45,7 +45,7 @@ int InserirGestor(struct NodeGestores** headRef, struct Gestores gestor) {
 /// @return Retorna 1 se a lista não estiver vazia, 0 caso contrário
 int MostrarGestores(struct NodeGestores* head) {
 if (head == NULL) {
-
+        return 0;
     }
      struct NodeGestores* current = head;
     while (current != NULL) {
@@ -54,27 +54,22 @@ if (head == NULL) {
                current->gestor.password);
         current = current->proximo;
     }
+    return 1;
 }
 
 /// @brief Cria uma nova struct de Gestores com os dados inseridos pelo utilizador e depois validados
 /// @param headRef Ponteiro para a head da lista de Gestores, usado para a verificação de Username
 /// @return Retorna uma struct Gestores com os dados do novo gestor (não adiciona á lista)
 
-struct Gestores AdicionarGestor(struct NodeGestores* headRef) {
+struct Gestores AdicionarGestor(struct NodeGestores* headRef, char nome[], char password[]) {
     struct Gestores gestoresTemp;
-    printf("Insira os dados do novo Gestor:\n");
-    while(1){
-        if(LerTextoInput("Nome: ", gestoresTemp.nome, MAX_STRING)){
-            if(!VerificaGestor(headRef, gestoresTemp.nome)) break;
-            else printf("Gestor com esse nome já existe.\n");
-        }
-    }
-    LerTextoInput("Password: ", gestoresTemp.password, MAX_STRING);
+    strcpy(gestoresTemp.nome, nome);
+    strcpy(gestoresTemp.password, password);
     return(gestoresTemp);
 }
 
 /// @brief Remove um Gestor da lista de NodeGestores
-/// @param head Pointer para o pointer do head da lista de NodeGestores
+/// @param head Pointer para o head da lista de NodeGestores
 /// @param nome Nome do Gestor a ser removido
 /// @return Retorna 1 se a remoção for bem sucedida, 0 caso contrário
 int RemoverGestor(struct NodeGestores **head, char nome[]) {

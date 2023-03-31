@@ -22,10 +22,10 @@ typedef struct NodeTransporte
 int InserirTransporte(struct NodeTransporte** headRef, struct Transporte transporte);
 int MostrarTransportes(struct NodeTransporte* head);
 int VerTransportesDisponiveis(struct NodeTransporte* headTransporte);
-struct Transporte EscreveTransporte(struct NodeTransporte* headTransporte);
+struct Transporte EscreveTransporte(struct NodeTransporte* headTransporte, int id, char* tipo, int nivelBateria, float preco, char* localizacao, int estado);
 struct Transporte* ProcurarTransporte(struct NodeTransporte* headRef, int id );    
 int RemoverTransporte(struct NodeTransporte **head, int id);
-int EditarTransporte(struct Transporte *transporte, int id);
+int EditarTransporte(struct Transporte *transporte, int id, int estado, int nivelBateria, float preco, char *localizacao, char *tipo);
 int CopiarLista(struct NodeTransporte *head, struct NodeTransporte **copiedHead);
 int OrdenarListaDecrescente(struct NodeTransporte *head);
 int MostrarTransportes(struct NodeTransporte *head);

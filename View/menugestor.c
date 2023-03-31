@@ -49,6 +49,7 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             LerTextoInput("Password: ", password, MAX_CHARS);
 
             clientes = AdicionarCliente(headClientes, nome, morada, nif, saldo, login, password);
+
             if (InserirCliente(&headClientes, clientes))
                 printf("Cliente adicionado com sucesso!\n");
             else
@@ -58,7 +59,7 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
         case 2:
             struct Clientes* clienteEditar;
             char nomeEditar[MAX_CHARS], moradaEditar[MAX_CHARS], loginEditar[MAX_CHARS], passwordEditar[MAX_CHARS];
-            printf("Inserir NIF do Cliente: a procurar\n");
+            printf("Inserir NIF do Cliente: \n");
             nif = VerificarInt();
             clienteEditar = ProcuraCliente(headClientes, nif);
             if (clienteEditar != NULL) {
@@ -73,7 +74,7 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
                 LerTextoInput("Morada: ", moradaEditar, MAX_CHARS);
                 LerTextoInput("Nome de Utilizador: ", loginEditar, MAX_CHARS);
                 LerTextoInput("Password: ", passwordEditar, MAX_CHARS);
-                if (EditarCliente(clienteEditar, nome, morada, loginEditar, password)) {
+                if (EditarCliente(clienteEditar, nomeEditar, moradaEditar, loginEditar, passwordEditar)) {
                     printf("Cliente Editado Com Sucesso!\n");
                 } else {
                     printf("Operação cancelada.");
@@ -111,18 +112,42 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
 
         case 11:
             struct Transporte transporte;
-            transporte = EscreveTransporte(headTransportes);
+            char tipo[MAX_CHARS], localizacao[MAX_CHARS];
+            int idTransporte, nivelBateria, estado;
+            float preco;
+            printf("Insira os dados do novo transporte:\n");
+            printf("ID: ");
+            idTransporte = VerificarInt();
+            if(!VerificaIdTransportes(headTransportes, idTransporte)) {
+               break;
+            }
+            printf("Nivel de Bateria: ");
+            nivelBateria = VerificarInt();
+            LerTextoInput("Tipo de Transporte?", tipo, MAX_CHARS);
+            LerTextoInput("Localização atual do Transporte?", localizacao, MAX_CHARS);
+            printf("Estado: ");
+            estado = VerificarInt();
+            printf("Preço: ");
+            preco = VerificarFloat();
+            transporte = EscreveTransporte(headTransportes, idTransporte, tipo, nivelBateria, preco, localizacao, estado);
             if(InserirTransporte(&headTransportes, transporte))
                 printf("Transporte adicionado com sucesso!\n");
                 else printf("Erro ao adicionar o transporte.");
             break;
 
         case 12:
+            char tipoEditar[MAX_CHARS], localizacaoEditar[MAX_CHARS];
+            int nivelBateriaEditar, estadoEditar;
+            float precoEditar;
             struct Transporte* transporteEditar;
             printf("Inserir ID do transporte: ");
             id = VerificarInt();
-            if(VerificaIdTransportes(headTransportes,id)==1)
+            if(!VerificaIdTransportes(headTransportes,id)){
+                printf("Transporte não encontrado!");
+                break;
+            }
             transporteEditar = ProcurarTransporte(headTransportes, id);
+            
             if (transporteEditar != NULL) {
                 printf("Transporte encontrado:\n");
                 printf("ID: %d\n", transporteEditar->id);
@@ -131,18 +156,30 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
                 printf("Preço / hora: %0.2f\n", transporteEditar->preco);
                 printf("Localização: %s\n", transporteEditar->localizacao);
                 printf("Estado: %d\n", transporteEditar->estado);
-                if(EditarTransporte(transporteEditar,id)) printf("Transporte Editado Com Sucesso!\n"); 
-                else printf("Operação cancelada.");   
+            }
+            printf("\nNovos Dados do transporte:\n");
+            LerTextoInput("Tipo?", tipoEditar, MAX_CHARS);
+            printf("Bateria: ");
+            nivelBateriaEditar = VerificarInt();
+            printf("Preço por Hora: ");
+            precoEditar = VerificarFloat();
+            LerTextoInput("Localização?", localizacaoEditar, MAX_CHARS);
+            printf("Estado do transporte: ");
+            estadoEditar = VerificarInt();
+            if (EditarTransporte(transporteEditar, id, estadoEditar, nivelBateriaEditar, precoEditar, localizacaoEditar, tipoEditar)) { 
+                printf("Transporte Editado Com Sucesso!\n");
             } else {
-                printf("Transporte nao encontrado!\n");
+                printf("Operação cancelada.");
             }
             break;
 
         case 13:
             printf("Inserir ID do transporte: ");
             id = VerificarInt();
-            if(RemoverTransporte(&headTransportes,id)) printf("Transporte com o ID %d eliminado.",id);
-            else printf("Não foi encontrado nenhum transporte com o ID: %d",id);
+            if(RemoverTransporte(&headTransportes,id)) 
+                printf("Transporte com o ID %d eliminado.",id);
+            else 
+                printf("Não foi encontrado nenhum transporte com o ID: %d",id);
             break;
         case 14:
             id = VerificarInt();
@@ -161,24 +198,34 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             //procurar por geocodigo
             break;
         case 21: 
-            struct Gestores gestor;
-            gestor = AdicionarGestor(headGestores);
-            if(InserirGestor(&headGestores, gestor))
+            struct Gestores gestorNovo;
+            char nomeGestor[MAX_LENGTH];
+            char passwordGestor[MAX_LENGTH];
+            LerTextoInput("Insira os dados do novo Gestor: ", nomeGestor, MAX_LENGTH);
+            if(VerificaGestor(headGestores, nomeGestor)) {
+                printf("Gestor com esse nome já existe.\n");
+                break;
+            }
+            LerTextoInput("Insira a password do Gestor: ", passwordGestor, MAX_LENGTH);
+            gestorNovo = AdicionarGestor(headGestores, nomeGestor, passwordGestor);
+            if(InserirGestor(&headGestores, gestorNovo))
                 printf("Gestor adicionado com sucesso!\n");
-                else printf("Erro ao adicionar Gestor!\n");
-            break;
+            else 
+                printf("Erro ao adicionar Gestor!\n");
             break;
         case 22:
-            char nomeGestor[MAX_LENGTH];
-            LerTextoInput("Inserir nome do Gestor: ",nomeGestor,MAX_LENGTH);
-            if(RemoverGestor(&headGestores,nomeGestor)) printf("Gestor %s Eliminado.",nomeGestor);
-            else printf("Não foi encontrado nenhum Gestor: %s",nomeGestor);
+            char nomeGestorRemover[MAX_LENGTH];
+            LerTextoInput("Inserir nome do Gestor para eliminar: ",nomeGestorRemover,MAX_LENGTH);
+            if(RemoverGestor(&headGestores,nomeGestorRemover)) printf("Gestor %s Eliminado.",nomeGestorRemover);
+            else printf("Não foi encontrado nenhum Gestor: %s",nomeGestorRemover);
             break;
         case 23:
             if(!MostrarGestores(headGestores)) printf("Não existem gestores registados.");
             break;
         case 31:
-            if(!MostrarTransacoes(headTransacoes)) printf("Não existem transacoes registadas.");
+            int totalTransacoes = MostrarTransacoes(headTransacoes);
+            if(totalTransacoes == 0) printf("Não existem transacoes registadas.");
+            else printf("Total de transacoes: %d",totalTransacoes);
             break;
         case 32:
             int idCliente;
@@ -188,6 +235,7 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             break;
         case 33:
             struct Transacoes* transacaoEditar;
+            int idClienteEditar, idTransporteEditar, tempoAlugadoEditar;
             printf("Inserir ID da Transação");
             id = VerificarInt();
             transacaoEditar = ProcurarTransacao(headTransacoes, id);
@@ -196,7 +244,15 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
                 printf("ID do Cliente: %d\n", transacaoEditar->idClienteAAlugar);
                 printf("ID do Transporte: %d\n", transacaoEditar->idTransporte);
                 printf("Tempo Alugado: %d\n", transacaoEditar->tempoAlugado);
-                if(EditarTransacao(transacaoEditar)) printf("Transação editada com sucesso.\n"); 
+                printf("A editar transação:\n");
+                printf("Tempo alugado: ");
+                tempoAlugadoEditar = VerificarInt();
+                printf("ID Cliente: ");
+                idClienteEditar = VerificarInt();
+                printf("ID Transporte: ");
+                idTransporteEditar = VerificarInt();
+
+                if(EditarTransacao(transacaoEditar,tempoAlugadoEditar,idClienteEditar,idTransporteEditar)) printf("Transação editada com sucesso.\n"); 
                 else printf("Operação cancelada.");   
             } else {
                 printf("Transação nao encontrada!\n");

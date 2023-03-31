@@ -1,14 +1,14 @@
 #ifndef CLIENTES_HEADER_GUARD
 #define CLIENTES_HEADER_GUARD
-
+#define MAX_CHAR 50
 // ESTRUTURA LISTA CLIENTES
 typedef struct Clientes{
     int nif;
-    char nome[50];
-    char morada[100];
+    char nome[MAX_CHAR];
+    char morada[MAX_CHAR];
     float saldo;
-    char login[50];
-    char password[50];
+    char login[MAX_CHAR];
+    char password[MAX_CHAR];
 } Clientes;
 typedef struct NodeClientes
 {
