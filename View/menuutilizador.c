@@ -40,11 +40,12 @@ int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headG
                 MostrarTransportesOrdenados(headTransportes);
                 break;
             case 2:
-                char localEscolhido[MAX_LENGTH];
-                LerTextoInput("Insere o local onde queres procurar os transportes: ", localEscolhido, MAX_LENGTH);
+                int localEscolhido;
+                printf("Insere o local onde queres procurar os transportes:");
+                localEscolhido = VerificarInt();
                 struct NodeTransporte* transportesNoLocal = ProcurarTransportesPorLocal(headTransportes, localEscolhido);
                 if (transportesNoLocal == NULL) {
-                    printf("Não foram encontrados transportes no local %s.\n", localEscolhido);
+                    printf("Não foram encontrados transportes no local %d.\n", localEscolhido);
                 } else {
                     MostrarTransportes(transportesNoLocal);
                 }

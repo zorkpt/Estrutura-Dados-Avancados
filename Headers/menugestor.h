@@ -6,6 +6,7 @@
 int MenuGestor(struct NodeClientes* headClientes, 
                struct NodeGestores* headGestores, 
                struct NodeTransporte* headTransportes, 
-               struct NodeTransacoes* headTransacoes);
+               struct NodeTransacoes* headTransacoes,
+               Vertice *headVertice);
 
 #endif

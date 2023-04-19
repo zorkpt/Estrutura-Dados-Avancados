@@ -9,6 +9,7 @@ typedef struct Clientes{
     float saldo;
     char login[MAX_CHAR];
     char password[MAX_CHAR];
+    int localCliente;
 } Clientes;
 typedef struct NodeClientes
 {
@@ -23,7 +24,7 @@ NodeClientes* criarNodeCliente(Clientes cliente);
 int InserirCliente(struct NodeClientes** headRef, struct Clientes cliente);
 int RemoverCliente(struct NodeClientes **head, int nif);
 int EditarCliente(struct Clientes *cliente, char *nome, char *morada, char *login, char *password);
-struct Clientes AdicionarCliente(struct NodeClientes* headRef, char* nome, char* morada, int nif, float saldo, char* login, char* password);
+struct Clientes AdicionarCliente(struct NodeClientes* headRef, char* nome, char* morada, int nif, float saldo, char* login, char* password, int localCliente);
 struct Clientes* ProcuraCliente(struct NodeClientes* headRef, int nif);
 int TemSaldoSuficiente(struct Clientes* cliente, float custoTotal);
 int AlterarSenha(struct Clientes* cliente, char novaSenha[]);

@@ -5,6 +5,7 @@
 #include "transportes.h"
 #include "gestores.h"
 #include "transacoes.h"
+#include "grafo.h"
 #define MAX_CHAR 50
 
 //login 

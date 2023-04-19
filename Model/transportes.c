@@ -48,7 +48,7 @@ int MostrarTransportes(struct NodeTransporte* head) {
     printf("%-5s %-20s %-10s %-10s %-20s %-10s\n", "ID", "TIPO", "BATERIA", "PRECO", "LOCALIZACAO", "ESTADO");
     struct NodeTransporte* current = head;
     while (current != NULL) {
-        printf("%-5d %-20s %-10d %-10.2f %-20s %-10d\n",
+        printf("%-5d %-20s %-10d %-10.2f %-20d %-10d\n",
                current->transporte.id,
                current->transporte.tipo,
                current->transporte.nivelBateria,
@@ -95,11 +95,11 @@ int RemoverTransporte(struct NodeTransporte **head, int id) {
 /// @param transporte struct de Transporte a editar
 /// @param id ID do transporte para manter o mesmo
 /// @return Retorna 1 se a edição for bem sucedida, 0 caso contrário      
-int EditarTransporte(struct Transporte *transporte, int id, int estado, int nivelBateria, float preco, char *localizacao, char *tipo){
+int EditarTransporte(struct Transporte *transporte, int id, int estado, int nivelBateria, float preco, int localizacao, char *tipo){
     transporte->estado = estado;
     transporte->nivelBateria = nivelBateria;
     transporte->preco = preco;
-    strcpy(transporte->localizacao, localizacao);
+    transporte->localizacao = localizacao;
     strcpy(transporte->tipo, tipo);
     //Guarda o ID sem alterar
     transporte->id = id;
@@ -142,12 +142,12 @@ struct Transporte* ProcurarTransporte(struct NodeTransporte* headRef, int id ){
 /// @param headTransportes Pointer para o head da lista de NodeTransporte
 /// @param local Localização a procurar
 /// @return Retorna a lista de transportes encontrados, NULL caso contrário
-struct NodeTransporte* ProcurarTransportesPorLocal(struct NodeTransporte* headTransportes, const char* local) {
+struct NodeTransporte* ProcurarTransportesPorLocal(struct NodeTransporte* headTransportes, int local) {
     struct NodeTransporte* resultHead = NULL;
     struct NodeTransporte* currentNode = headTransportes;
 
     while (currentNode != NULL) {
-        if (strcmp(currentNode->transporte.localizacao, local) == 0) {
+        if (currentNode->transporte.localizacao == local) {
             // adiciona o transporte à lista de resultados
             struct NodeTransporte* newNode = (struct NodeTransporte*)malloc(sizeof(struct NodeTransporte));
             newNode->transporte = currentNode->transporte;
@@ -169,7 +169,7 @@ int VerTransportesDisponiveis(struct NodeTransporte* headTransporte) {
     printf("%-8s%-20s%-10s%-10s%-30s\n", "ID", "TIPO", "BATERIA", "PRECO/HORA", "LOCAL");    
     while (current != NULL) {
             if (current->transporte.estado == 0) {
-                printf("%-8d%-20s%-10d%-10.2f%-30s\n", 
+                printf("%-8d%-20s%-10d%-10.2f%-30d\n", 
                     current->transporte.id, 
                     current->transporte.tipo, 
                     current->transporte.nivelBateria, 
@@ -183,13 +183,13 @@ int VerTransportesDisponiveis(struct NodeTransporte* headTransporte) {
 /// @brief Escreve os dados de um transporte 
 /// @param headTransporte Pointer para o head da lista de NodeTransporte
 /// @return Retorna uma struct Transporte com os dados inseridos
-struct Transporte EscreveTransporte(struct NodeTransporte* headTransporte, int id, char* tipo, int nivelBateria, float preco, char* localizacao, int estado) {
+struct Transporte EscreveTransporte(struct NodeTransporte* headTransporte, int id, char* tipo, int nivelBateria, float preco, int localizacao, int estado) {
     struct Transporte transporteTemp;
     transporteTemp.id = id;
     strcpy(transporteTemp.tipo, tipo);
     transporteTemp.nivelBateria = nivelBateria;
     transporteTemp.preco = preco;
-    strcpy(transporteTemp.localizacao, localizacao);
+    transporteTemp.localizacao = localizacao;
     transporteTemp.estado = estado;
     return transporteTemp;
 }

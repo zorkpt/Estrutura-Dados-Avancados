@@ -24,7 +24,7 @@
 /// @param headGestores Pointer para o header da lista de gestores
 /// @param headTransportes Pointer para o header da lista de transportes
 /// @param headTransacoes Pointer para o header da lista de transacoes
-int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGestores, struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes ){
+int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGestores, struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, Vertice *headVertice ){
     int id;
     while(1)
     {   
@@ -35,7 +35,7 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
         case 1:
             struct Clientes clientes;
             char nome[MAX_CHARS], morada[MAX_CHARS], login[MAX_CHARS], password[MAX_CHARS];
-            int nif;
+            int nif, localAtual;
             float saldo;
 
             printf("Insira os dados do novo cliente:\n");
@@ -47,8 +47,10 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             saldo = VerificarFloat();
             LerTextoInput("Nome de Utilizador: ", login, MAX_CHARS);
             LerTextoInput("Password: ", password, MAX_CHARS);
+            printf("Localização Atual: ");
+            localAtual = VerificarInt();
 
-            clientes = AdicionarCliente(headClientes, nome, morada, nif, saldo, login, password);
+            clientes = AdicionarCliente(headClientes, nome, morada, nif, saldo, login, password, localAtual);
 
             if (InserirCliente(&headClientes, clientes))
                 printf("Cliente adicionado com sucesso!\n");
@@ -112,8 +114,8 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
 
         case 11:
             struct Transporte transporte;
-            char tipo[MAX_CHARS], localizacao[MAX_CHARS];
-            int idTransporte, nivelBateria, estado;
+            char tipo[MAX_CHARS];
+            int idTransporte, localizacao, nivelBateria, estado;
             float preco;
             printf("Insira os dados do novo transporte:\n");
             printf("ID: ");
@@ -124,7 +126,8 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             printf("Nivel de Bateria: ");
             nivelBateria = VerificarInt();
             LerTextoInput("Tipo de Transporte?", tipo, MAX_CHARS);
-            LerTextoInput("Localização atual do Transporte?", localizacao, MAX_CHARS);
+            printf("Localização: ");
+            localizacao = VerificarInt();
             printf("Estado: ");
             estado = VerificarInt();
             printf("Preço: ");
@@ -136,8 +139,8 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             break;
 
         case 12:
-            char tipoEditar[MAX_CHARS], localizacaoEditar[MAX_CHARS];
-            int nivelBateriaEditar, estadoEditar;
+            char tipoEditar[MAX_CHARS];
+            int nivelBateriaEditar, estadoEditar, localizacaoEditar;
             float precoEditar;
             struct Transporte* transporteEditar;
             printf("Inserir ID do transporte: ");
@@ -154,7 +157,7 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
                 printf("Tipo: %s\n", transporteEditar->tipo);
                 printf("Bateria: %d\n", transporteEditar->nivelBateria);
                 printf("Preço / hora: %0.2f\n", transporteEditar->preco);
-                printf("Localização: %s\n", transporteEditar->localizacao);
+                printf("Localização: %d\n", transporteEditar->localizacao);
                 printf("Estado: %d\n", transporteEditar->estado);
             }
             printf("\nNovos Dados do transporte:\n");
@@ -163,7 +166,8 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             nivelBateriaEditar = VerificarInt();
             printf("Preço por Hora: ");
             precoEditar = VerificarFloat();
-            LerTextoInput("Localização?", localizacaoEditar, MAX_CHARS);
+            printf("Localização: ");
+            localizacaoEditar = VerificarInt();
             printf("Estado do transporte: ");
             estadoEditar = VerificarInt();
             if (EditarTransporte(transporteEditar, id, estadoEditar, nivelBateriaEditar, precoEditar, localizacaoEditar, tipoEditar)) { 

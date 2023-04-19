@@ -71,16 +71,17 @@ int MostrarClientes(struct NodeClientes* head) {
     if (head == NULL) {
         return 0;
     }
-    printf("%-12s %-20s %-30s %-10s %-15s %-15s\n", "NIF", "NOME", "MORADA", "SALDO", "LOGIN", "PASSWORD");
+    printf("%-12s %-20s %-30s %-10s %-15s %-15s %-15s\n", "NIF", "NOME", "MORADA", "SALDO", "LOGIN", "PASSWORD", "LOCALIZACAO");
     struct NodeClientes* current = head;
     while (current != NULL) {
-        printf("%-12d %-20s %-30s %-10.2f %-15s %-15s\n",
+        printf("%-12d %-20s %-30s %-10.2f %-15s %-15s %-15d\n",
                current->cliente.nif,
                current->cliente.nome,
                current->cliente.morada,
                current->cliente.saldo,
                current->cliente.login,
-               current->cliente.password);
+               current->cliente.password,
+               current->cliente.localCliente);
         current = current->proximo;
     }
     return 1;
@@ -148,7 +149,7 @@ struct Clientes* ProcuraCliente(struct NodeClientes* headRef, int nif) {
 /// @brief Cria uma nova struct de Clientes com os dados inseridos pelo utilizador e depois validados
 /// @param headRef Ponteiro para a head da lista de clientes, usado para as verificações de NIF e Username
 /// @return Retorna uma struct Clientes com os dados do novo cliente (não adiciona á lista)
-struct Clientes AdicionarCliente(struct NodeClientes* headRef, char* nome, char* morada, int nif, float saldo, char* login, char* password) {
+struct Clientes AdicionarCliente(struct NodeClientes* headRef, char* nome, char* morada, int nif, float saldo, char* login, char* password, int localCliente) {
     struct Clientes clienteTemp;
     strncpy(clienteTemp.nome, nome, 50);
     clienteTemp.nif = nif;
@@ -156,6 +157,7 @@ struct Clientes AdicionarCliente(struct NodeClientes* headRef, char* nome, char*
     clienteTemp.saldo = saldo;
     strncpy(clienteTemp.login, login, 50);
     strncpy(clienteTemp.password, password, 50);
+    clienteTemp.localCliente = localCliente;
     return clienteTemp;
 }
 

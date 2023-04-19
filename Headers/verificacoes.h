@@ -5,8 +5,9 @@
 #include "clientes.h"
 #include "gestores.h"
 #include "transacoes.h"
+#include "grafo.h"
 
-
+ 
 int VerificarInt();
 int VerificaIdTransportes(struct NodeTransporte* head, int id);
 int VerificaNif(struct NodeClientes* head, int nif);

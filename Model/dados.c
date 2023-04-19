@@ -11,7 +11,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
+#include <string.h> 
 #include "../Headers/funcoes.h"
 // Número maximo de caracteres que cada linha pode conter
 #define MAX_LINHA 100
@@ -87,13 +87,14 @@ int LerClientesDeFicheiro(struct NodeClientes** headRef, FILE *ficheiro){
     int totalClientes=0;
     while (fgets(linha, MAX_LINHA, ficheiro) != NULL)
     {
-        if(sscanf(linha,"%d\t%[^\t]\t%[^\t]\t%f\t%[^\t]\t%[^\n]", 
-                                                                &temp.nif, 
-                                                                temp.nome, 
-                                                                temp.morada, 
-                                                                &temp.saldo,
-                                                                temp.login,
-                                                                temp.password)==6){
+            if(sscanf(linha,"%d\t%[^\t]\t%[^\t]\t%f\t%[^\t]\t%[^\t]\t%d", 
+                                                                    &temp.nif, 
+                                                                    temp.nome, 
+                                                                    temp.morada, 
+                                                                    &temp.saldo,
+                                                                    temp.login,
+                                                                    temp.password,
+                                                                    &temp.localCliente)==7){
             if(InserirCliente(headRef, temp))
                 totalClientes++;
         }
@@ -112,12 +113,12 @@ int LerTransportesDeFicheiro(struct NodeTransporte** headRef, FILE *ficheiro){
     int totalTransportes=0;
     while (fgets(linha, MAX_LINHA, ficheiro) != NULL)
     {
-        if(sscanf(linha,"%d\t%[^\t]\t%d\t%f\t%[^\t]%d", 
+        if(sscanf(linha,"%d\t%[^\t]\t%d\t%f\t%d\t%d", 
                                                     &temp.id, 
                                                     temp.tipo, 
                                                     &temp.nivelBateria, 
                                                     &temp.preco,
-                                                    temp.localizacao,
+                                                    &temp.localizacao,
                                                     &temp.estado)==6){
             if(InserirTransporte(headRef,temp))
                 totalTransportes++;
@@ -157,6 +158,7 @@ int LerTransacoesDeFicheiro(struct NodeTransacoes** headRef, FILE *ficheiro){
     int totalTransacoes=0;
     while (fgets(linha, MAX_LINHA, ficheiro) != NULL)
     {
+        printf("%s",linha);
         if(sscanf(linha,"%d\t%d\t%d\t%d\n",
                             &temp.idTransacao,
                             &temp.idClienteAAlugar,
