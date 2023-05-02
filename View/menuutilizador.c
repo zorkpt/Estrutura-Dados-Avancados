@@ -18,6 +18,17 @@
 
 
 
+/// @brief Mostar o cabeçalho do menu do cliente
+/// @param cliente 
+/// @param headGrafo 
+void MostrarCabecalhoCliente(Clientes *cliente, Vertice *headGrafo) {
+    printf("\n\nBem-vindo %s\n", cliente->nome);
+    printf("Estás em [%d] %s\n", cliente->localCliente, GetNomeLocal(headGrafo, cliente->localCliente));
+    printf("Saldo Atual: %.2f€\n", cliente->saldo);
+}
+
+
+
 /// @brief Vista e opções destinadas ao utilizador/cliente
 /// @param headClientes Pointer para o header da lista de clientes
 /// @param headGestores Pointer para o header da lista de gestores
@@ -26,91 +37,130 @@
 /// @param nifClienteLogado NIF do cliente que está logado
 /// @return 
 int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headGestores, 
-                struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, 
+                struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, Vertice* headGrafo,
                 int nifClienteLogado ){
+    while (1) {
+        struct Clientes *cliente = ProcuraCliente(headClientes, nifClienteLogado);
+        struct Transporte *transporteAlugar;
 
-    while(1)
-    {   
-        struct Clientes* cliente = ProcuraCliente(headClientes, nifClienteLogado);
-        struct Transporte* transporteAlugar;
+        MostrarCabecalhoCliente(cliente, headGrafo);
         int escolha = ListaMenuCliente();
+
         switch (escolha)
         {
+            // Caso 1: Visualizar todos os meios de mobilidade elétrica disponíveis
             case 1:
                 MostrarTransportesOrdenados(headTransportes);
                 break;
+
+            // Caso 2: Visualizar meios de mobilidade elétrica disponíveis por geocódigo
             case 2:
                 int localEscolhido;
-                printf("Insere o local onde queres procurar os transportes:");
+                printf("Insere o local onde queres procurar os transportes: ");
                 localEscolhido = VerificarInt();
-                struct NodeTransporte* transportesNoLocal = ProcurarTransportesPorLocal(headTransportes, localEscolhido);
-                if (transportesNoLocal == NULL) {
-                    printf("Não foram encontrados transportes no local %d.\n", localEscolhido);
-                } else {
-                    MostrarTransportes(transportesNoLocal);
-                }
 
+                // Verificar se o local inserido é válido
+                Vertice *localValido = ProcuraVertice(headGrafo, localEscolhido);
+                if (localValido == NULL) {
+                    printf("Local não encontrado.\n");
+                } else {
+                    struct NodeTransporte *transportesNoLocal = ProcurarTransportesPorLocal(headTransportes, localEscolhido);
+                    if (transportesNoLocal == NULL) {
+                        printf("Não foram encontrados transportes no local %d.\n", localEscolhido);
+                    } else {
+                        MostrarTransportes(transportesNoLocal);
+                    }
+                }
                 break;
+
+            // Caso 3: Alugar um meio de mobilidade elétrica
             case 3:
-                int idTransporte, tempoAluguer;
+                int idTransporte;
                 if (ClienteEmTransporte(headTransacoes, nifClienteLogado)) {
                     printf("Já estás a utilizar um transporte. Termina a viagem atual antes de alugar outro.\n");
                     break;
                 }
 
                 VerTransportesDisponiveis(headTransportes);
-                printf("\nSaldo Atual: %.2f€",cliente->saldo);
-                printf("\nEscolher um dos transportes disponiveis de momento: (ID) ");
+                printf("Escolher um dos transportes disponiveis de momento: (ID) ");
                 idTransporte = VerificarInt();
                 transporteAlugar = ProcurarTransporte(headTransportes, idTransporte);
-                
-                if (transporteAlugar != NULL && AlugarTransporteDisponivel(transporteAlugar)) {
-                    printf("\nPor quanto tempo queres alugar? ");
-                    tempoAluguer = VerificarInt();
-                    float custoTotal = CustoTotalAluguer(transporteAlugar, tempoAluguer);
 
-                    if (TemSaldoSuficiente(cliente, custoTotal)) {
-                        int novoIdTransaccao = ProximoIDTransacao(headTransacoes);
-                        if(!AtualizarEstadoTransporte(cliente, headTransportes, headTransacoes, idTransporte, tempoAluguer, custoTotal, novoIdTransaccao)){
-                            printf("Erro ao processar aluguer.");
-                        }else printf("Transporte alugado com sucesso.");
+                if (transporteAlugar != NULL && AlugarTransporteDisponivel(transporteAlugar)) {
+                    int novoIdTransaccao = ProximoIDTransacao(headTransacoes);
+                    if (!AtualizarEstadoTransporte(cliente, headTransportes, headTransacoes, idTransporte, novoIdTransaccao)) {
+                        printf("Erro ao processar aluguer.\n");
                     } else {
-                        printf("Saldo insuficiente para realizar o aluguer.\n");
+                        printf("Transporte alugado com sucesso.\n");
                     }
                 } else {
                     printf("Não foi encontrado Meio de Transporte para esse ID.\n");
                 }
                 break;
+
+
+            // Caso 4: Terminar Viagem
             case 4:
                 if (!ClienteEmTransporte(headTransacoes, nifClienteLogado)) {
                     printf("Não estás a utilizar um transporte no momento.\n");
-                    break;
                 } else {
-                    if (!TerminarAluguer(headTransportes, headTransacoes, nifClienteLogado)) {
-                        printf("Erro ao terminar aluguer.\n");
+                    Clientes *cliente = ProcuraCliente(headClientes, nifClienteLogado);
+                    int IdlocalTermino;
+                    printf("Em que local Terminaste a viagem? ");
+                    IdlocalTermino = VerificarInt();
+                    Vertice *localTermino = ProcuraVertice(headGrafo, IdlocalTermino);
+
+                    if (localTermino == NULL) {
+                        printf("Local não encontrado.\n");
                     } else {
-                        printf("Aluguer terminado com sucesso.\n");
+                        Caminho *caminho = BuscaEmLargura(headGrafo, cliente->localCliente, IdlocalTermino);
+
+                        if (!TerminarAluguer(headTransportes, headTransacoes, headClientes, nifClienteLogado, IdlocalTermino, caminho)) {
+                            printf("Erro ao terminar aluguer.\n");
+                        } else {
+                            printf("Aluguer terminado com sucesso.\n");
+                        }
                     }
                 }
                 break;
+
+            // Caso 5: Visualizar histórico de alugueres
             case 5:
-                int totalTransacoes = MostrarHistoricoAlugueres(headTransacoes,nifClienteLogado);
-                if(totalTransacoes==0) {
+                int totalTransacoes = MostrarHistoricoAlugueres(headTransacoes, nifClienteLogado);
+                if (totalTransacoes == 0) {
                     printf("Sem dados para mostrar.\n");
                 } else {
-                    printf("\nA mostrar %d registos.",totalTransacoes);
+                    printf("\nA mostrar %d registos.", totalTransacoes);
                 }
                 break;
+
+            // Caso 6: Procurar transporte mais próximo
             case 6:
-                printf("\nSaldo Atual: %.2f€",cliente->saldo);
+                NodeTransporte *transporteMaisProximo = ProcuraTransporteMaisProximo(headTransportes, headGrafo, cliente->localCliente);
+                if (transporteMaisProximo) {
+                    printf("O transporte mais próximo é:\n[%d] - %s - Localizado em [%d] %s\n",
+                        transporteMaisProximo->transporte.id,
+                        transporteMaisProximo->transporte.tipo,
+                        transporteMaisProximo->transporte.localizacao, 
+                        GetNomeLocal(headGrafo , transporteMaisProximo->transporte.localizacao));
+                } else {
+                    printf("Nenhum transporte disponível foi encontrado.\n");
+                }
                 break;
+
+            // Caso 7: Realizar depósito
             case 7:
                 float valorDeposito;
+                printf("Insira o valor do depósito: ");
                 valorDeposito = VerificarFloat();
-                if(RealizarDeposito(cliente, valorDeposito)){
-                    printf("Deposito realizado com sucesso.\n");
-                }else printf("Erro ao realizar deposito.\n");
+                if (RealizarDeposito(cliente, valorDeposito)) {
+                    printf("Depósito realizado com sucesso.\n");
+                } else {
+                    printf("Erro ao realizar depósito.\n");
+                }
                 break;
+
+            // Caso 8: Alterar senha
             case 8:
                 char novaSenha[MAX_LENGTH];
                 LerTextoInput("Insere a nova senha: ", novaSenha, MAX_LENGTH);
@@ -120,20 +170,18 @@ int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headG
                     printf("Erro ao alterar senha.\n");
                 }
                 break;
+
+
+            // Caso 9: Exportar todos os dados e sair do programa
             case 9:
-                if (!ExportarClientes(headClientes)) {
-                    printf("Erro ao exportar dados dos Clientes.\n");
-                }else printf("Clientes exportados com sucesso.\n");
-                if (!ExportarGestores(headGestores)) {
-                    printf("Erro ao exportar dados dos Gestores.\n");
-                }else printf("Gestores exportados com sucesso.\n");
-                if (!ExportarTransportes(headTransportes)) {
-                    printf("Erro ao exportar dados dos Transportes.\n");
-                }else printf("Transportes exportados com sucesso.\n");
-                if (!ExportarTransacoes(headTransacoes)) {
-                    printf("Erro ao exportar dados das Transações.\n");
-                }else printf("Transacoes exportados com sucesso.\n");
+                if (ExportarTodosDados(headClientes, headGestores, headTransportes, headTransacoes, headGrafo)) {
+                    printf("Todos os dados foram exportados com sucesso.\n");
+                    exit(0);
+                } else {
+                    printf("Erro ao exportar dados.\n");
+                }
                 break;
+
             default:
                 printf("\nInsere uma das opções mostradas.\n");
                 break;  

@@ -20,6 +20,7 @@
 int listaMenuGestor(){
     int escolha;
     printf("\nSoftware de Gestão frota Smart City.\n");
+    printf("======================================\n");
     printf(" ------- CLIENTES -------- \n");
     printf("1. Registar Cliente\n");
     printf("2. Alterar Cliente\n");
@@ -56,12 +57,13 @@ int listaMenuGestor(){
 int ListaMenuCliente(){
     int escolha;
     printf("\nSmart City\n");
+    printf("======================================\n");
     printf("1. Visualizar meios de mobilidade elétrica disponíveis por ordem decrescente de autonomia\n");
     printf("2. Visualizar meios de mobilidade elétrica disponíveis por geocódigo\n");
     printf("3. Alugar um meio de mobilidade elétrica\n");
     printf("4. Terminar Viagem\n");    
     printf("5. Visualizar histórico de alugueres\n");
-    printf("6. Consultar Saldo\n");
+    printf("6. Ver transportes mais perto\n");
     printf("7. Realizar depósito\n");
     printf("8. Alterar Senha\n");
     printf("9. Sair\n");

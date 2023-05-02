@@ -14,25 +14,26 @@ int IniciarLogin(struct NodeClientes** clientesHead, struct NodeGestores** gesto
 
 // Carregar dados de ficheiros binarios
 int CarregarDados(struct NodeClientes** headClientes, struct NodeTransporte** headTransportes,
-                    struct NodeGestores** headGestores, struct NodeTransacoes** headTransacoes);
+                    struct NodeGestores** headGestores, struct NodeTransacoes** headTransacoes, Vertice **headVertice);
 
 int CarregarFicheiroClientes(struct NodeClientes** head, char *nomeFicheiro);
 int CarregarFicheiroTransacoes(struct NodeTransacoes** head, char* nomeFicheiro);
 int CarregarFicheiroGestores(struct NodeGestores** head, char* nomeFicheiro);
 int CarregarFicheiroTransportes(struct NodeTransporte** head, char* nomeFicheiro);
+int CarregarFicheiroGrafo(Vertice **grafo, char *nomeFicheiro);
 int CarregarBinarioClientes(struct NodeClientes** head);
 int CarregarBinarioGestores(struct NodeGestores** head);
 int CarregarBinarioTransportes(struct NodeTransporte** head);
 int CarregarBinarioTransacoes(struct NodeTransacoes** head);
 
-
 // Carregar dados de ficheiros CSV
 int CarregarCSV(struct NodeClientes** headClientes, struct NodeTransporte** headTransportes, 
-                 struct NodeGestores** headGestores, struct NodeTransacoes** headTransacoes);
+                 struct NodeGestores** headGestores, struct NodeTransacoes** headTransacoes, Vertice **headGrafo);
 int LerClientesDeFicheiro(struct NodeClientes** headRef, FILE *ficheiro);
 int LerTransportesDeFicheiro(struct NodeTransporte** headRef, FILE *ficheiro);
 int LerGestoresDeFicheiro(struct NodeGestores** headRef, FILE *ficheiro);
 int LerTransacoesDeFicheiro(struct NodeTransacoes** headRef, FILE *ficheiro);
+int LerGrafoDeFicheiro(Vertice **grafo, FILE *ficheiro);
 
 // Menu
 int listaMenuGestor();
@@ -40,13 +41,15 @@ int ListaMenuCliente();
 
 
 // Exportar dados para ficheiros binarios
+int ExportarTodosDados(NodeClientes *headClientes, NodeGestores *headGestores, NodeTransporte *headTransportes, NodeTransacoes *headTransacoes, Vertice *headGrafo);
 int ExportarClientes(struct NodeClientes* listaClientes);
 int ExportarGestores(struct NodeGestores* listaGestores);
 int ExportarTransportes(struct NodeTransporte* listaTransporte);
 int ExportarTransacoes(struct NodeTransacoes* listaTransacoes);
-
-
-
+int ExportaVertices(Vertice *grafo);
+int ExportaAdjacentes(Vertice *grafo);
+int CarregarBinarioVertices(Vertice** grafo);
+int CarregarBinarioAdjacentes(Vertice* grafo);
 
 
 

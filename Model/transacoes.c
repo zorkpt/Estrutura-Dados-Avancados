@@ -195,29 +195,8 @@ int ClienteEmTransporte(struct NodeTransacoes* headTransacoes, int nif) {
     return 0; 
 }
 
-/// @brief Termina o aluguer de um transporte a um cliente
-/// @param headTransportes Pointer para o head da lista de NodeTransporte
-/// @param headTransacoes Pointer para o head da lista de NodeTransacoes
-/// @param nifClienteLogado NIF do cliente a terminar o aluguer
-/// @return Retorna 1 se o aluguer for terminado com sucesso, 0 caso contrário
-int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, int nifClienteLogado) { 
-    struct NodeTransacoes* currentTransacao = headTransacoes;
-    struct NodeTransporte* currentTransporte = headTransportes;
-    while (currentTransacao != NULL) {
-        if (currentTransacao->transacoes.idClienteAAlugar == nifClienteLogado && currentTransacao->transacoes.ativo == 1) {
-            currentTransacao->transacoes.ativo = 0;
-            while (currentTransporte != NULL) {
-                if (currentTransporte->transporte.id == currentTransacao->transacoes.idTransporte) {
-                    currentTransporte->transporte.estado = 0;
-                    return 1;
-                }
-                currentTransporte = currentTransporte->proximo;
-            }
-        }
-        currentTransacao = currentTransacao->proximo;
-    }
-    return 0;
-}
+
+
 
 /// @brief Atualiza o estado de um transporte
 /// @param cliente struct de Clientes, passada para atualizar o saldo
@@ -230,7 +209,7 @@ int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoe
 /// @return  Retorna 1 se o transporte for atualizado com sucesso, 0 caso contrário
 int AtualizarEstadoTransporte(struct Clientes* cliente, struct NodeTransporte* headTransportes, 
                             struct NodeTransacoes* headTransacoes, int idTransporte, 
-                            int tempoAluguer, float custoTotal, int novoIdTransacao) {
+                            int novoIdTransacao) {
     if(!EditarTransporteID(headTransportes,idTransporte)) {
         return 0;
     }
@@ -238,14 +217,117 @@ int AtualizarEstadoTransporte(struct Clientes* cliente, struct NodeTransporte* h
     struct Transacoes novaTransacao;
     novaTransacao.idClienteAAlugar = cliente->nif;
     novaTransacao.idTransporte = idTransporte;
-    novaTransacao.tempoAlugado = tempoAluguer;
     novaTransacao.idTransacao = novoIdTransacao;
     novaTransacao.ativo = 1;
     // adicionar a nova transação á lista
     if(!InserirTransacoes(&headTransacoes, novaTransacao)){
         return 0;
     }else {
-        cliente->saldo -= custoTotal;
         return 1;
     }
+}
+
+
+
+
+
+
+
+
+/// @brief Atualiza o local de um cliente
+/// @param cliente 
+/// @param novoLocal 
+void AtualizaLocalCliente(struct Clientes* cliente, int novoLocal) {
+    cliente->localCliente = novoLocal;
+}
+
+/// @brief Atualiza o local de um transporte
+/// @param transporte 
+/// @param novoLocal 
+void AtualizaLocalTransporte(struct Transporte* transporte, int novoLocal) {
+    transporte->localizacao = novoLocal;
+}
+
+/// @brief Atualiza o nivel de bateria de um transporte
+/// @param transporte 
+/// @param bateriaPerdida 
+void AtualizaNivelBateria(Transporte *transporte, int bateriaPerdida) {
+    transporte->nivelBateria -= bateriaPerdida;
+    if (transporte->nivelBateria < 0) {
+        transporte->nivelBateria = 0;
+    }
+}
+
+/// @brief Muda o estado de um transporte para disponível
+/// @param transporte 
+void MudaEstadoTransporte(struct Transporte* transporte) {
+    transporte->estado = 0; 
+}
+
+/// @brief Atualiza o saldo de um cliente
+/// @param cliente 
+/// @param valor 
+void AtualizaSaldoCliente(struct Clientes* cliente, float valor) {
+    cliente->saldo -= valor;
+}
+
+/// @brief Calcula o valor total de um aluguer
+/// @param distancia 
+/// @param preco 
+/// @return Valor total do aluguer
+float CalculaValorTotal(float distancia, float preco) {
+    return (distancia * preco)*0.01;
+}
+
+/// @brief Calcula a bateria perdida com base na distância total
+/// @param distancia 
+/// @return Bateria perdida
+int CalculaBateriaPerdida(float distancia) {
+    // Implementação da lógica de cálculo da bateria perdida com base na distância total
+    int bateriaPerdida = 0;
+
+    // Fator de conversão para bateria perdida por unidade de distância
+    float fatorConversao = 0.001; 
+
+    bateriaPerdida = (int)(distancia * fatorConversao);
+
+    return bateriaPerdida;
+}
+
+/// @brief Termina um aluguer
+/// @param headTransportes 
+/// @param headTransacoes 
+/// @param headClientes 
+/// @param nifClienteLogado 
+/// @param idLocalTermino 
+/// @param caminho 
+/// @return 1 se o aluguer for terminado com sucesso, 0 caso contrário
+int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, struct NodeClientes* headClientes, int nifClienteLogado, int idLocalTermino, Caminho* caminho) { 
+    struct NodeTransacoes* currentTransacao = headTransacoes;
+    struct NodeTransporte* currentTransporte = headTransportes;
+    
+    while (currentTransacao != NULL) {
+        if (currentTransacao->transacoes.idClienteAAlugar == nifClienteLogado && currentTransacao->transacoes.ativo == 1) {
+            currentTransacao->transacoes.ativo = 0;
+            while (currentTransporte != NULL) {
+                if (currentTransporte->transporte.id == currentTransacao->transacoes.idTransporte) {
+                    int localInicial = currentTransporte->transporte.localizacao;
+                    AtualizaLocalCliente(ProcuraCliente(headClientes, nifClienteLogado), idLocalTermino);
+                    AtualizaLocalTransporte(&currentTransporte->transporte, idLocalTermino);
+                    float distancia = DistanciaCaminho(caminho);
+                    float valorTotal = CalculaValorTotal(distancia, currentTransporte->transporte.preco);
+                    int bateriaPerdida = CalculaBateriaPerdida(distancia);
+                    AtualizaNivelBateria(&currentTransporte->transporte, bateriaPerdida);
+                    MudaEstadoTransporte(&currentTransporte->transporte);
+
+                    AtualizaSaldoCliente(ProcuraCliente(headClientes, nifClienteLogado), valorTotal);
+
+                    return 1;
+                }
+                currentTransporte = currentTransporte->proximo;
+            }
+        }
+        currentTransacao = currentTransacao->proximo;
+    }
+    return 0;
 }

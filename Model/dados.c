@@ -14,7 +14,7 @@
 #include <string.h> 
 #include "../Headers/funcoes.h"
 // Número maximo de caracteres que cada linha pode conter
-#define MAX_LINHA 100
+#define MAX_LINHA 1024
 
 
 /// @brief Carrega dados de clientes de um determinado ficheiro e passa-os para uma lista ligada.
@@ -31,6 +31,65 @@ int CarregarFicheiroClientes(struct NodeClientes** head, char *nomeFicheiro){
     totalClientes = LerClientesDeFicheiro(head,ficheiro);
     return totalClientes;
 }
+
+/// @brief 
+/// @param grafo 
+/// @param nomeFicheiro 
+/// @return 
+int CarregarFicheiroGrafo(Vertice **grafo, char *nomeFicheiro){
+    FILE *ficheiro;
+    ficheiro = fopen(nomeFicheiro, "r");
+    int totalVertices = 0;
+    if(ficheiro == NULL){
+        printf("Erro ao abrir ficheiro grafos");
+        return 0;
+    }
+    totalVertices = LerGrafoDeFicheiro(grafo,ficheiro);
+    fclose(ficheiro); 
+    return totalVertices;
+}
+
+/// @brief 
+/// @param grafo 
+/// @param ficheiro 
+/// @return 
+int LerGrafoDeFicheiro(Vertice **grafo, FILE *ficheiro){
+    char linha[MAX_LINHA];
+    int totalVertices = 0;
+
+    fgets(linha, MAX_LINHA, ficheiro); // Pular a primeira linha (cabeçalho)
+    while(fgets(linha, MAX_LINHA, ficheiro) != NULL){
+        int id, adj1, dist1, adj2, dist2, adj3, dist3;
+        char title[256];
+        sscanf(linha, "%d,%[^,],%d,%d,%d,%d,%d,%d", 
+                                                &id, title, 
+                                                &adj1, &dist1, 
+                                                &adj2, &dist2, 
+                                                &adj3, &dist3);
+
+        Vertice *novoVertice = CriarVertice(id, title);
+        *grafo = InsereVertice(*grafo, novoVertice);
+
+        Adjacente* novoAdjacente;
+
+        if (adj1) {
+            novoAdjacente = CriaAdjacente(adj1, dist1);
+            *grafo = InsereAdjacente(*grafo, id, novoAdjacente);
+        }
+        if (adj2) {
+            novoAdjacente = CriaAdjacente(adj2, dist2);
+            *grafo = InsereAdjacente(*grafo, id, novoAdjacente);
+        }
+        if (adj3) {
+            novoAdjacente = CriaAdjacente(adj3, dist3);
+            *grafo = InsereAdjacente(*grafo, id, novoAdjacente);
+        }
+
+        totalVertices++;
+    }
+    return totalVertices;
+}
+
 
 /// @brief Carrega dados de transportes de um determinado ficheiro e passa-os para uma lista ligada.
 /// @param head Pointer para o pointer do header da lista de transportes.

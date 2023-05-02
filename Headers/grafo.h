@@ -3,7 +3,7 @@
 #pragma once
 
 #define MAX_ID 100
-
+#include "transportes.h"
 #include <stdio.h>
 
 
@@ -20,6 +20,10 @@ typedef struct Vertice{
 	char cidade[MAX_ID];
 	struct Vertice *proximo;
 	struct Adjacente *adjacentes;
+	int visitado;
+	int predecessor;
+    float distancia;
+	int numAdjacentes;
 }Vertice;
 
 typedef struct Caminho {
@@ -30,38 +34,34 @@ typedef struct Caminho {
 
 // Definição do tipo Fila
 typedef struct Fila {
-    struct NoFila *front;
-    struct NoFila *rear;
+    struct NodeFila *front;
+    struct NodeFila *rear;
 } Fila;
 
-// Definição do tipo NoFila
-typedef struct NoFila {
+// Definição do tipo NodeFila
+typedef struct NodeFila {
     Vertice *vertice;
-    struct NoFila *proximo;
-} NoFila;
+    struct NodeFila *proximo;
+} NodeFila;
 
-Adjacente *CriaAdjacente(int idVertice, float distancia);
-Vertice* InsereVertice(Vertice *grafo, Vertice* novo);
+
+
+// CONFIRMADAS
 Vertice* CriarVertice(int idVertice, char cidade[]);
+Vertice* InsereVertice(Vertice *grafo, Vertice* novo);
+Adjacente *CriaAdjacente(int idVertice, float distancia);
+Vertice* InsereAdjacente(Vertice *grafo, int origem, Adjacente* novoAdjacente);
+const char* GetNomeLocal(Vertice *grafo, int location_id);	
+void LimparCamposGrafo(Vertice *grafo);
+Caminho* CriarCaminho(int idVertice, float distancia);
+int Enfileirar(Fila *fila, Vertice *vertice);
+Vertice* RetiraDaFila(Fila *fila);
 void PrintGrafo(Vertice *grafo);
-Vertice* InsereAdjacente(Vertice *grafo, int origem, int destino, float distancia);
-void read_csv_file(char *filename, Vertice **graph);
-int location_exists(Vertice *graph, int location_id);
-const char* GetLocationName(Vertice *grafo, int location_id);	
-NodeTransporte *BuscarTransporteMaisProximo(NodeTransporte *listaTransportes, Vertice *grafo, int localCliente);
-Vertice *encontrarVertice(Vertice *grafo, int idVertice);
-int contarVertices(Vertice *grafo);
-int estaVazia(Fila *fila);
-Vertice* desenfileirar(Fila *fila);
-void enfileirar(Fila *fila, Vertice *vertice);
+int EstaVazia(Fila *fila);
+NodeTransporte *ProcuraTransporteMaisProximo(NodeTransporte *listaTransportes, Vertice *grafo, int localCliente);
 Caminho* BuscaEmLargura(Vertice *grafo, int origem, int destino);
-const char* GetLocationName(Vertice *grafo, int location_id);
-int location_exists(Vertice *graph, int location_id);
 Fila* CriarFila();
-Vertice* BuscarVertice(Vertice *grafo, int idVertice);
-Caminho* MenorCaminho(Vertice *grafo, int origem, int destino);
-float DistanciaEntreVertices(Vertice *grafo, int origem, int destino);
-
-
+Vertice* ProcuraVertice(Vertice *grafo, int idVertice);
+float DistanciaCaminho(Caminho *caminho);
 
 #endif

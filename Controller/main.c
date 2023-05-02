@@ -24,26 +24,15 @@
 /// @return 
 int main() {
 
-    Vertice *headVertice = NULL;
-
-    read_csv_file("Data/matrix.csv", &headVertice);
-
-     // Print the graph
-    PrintGrafo(headVertice);
-
-
-
-
-
     // Inicializar variáveis
     NodeClientes* headClientes = NULL;
     NodeTransporte* headTransportes = NULL;
     NodeGestores* headGestores = NULL;
     NodeTransacoes* headTransacoes = NULL;
-    MostrarClientes(headClientes);
+    Vertice *headVertice = NULL;
     int nifClienteLogado;
     // verificar se os ficheiros binários existem, se não existirem, carregar os dados dos ficheiros CSV, ou se não, não carrega nada
-    int dadosCarregados = CarregarDados(&headClientes, &headTransportes, &headGestores, &headTransacoes);
+    int dadosCarregados = CarregarDados(&headClientes, &headTransportes, &headGestores, &headTransacoes, &headVertice);
     if (dadosCarregados == 1) {
         printf("Dados carregados dos arquivos binários.\n");
     } else if(dadosCarregados == 0) {
@@ -51,15 +40,15 @@ int main() {
     } else {
         printf("Erro ao carregar dados.\n");
     }
-    // login, retorna 1 se for cliente, 2 se for gestor, 0 se não for nenhum dos dois
-
-
-
 
 //testes
-    int localCliente = 45; // teste -  ID do vértice que representa a localização do cliente
 
-    NodeTransporte *transporteMaisProximo = BuscarTransporteMaisProximo(headTransportes, headVertice, localCliente);
+     // Print the graph
+    PrintGrafo(headVertice);
+
+    int localCliente = 1; // teste -  ID do vértice que representa a localização do cliente
+
+    NodeTransporte *transporteMaisProximo = ProcuraTransporteMaisProximo(headTransportes, headVertice, localCliente);
 
     if (transporteMaisProximo) {
         printf("O transporte mais próximo é o transporte com ID %d, localizado no vértice %d\n",
@@ -67,17 +56,14 @@ int main() {
     } else {
         printf("Nenhum transporte disponível foi encontrado.\n");
     }
-
-
-
     int origem = 1;
-    int destino = 11;
+    int destino = 5;
     Caminho *caminho = BuscaEmLargura(headVertice, origem, destino);
 
     if (caminho) {
         printf("Caminho encontrado entre %d e %d:\n", origem, destino);
         while (caminho != NULL) {
-            printf("ID: %d, Cidade: %s, Distancia: %.2f\n", caminho->idVertice, GetLocationName(headVertice, caminho->idVertice), caminho->distancia);
+            printf("ID: %d, Cidade: %s, Distancia: %.2f\n", caminho->idVertice, GetNomeLocal(headVertice, caminho->idVertice), caminho->distancia);
             Caminho *caminhoTemp = caminho;
             caminho = caminho->proximo;
             free(caminhoTemp);
@@ -89,18 +75,14 @@ int main() {
 //fim testes
 
 
-
-
-
-
-
+    // login, retorna 1 se for cliente, 2 se for gestor, 0 se não for nenhum dos dois
 
     int tipoMenu = IniciarLogin(&headClientes,&headGestores,&nifClienteLogado); 
 
     switch(tipoMenu)
     {
     case 1:
-        MenuUtilizador(headClientes,headGestores,headTransportes,headTransacoes,nifClienteLogado);
+        MenuUtilizador(headClientes,headGestores,headTransportes,headTransacoes,headVertice,nifClienteLogado);
         break;
     case 2:
         MenuGestor(headClientes,headGestores,headTransportes,headTransacoes, headVertice);

@@ -2,6 +2,7 @@
 #define TRANSACOES_HEADER_GUARD
 #pragma once
 #include "transportes.h"
+#include "grafo.h"
 
 typedef struct Transacoes{
     int idTransacao;
@@ -28,9 +29,16 @@ struct Transacoes* ProcurarTransacao(struct NodeTransacoes* head, int idTransaca
 int ProximoIDTransacao(struct NodeTransacoes* headTransacoes);
 int MostrarHistoricoAlugueres(struct NodeTransacoes* headTransacoes, int nif);
 int ClienteEmTransporte(struct NodeTransacoes* headTransacoes, int nif);
-int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, int nifClienteLogado);
+int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, struct NodeClientes* headClientes, int nifClienteLogado, int idLocalTermino, Caminho* caminho);
 int AtualizarEstadoTransporte(struct Clientes* cliente, struct NodeTransporte* headTransportes, 
                             struct NodeTransacoes* headTransacoes, int idTransporte, 
-                            int tempoAluguer, float custoTotal, int novoIdTransacao);
+                            int novoIdTransacao);
+int CalculaBateriaPerdida(float distancia);
+float CalculaValorTotal(float distancia, float preco);
+void AtualizaSaldoCliente(struct Clientes* cliente, float valor);
+void MudaEstadoTransporte(struct Transporte* transporte);
+void AtualizaNivelBateria(Transporte *transporte, int bateriaPerdida);
+void AtualizaLocalTransporte(struct Transporte* transporte, int novoLocal);
+void AtualizaLocalCliente(struct Clientes* cliente, int novoLocal);
 
 #endif

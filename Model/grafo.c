@@ -6,11 +6,11 @@
 #define BUFFER_SIZE 1024
 
 
-
+/// @brief Função para criar um novo vértice
+/// @param idVertice 
+/// @param cidade 
+/// @return novo vértice
 Vertice* CriarVertice(int idVertice, char cidade[]){
-
-	static int totalVertices = 0;
-
 	Vertice* novo = (Vertice*)calloc(1,sizeof(Vertice));
 	if(novo == NULL){
 		return NULL;
@@ -23,21 +23,21 @@ Vertice* CriarVertice(int idVertice, char cidade[]){
 	return novo;
 }
 
-Vertice* InsereVertice(Vertice *grafo, Vertice* novo){
+/// @brief Insere um novo vértice no grafo, mantendo a ordem crescente dos IDs dos vértices.
+/// @param grafo: Ponteiro para o primeiro vértice do grafo (lista ligada simples de vértices).
+/// @param novo: Ponteiro para o novo vértice a ser inserido no grafo.
+/// @return Ponteiro para o primeiro vértice do grafo após a inserção do novo vértice.
+Vertice* InsereVertice(Vertice *grafo, Vertice* novo) {
+    Vertice* anterior = NULL;
+    Vertice* atual = grafo;
 
-	Vertice* aux = grafo;
-	Vertice* anterior = aux;
+    // Encontra a posição correta para inserir o novo vértice
+    while (atual != NULL && atual->idVertice < novo->idVertice) {
+        anterior = atual;
+        atual = atual->proximo;
+    }
 
-	if(grafo == NULL){
-		grafo = novo;
-		return grafo;
-	}
-
-	while(aux && aux->idVertice != novo->idVertice){
-		anterior = aux;
-		aux = aux->proximo;
-	}
-
+    // Insere o novo vértice na posição correta
     if (anterior == NULL) {
         novo->proximo = grafo;
         grafo = novo;
@@ -49,118 +49,83 @@ Vertice* InsereVertice(Vertice *grafo, Vertice* novo){
     return grafo;
 }
 
-void MostrarGrafo(Vertice* grafo){
 
-	if(grafo==NULL){
-		return;
-	}
-
-	Vertice* aux = grafo;
-
-	while(aux != NULL){
-		printf("ID: %d\tCidade: %s\n", aux->idVertice, aux->cidade);
-		aux = aux->proximo;
-	}
+/// @brief Cria um novo nó adjacente com o ID do vértice e a distância especificada
+/// @param idVertice O ID do vértice adjacente
+/// @param distancia A distância entre o vértice atual e o vértice adjacente
+/// @return Um ponteiro para o novo nó adjacente criado ou NULL se a alocação de memória falhar
+Adjacente *CriaAdjacente(int idVertice, float distancia) {
+    Adjacente *novo = (Adjacente *)malloc(sizeof(Adjacente));
+    
+    if (novo == NULL) {
+        return NULL;
+    }
+    
+    novo->idVertice = idVertice;
+    novo->distancia = distancia;
+    novo->proximo = NULL;
+    
+    return novo;
 }
 
-Vertice* InsereAdjacente(Vertice *grafo, int origem, int destino, float distancia){
+/// @brief Insere um vértice adjacente no grafo, dado o vértice de origem e o vértice adjacente previamente criado
+/// @param grafo Ponteiro para o grafo onde o vértice adjacente será inserido
+/// @param origem ID do vértice de origem
+/// @param novoAdjacente Ponteiro para o vértice adjacente previamente criado
+/// @return Retorna o ponteiro para o grafo atualizado ou NULL se a operação falhar
+Vertice* InsereAdjacente(Vertice *grafo, int origem, Adjacente* novoAdjacente){
 
-	Vertice* aux = grafo;
+    // Encontra o vértice de origem no grafo
+    Vertice* aux = grafo;
+    while (aux && aux->idVertice != origem) {
+        aux = aux->proximo;
+    }
 
-	if(grafo == NULL){
-		return NULL;
-	}
+    // Se o vértice de origem não for encontrado, retorna NULL
+    if (aux == NULL) {
+        return NULL;
+    }
 
-	while(aux && aux->idVertice != origem){
-		aux = aux->proximo;
-	}
+    // Insere o novo vértice adjacente na lista de adjacentes do vértice de origem
+    novoAdjacente->proximo = aux->adjacentes;
+    aux->adjacentes = novoAdjacente;
 
-	if(aux == NULL){
-		return NULL;
-	}
+    // Incrementa o contador de vértices adjacentes para o vértice de origem
+    aux->numAdjacentes++;
 
-	Adjacente* headAdjacent = aux->adjacentes;	
-	Adjacente* novo = CriaAdjacente(destino, distancia); // Pass the values to the function
-
-	// Insert the new Adjacente node at the beginning of the list
-	novo->proximo = headAdjacent;
-	aux->adjacentes = novo;
-
-	return grafo;
+    return grafo;
 }
 
-Adjacente *CriaAdjacente(int idVertice, float distancia) { // Add parameters to the function
-	Adjacente *novo = (Adjacente *)malloc(sizeof(Adjacente));
-	novo->idVertice = idVertice;
-	novo->distancia = distancia;
-	novo->proximo = NULL;
-	return novo;
-}
-
-
-
+/// @brief Imprime o grafo, mostrando vértices e adjacências
+/// @param grafo O ponteiro para o grafo
 void PrintGrafo(Vertice *grafo) {
-    Vertice *vertex = grafo;
+    Vertice *vertice = grafo;
 
-    while (vertex) {
-        printf("ID: %d\tCidade: %s\n", vertex->idVertice, vertex->cidade);
+    // Iterar pelos vértices do grafo
+    while (vertice) {
+        printf("ID: %d\tCidade: %s\n", vertice->idVertice, vertice->cidade);
         
-        Adjacente *adjacent = vertex->adjacentes;
+        Adjacente *adjacent = vertice->adjacentes;
+
+        // Iterar pelas adjacências do vértice atual
         while (adjacent) {
             printf("  -> ID: %d\tDistancia: %.2f\n", adjacent->idVertice, adjacent->distancia);
             adjacent = adjacent->proximo;
         }
         
         printf("\n");
-        vertex = vertex->proximo;
+        vertice = vertice->proximo;
     }
 }
 
-
-void read_csv_file(char *filename, Vertice **graph) {
-    FILE *file = fopen(filename, "r");
-    if (!file) {
-        printf("Error: Unable to open the file. dir errada\n");
-        return;
-    }
-
-    char buffer[BUFFER_SIZE];
-    fgets(buffer, BUFFER_SIZE, file); // Skip the header
-
-    while (fgets(buffer, BUFFER_SIZE, file)) {
-        int id, adj1, dist1, adj2, dist2, adj3, dist3;
-        char title[256];
-        sscanf(buffer, "%d,%[^,],%d,%d,%d,%d,%d,%d", &id, title, &adj1, &dist1, &adj2, &dist2, &adj3, &dist3);
-
-        Vertice *new_vertex = CriarVertice(id, title);
-        *graph = InsereVertice(*graph, new_vertex);
-
-        *graph = InsereAdjacente(*graph, id, adj1, dist1);
-        *graph = InsereAdjacente(*graph, id, adj2, dist2);
-        if (adj3) {
-            *graph = InsereAdjacente(*graph, id, adj3, dist3);
-        }
-    }
-
-    fclose(file);
-}
-
-int location_exists(Vertice *graph, int location_id) {
-    Vertice *current = graph;
-    while (current) {
-        if (current->idVertice == location_id) {
-            return 1;
-        }
-        current = current->proximo;
-    }
-    return 0;
-}
-
-
-const char* GetLocationName(Vertice *grafo, int location_id) {
+/// @brief Função para saber o nome do local a partir do id
+/// @param grafo 
+/// @param localID 
+/// @return 
+const char* GetNomeLocal(Vertice *grafo, int localID) {
     Vertice *current = grafo;
     while (current != NULL) {
-        if (current->idVertice == location_id) {
+        if (current->idVertice == localID) {
             return current->cidade;
         }
         current = current->proximo;
@@ -168,52 +133,73 @@ const char* GetLocationName(Vertice *grafo, int location_id) {
     return NULL;
 }
 
+/// @brief Limpa os campos visitado, predecessor e distância de todos os vértices do grafo
+/// @param grafo Um ponteiro para a estrutura Vertice que representa o grafo a ser limpo
+void LimparCamposGrafo(Vertice *grafo) {
+    Vertice *verticeAux = grafo;
 
+    while (verticeAux != NULL) {
+        verticeAux->visitado = 0;
+        verticeAux->predecessor = -1;
+        verticeAux->distancia = 0;
+        verticeAux = verticeAux->proximo;
+    }
+}
+
+/// @brief Realiza uma busca em largura no grafo para encontrar o caminho mais curto entre dois vértices
+/// @param grafo Ponteiro para o primeiro vértice na lista de vértices do grafo
+/// @param origem ID do vértice de origem
+/// @param destino ID do vértice de destino
+/// @return Ponteiro para o primeiro elemento da lista de caminho, 
+///         que contém os vértices e suas distâncias acumuladas; 
+///         retorna NULL se não houver caminho ou se algum dos vértices não for encontrado
 Caminho* BuscaEmLargura(Vertice *grafo, int origem, int destino) {
+    // Retorna NULL se o grafo estiver vazio
     if (grafo == NULL) {
         return NULL;
     }
 
-    Vertice *verticeAux = grafo;
-    Vertice *verticeOrigem = NULL;
-    Vertice *verticeDestino = NULL;
+    // Limpar o campo visitado de todos os vértices
+    LimparCamposGrafo(grafo);
 
-    while (verticeAux) {
-        if (verticeAux->idVertice == origem) {
-            verticeOrigem = verticeAux;
-        }
-        if (verticeAux->idVertice == destino) {
-            verticeDestino = verticeAux;
-        }
-        verticeAux = verticeAux->proximo;
-    }
+    // Encontrar os vértices de origem e destino usando ProcuraVertice
+    Vertice *verticeOrigem = ProcuraVertice(grafo, origem);
+    Vertice *verticeDestino = ProcuraVertice(grafo, destino);
 
+    // Retorna NULL se não encontrar os vértices de origem ou destino
     if (verticeOrigem == NULL || verticeDestino == NULL) {
         return NULL;
     }
 
+    // Inicializar a fila vazia
     Fila *fila = CriarFila();
-    int visitado[1000] = {0};
-    int predecessor[1000] = {-1};
-    float distancia[1000] = {0};
 
-    enfileirar(fila, verticeOrigem);
-    visitado[verticeOrigem->idVertice] = 1;
-    distancia[verticeOrigem->idVertice] = 0;
-
-    while (!estaVazia(fila)) {
-        Vertice *verticeAtual = desenfileirar(fila);
+    // Adicionar o vértice de origem à fila e marcá-lo como visitado
+    Enfileirar(fila, verticeOrigem);
+    verticeOrigem->visitado = 1;
+    verticeOrigem->distancia = 0;
+    verticeOrigem->predecessor = -1;
+    int encontrouDestino = 0;
+    // Processar vértices na fila até que esteja vazia
+    while (!EstaVazia(fila) && !encontrouDestino ) {
+        Vertice *verticeAtual = RetiraDaFila(fila);
         Adjacente *adjacenteAtual = verticeAtual->adjacentes;
 
+        // Verificar todos os vértices adjacentes ao vértice atual
         while (adjacenteAtual) {
-            int idAdjacente = adjacenteAtual->idVertice;
-            if (!visitado[idAdjacente]) {
-                visitado[idAdjacente] = 1;
-                enfileirar(fila, BuscarVertice(grafo, idAdjacente));
-                predecessor[idAdjacente] = verticeAtual->idVertice;
-                distancia[idAdjacente] = distancia[verticeAtual->idVertice] + adjacenteAtual->distancia;
+            Vertice *adjacente = ProcuraVertice(grafo, adjacenteAtual->idVertice);
 
-                if (idAdjacente == destino) {
+            if (!adjacente->visitado) {
+                // Marcar vértice adjacente como visitado e adicioná-lo à fila
+                adjacente->visitado = 1;
+                Enfileirar(fila, adjacente);
+
+                // Armazene o predecessor e a distância para o vértice adjacente
+                adjacente->predecessor = verticeAtual->idVertice;
+                adjacente->distancia = verticeAtual->distancia + adjacenteAtual->distancia;
+                // Se encontrarmos o vértice de destino, podemos parar de procurar
+                if (adjacente->idVertice == destino) {
+                    encontrouDestino = 1;
                     break;
                 }
             }
@@ -221,25 +207,44 @@ Caminho* BuscaEmLargura(Vertice *grafo, int origem, int destino) {
         }
     }
 
-    if (predecessor[verticeDestino->idVertice] == -1) {
+    // Se não encontrarmos um caminho para o destino, retorna NULL
+    if (verticeDestino->predecessor == -1) {
         return NULL;
     }
 
-    // Construir a lista de vértices do caminho
+    // construir a lista de vértices do caminho usando predecessores e distâncias
     Caminho *caminho = NULL;
-    int atual = destino;
-    while (atual != -1) {
-        Caminho *novoCaminho = (Caminho *)malloc(sizeof(Caminho));
-        novoCaminho->idVertice = atual;
-        novoCaminho->distancia = distancia[atual];
+    Vertice *atual = verticeDestino;
+    while (atual != NULL) {
+        Caminho *novoCaminho = CriarCaminho(atual->idVertice, atual->distancia);
         novoCaminho->proximo = caminho;
         caminho = novoCaminho;
-        atual = predecessor[atual];
+
+        if (atual->predecessor == -1) {
+            atual = NULL;
+        } else {
+            atual = ProcuraVertice(grafo, atual->predecessor);
+        }
     }
 
     return caminho;
 }
 
+/// @brief Cria um novo elemento de caminho com as informações fornecidas
+/// @param idVertice ID do vértice no elemento de caminho
+/// @param distancia Distância acumulada até este vértice no caminho
+/// @return Ponteiro para o novo elemento de caminho criado      
+Caminho* CriarCaminho(int idVertice, float distancia) {
+    Caminho *novoCaminho = (Caminho *)malloc(sizeof(Caminho));
+    novoCaminho->idVertice = idVertice;
+    novoCaminho->distancia = distancia;
+    novoCaminho->proximo = NULL;
+    return novoCaminho;
+}
+
+
+/// @brief Cria uma nova fila vazia
+/// @return Ponteiro para a nova fila criada, ou NULL em caso de falha na alocação de memória
 Fila* CriarFila() {
     Fila *novaFila = (Fila *)malloc(sizeof(Fila));
     if (!novaFila) {
@@ -251,32 +256,40 @@ Fila* CriarFila() {
 }
 
 
-
-// Função para enfileirar um elemento na fila
-void enfileirar(Fila *fila, Vertice *vertice) {
-    NoFila *novoNo = (NoFila *)malloc(sizeof(NoFila));
+/// @brief Adiciona um elemento ao final da fila
+/// @param fila A fila à qual o elemento será adicionado
+/// @param vertice O vértice a ser adicionado à fila
+/// @return Retorna 1 se a operação for bem-sucedida e 0 se houver alguma falha
+int Enfileirar(Fila *fila, Vertice *vertice) {
+    NodeFila *novoNo = (NodeFila *)malloc(sizeof(NodeFila));
+    if (novoNo == NULL) {
+        return 0; // Retornar 0 se a alocação de memória falhar
+    }
     novoNo->vertice = vertice;
     novoNo->proximo = NULL;
 
     if (fila->rear == NULL) {
         fila->front = novoNo;
         fila->rear = novoNo;
-        return;
+    } else {
+        fila->rear->proximo = novoNo;
+        fila->rear = novoNo;
     }
-
-    fila->rear->proximo = novoNo;
-    fila->rear = novoNo;
+    
+    return 1; // Retornar 1 se a operação for bem-sucedida
 }
 
 
-// Função para desenfileirar um elemento da fila
-// Retorna o elemento desenfileirado
-Vertice* desenfileirar(Fila *fila) {
+
+/// @brief Remove o primeiro elemento da fila e retorna o vértice associado
+/// @param fila A fila da qual o elemento será removido
+/// @return Retorna o vértice associado ao elemento removido ou NULL se a fila estiver vazia
+Vertice* RetiraDaFila(Fila *fila) {
     if (fila->front == NULL) {
         return NULL;
     }
 
-    NoFila *noASerRemovido = fila->front;
+    NodeFila *noASerRemovido = fila->front;
     Vertice *verticeRemovido = noASerRemovido->vertice;
 
     fila->front = noASerRemovido->proximo;
@@ -290,72 +303,83 @@ Vertice* desenfileirar(Fila *fila) {
 }
 
 
-// Função para verificar se a fila está vazia
-// Retorna 1 se a fila estiver vazia, caso contrário retorna 0
-int estaVazia(Fila *fila) {
-    return fila->front == NULL;
-}
-
-// Função para contar o número de vértices no grafo
-// Retorna o número de vértices
-int contarVertices(Vertice *grafo) {
-    int contador = 0;
-    Vertice *verticeAtual = grafo;
-
-    while (verticeAtual != NULL) {
-        contador++;
-        verticeAtual = verticeAtual->proximo;
+/// @brief Verifica se a fila está vazia
+/// @param fila A fila que será verificada
+/// @return Retorna 1 se a fila estiver vazia, caso contrário retorna 0
+int EstaVazia(Fila *fila) {
+    if (fila->front == NULL) {
+        return 1;
     }
-
-    return contador;
+    return 0;
 }
 
-// Função para encontrar um vértice no grafo pelo seu ID
-// Retorna um ponteiro para o vértice encontrado ou NULL se não for encontrado
-Vertice *encontrarVertice(Vertice *grafo, int idVertice) {
-    Vertice *verticeAtual = grafo;
-
-    while (verticeAtual != NULL) {
-        if (verticeAtual->idVertice == idVertice) {
-            return verticeAtual;
-        }
-        verticeAtual = verticeAtual->proximo;
-    }
-
-    return NULL;
-}
-
-
-
-Vertice* BuscarVertice(Vertice *grafo, int idVertice) {
+/// @brief Procura um vértice no grafo com base no ID.
+/// @param grafo O grafo no qual o vértice vai ser procurado.
+/// @param idVertice O ID do vértice a procurar.
+/// @return Retorna um ponteiro para o vértice encontrado ou NULL se não encontrar.
+Vertice* ProcuraVertice(Vertice *grafo, int idVertice) {
+    // Cria um ponteiro auxiliar para percorrer a lista de vértices
     Vertice *aux = grafo;
+
+    // Enquanto houver vértices na lista
     while (aux) {
+        // Verifica se o ID do vértice atual corresponde ao ID procurado
         if (aux->idVertice == idVertice) {
+            // Se encontrado, retorna o ponteiro para o vértice
             return aux;
         }
+        // Avança para o próximo vértice na lista encadeada
         aux = aux->proximo;
     }
+
+    // Se o vértice não for encontrado, retorna NULL
     return NULL;
 }
 
 
-NodeTransporte *BuscarTransporteMaisProximo(NodeTransporte *listaTransportes, Vertice *grafo, int localCliente) {
+
+/// @brief Vê o valor de distância do último node.
+/// @param caminho Um ponteiro para a estrutura Caminho que representa o caminho a ser analisado.
+/// @return A distância total do caminho fornecido. Retorna INFINITY se o caminho for NULL.
+float DistanciaCaminho(Caminho *caminho) {
+    if (caminho == NULL) {
+        return INFINITY;
+    }
+
+    float distancia = 0;
+    while (caminho != NULL) {
+        distancia = caminho->distancia;
+        caminho = caminho->proximo;
+    }
+
+    return distancia;
+}
+
+/// @brief Procura o transporte mais próximo de um cliente
+/// @param listaTransportes A lista de transportes disponíveis
+/// @param grafo O grafo que representa a mapa dos transportes
+/// @param localCliente O ID do vértice que representa o local do cliente
+/// @return Retorna um ponteiro para o transporte mais próximo ou NULL se nenhum transporte estiver disponível
+NodeTransporte *ProcuraTransporteMaisProximo(NodeTransporte *listaTransportes, Vertice *grafo, int localCliente) {
     NodeTransporte *transporteAtual = listaTransportes;
     NodeTransporte *transporteMaisProximo = NULL;
     float menorDistancia = INFINITY;
-    
+
     while (transporteAtual != NULL) {
         if (transporteAtual->transporte.estado == 0) { // Verifica se o transporte está disponível
             Caminho *caminho = BuscaEmLargura(grafo, localCliente, transporteAtual->transporte.localizacao);
-            if (caminho != NULL) {
-                float distancia = caminho->distancia;
+            if(caminho == NULL) {
+                return NULL;
+            }
+            
+            float distancia = DistanciaCaminho(caminho);
+
+            if (distancia != INFINITY) {
                 if (distancia < menorDistancia) {
                     menorDistancia = distancia;
                     transporteMaisProximo = transporteAtual;
                 }
             }
-            // Libere a memória alocada para a estrutura Caminho, se necessário
-            // Por exemplo: LiberarCaminho(caminho);
         }
         transporteAtual = transporteAtual->proximo;
     }
@@ -364,15 +388,3 @@ NodeTransporte *BuscarTransporteMaisProximo(NodeTransporte *listaTransportes, Ve
 }
 
 
-
-
-float DistanciaEntreVertices(Vertice *grafo, int origem, int destino) {
-    Caminho *caminho = BuscaEmLargura(grafo, origem, destino);
-    if (caminho == NULL) {
-        return INFINITY;
-    }
-    float distancia = caminho->distancia;
-    // Libere a memória alocada para a estrutura Caminho, se necessário
-    // Por exemplo: LiberarCaminho(caminho);
-    return distancia;
-}
