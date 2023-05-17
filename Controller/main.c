@@ -27,12 +27,14 @@ int main() {
     // Inicializar variáveis
     NodeClientes* headClientes = NULL;
     NodeTransporte* headTransportes = NULL;
+    NodeTipoTransporte* headTipoTransporte = NULL;
     NodeGestores* headGestores = NULL;
     NodeTransacoes* headTransacoes = NULL;
     Vertice *headVertice = NULL;
+
     int nifClienteLogado;
     // verificar se os ficheiros binários existem, se não existirem, carregar os dados dos ficheiros CSV, ou se não, não carrega nada
-    int dadosCarregados = CarregarDados(&headClientes, &headTransportes, &headGestores, &headTransacoes, &headVertice);
+    int dadosCarregados = CarregarDados(&headClientes, &headTransportes, &headGestores, &headTransacoes, &headVertice, &headTipoTransporte);
     if (dadosCarregados == 1) {
         printf("Dados carregados dos arquivos binários.\n");
     } else if(dadosCarregados == 0) {
@@ -40,11 +42,13 @@ int main() {
     } else {
         printf("Erro ao carregar dados.\n");
     }
+    headVertice->idCentroRecolha = ProcurarCentroRecolha(headVertice);
+
 
 //testes
 
-     // Print the graph
-    PrintGrafo(headVertice);
+    //  // Print the graph
+  //  PrintGrafo(headVertice);
 
     int localCliente = 1; // teste -  ID do vértice que representa a localização do cliente
 

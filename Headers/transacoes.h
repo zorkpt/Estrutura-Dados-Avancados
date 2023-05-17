@@ -1,8 +1,9 @@
 #ifndef TRANSACOES_HEADER_GUARD
 #define TRANSACOES_HEADER_GUARD
 #pragma once
+#include "clientes.h"
 #include "transportes.h"
-#include "grafo.h"
+#include "caminho.h"
 
 typedef struct Transacoes{
     int idTransacao;
@@ -40,5 +41,7 @@ void MudaEstadoTransporte(struct Transporte* transporte);
 void AtualizaNivelBateria(Transporte *transporte, int bateriaPerdida);
 void AtualizaLocalTransporte(struct Transporte* transporte, int novoLocal);
 void AtualizaLocalCliente(struct Clientes* cliente, int novoLocal);
+int VerificaSePodeAlugar(NodeTransacoes *headTransacoes, struct Clientes *cliente, int nifClienteLogado );
+
 
 #endif

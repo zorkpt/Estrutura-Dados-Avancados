@@ -1,31 +1,45 @@
 #ifndef TRANSPORTES_HEADER_GUARD
 #define TRANSPORTES_HEADER_GUARD
 #pragma once
-#include "clientes.h"
+#include "grafo.h"
+#define MAX_TIPOS_TRANSPORTE 100
 
+
+typedef struct TipoTransporte {
+    int idTipo;
+    char nome[50];
+    float peso;
+    float precoPorKm;
+} TipoTransporte;
+
+typedef struct NodeTipoTransporte {
+    TipoTransporte tipo;
+    struct NodeTipoTransporte* proximo;
+}NodeTipoTransporte;
 typedef struct Transporte{
     int id;
-    char tipo[50];
-    int nivelBateria;   
-    float preco;
+    TipoTransporte* tipo;
+    int nivelBateria;
     int localizacao;
     int estado;
+    int visitado;
 } Transporte;
 
 typedef struct NodeTransporte
 {
     struct Transporte transporte;
     struct NodeTransporte *proximo;
+
 }NodeTransporte;
 
 
 int InserirTransporte(struct NodeTransporte** headRef, struct Transporte transporte);
 int MostrarTransportes(struct NodeTransporte* head);
-int VerTransportesDisponiveis(struct NodeTransporte* headTransporte);
+int VerTransportesDisponiveis(struct NodeTransporte* headTransporte, struct Vertice* headGrafo, int localizacaoCliente);
 struct Transporte EscreveTransporte(struct NodeTransporte* headTransporte, int id, char* tipo, int nivelBateria, float preco, int localizacao, int estado);
 struct Transporte* ProcurarTransporte(struct NodeTransporte* headRef, int id );    
 int RemoverTransporte(struct NodeTransporte **head, int id);
-int EditarTransporte(struct Transporte *transporte, int id, int estado, int nivelBateria, float preco, int localizacao, char *tipo);
+int EditarTransporte(struct Transporte *transporte, int id, int estado, int nivelBateria, float preco, int localizacao);
 int CopiarLista(struct NodeTransporte *head, struct NodeTransporte **copiedHead);
 int OrdenarListaDecrescente(struct NodeTransporte *head);
 int MostrarTransportes(struct NodeTransporte *head);
@@ -34,6 +48,13 @@ struct NodeTransporte* ProcurarTransportesPorLocal(struct NodeTransporte* headTr
 float CustoTotalAluguer(struct Transporte* transporte, int tempoAluguer);
 int AlugarTransporteDisponivel(struct Transporte* transporte);
 int EditarTransporteID(struct NodeTransporte *headTransporte, int id);
+NodeTransporte* TransportesParaRecolher(NodeTransporte *transportes);
+void LimparCamposTransportes(NodeTransporte *transporte);
+NodeTransporte *ProcuraTransporteMaisProximo(NodeTransporte *listaTransportes, Vertice *grafo, int localCliente);
+void ListarTransportesPorTipoERaio(struct NodeTransporte* headTransportes, struct Vertice* headGrafo, int localCliente, const char* tipo, float raio);
+TipoTransporte* ProcuraTipoTransporte(NodeTipoTransporte** head, int idTipo);
+int InserirTipoTransporte(struct NodeTipoTransporte** headRef, TipoTransporte tipoTransporte);
+
 
 
 #endif

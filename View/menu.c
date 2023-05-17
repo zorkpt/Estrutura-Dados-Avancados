@@ -66,7 +66,8 @@ int ListaMenuCliente(){
     printf("6. Ver transportes mais perto\n");
     printf("7. Realizar depósito\n");
     printf("8. Alterar Senha\n");
-    printf("9. Sair\n");
+    printf("9. Procurar Transportes por Tipo/Raio\n");
+    printf("10. Sair\n");
     escolha = VerificarInt(escolha);
     return escolha;
 }

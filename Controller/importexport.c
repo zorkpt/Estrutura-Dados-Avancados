@@ -33,6 +33,7 @@
 #define csvTransportes "Data/Csv/transportes.csv"
 #define csvTransacoes "Data/Csv/transacoes.csv"
 #define csvGrafo "Data/Csv/matrix.csv"
+#define csvTipoTransportes "Data/Csv/tipostransportes.csv"
 
 /// @brief Se todos os ficheiros CSV forem carregados com sucesso, retorna 1, caso contrário, retorna 0.
 /// @param headClientes 
@@ -41,12 +42,13 @@
 /// @param headTransacoes 
 /// @return 
 int CarregarCSV(struct NodeClientes** headClientes, struct NodeTransporte** headTransportes, 
-                 struct NodeGestores** headGestores, struct NodeTransacoes** headTransacoes, Vertice** headGrafo) {
+                 struct NodeGestores** headGestores, struct NodeTransacoes** headTransacoes, Vertice** headGrafo, NodeTipoTransporte** headTipoTransporte) {
     if (CarregarFicheiroClientes(headClientes, csvClientes) &&
-        CarregarFicheiroTransportes(headTransportes, csvTransportes) &&
+        CarregarFicheiroTiposTransporte(headTipoTransporte, csvTipoTransportes) &&
+        CarregarFicheiroTransportes(headTransportes, headTipoTransporte, csvTransportes) &&
         CarregarFicheiroGestores(headGestores, csvGestores) &&
         CarregarFicheiroTransacoes(headTransacoes, csvTransacoes) &&
-        CarregarFicheiroGrafo(headGrafo, csvGrafo)) {
+        CarregarFicheiroGrafo(headGrafo, csvGrafo) ) {
         return 1;
     }
     return 0;
@@ -61,7 +63,7 @@ int CarregarCSV(struct NodeClientes** headClientes, struct NodeTransporte** head
 /// @return Retorna 1 se os dados forem carregados com sucesso, retorna 
 ///         0 se os dados forem carregados de ficheiros CSV, retorna -1 se os dados não forem carregados.
 int CarregarDados(struct NodeClientes** headClientes, struct NodeTransporte** headTransportes, 
-                 struct NodeGestores** headGestores, struct NodeTransacoes** headTransacoes, Vertice** headGrafo) {
+                 struct NodeGestores** headGestores, struct NodeTransacoes** headTransacoes, Vertice** headGrafo, NodeTipoTransporte** headTipoTransporte) {
     if (CarregarBinarioClientes(headClientes) &&
         CarregarBinarioTransportes(headTransportes) &&
         CarregarBinarioGestores(headGestores) &&
@@ -70,7 +72,7 @@ int CarregarDados(struct NodeClientes** headClientes, struct NodeTransporte** he
         CarregarBinarioAdjacentes(*headGrafo)) {
         return 1;
     }
-    if(!CarregarCSV(headClientes, headTransportes, headGestores, headTransacoes, headGrafo)) {
+    if(!CarregarCSV(headClientes, headTransportes, headGestores, headTransacoes, headGrafo, headTipoTransporte)) {
         return -1;
     } else {
         return 0;
@@ -308,4 +310,279 @@ int CarregarBinarioAdjacentes(Vertice* grafo) {
     return 1;
 }
 
+// Número maximo de caracteres que cada linha pode conter
+#define MAX_LINHA 1024
+
+
+/// @brief Carrega dados de clientes de um determinado ficheiro e passa-os para uma lista ligada.
+/// @param head Pointer para o pointer do header da lista de clientes.
+/// @param nomeFicheiro String com o nome do ficheiro que contem os dados dos clientes a ser carregado.
+/// @return Retorna o número de clientes carregados.
+int CarregarFicheiroClientes(struct NodeClientes** head, char *nomeFicheiro){
+    FILE *ficheiro;
+    ficheiro = fopen(nomeFicheiro, "r");
+    int totalClientes = 0;
+    if(ficheiro == NULL){
+        return 0;
+    }
+    totalClientes = LerClientesDeFicheiro(head,ficheiro);
+    return totalClientes;
+}
+
+/// @brief 
+/// @param grafo 
+/// @param nomeFicheiro 
+/// @return 
+int CarregarFicheiroGrafo(Vertice **grafo, char *nomeFicheiro){
+    FILE *ficheiro;
+    ficheiro = fopen(nomeFicheiro, "r");
+    int totalVertices = 0;
+    if(ficheiro == NULL){
+        return 0;
+    }
+    totalVertices = LerGrafoDeFicheiro(grafo,ficheiro);
+    fclose(ficheiro); 
+    return totalVertices;
+}
+
+/// @brief 
+/// @param grafo 
+/// @param ficheiro 
+/// @return 
+int LerGrafoDeFicheiro(Vertice **grafo, FILE *ficheiro){
+    char linha[MAX_LINHA];
+    int totalVertices = 0;
+
+    fgets(linha, MAX_LINHA, ficheiro); // Pular a primeira linha (cabeçalho)
+    while(fgets(linha, MAX_LINHA, ficheiro) != NULL){
+        int id;
+        char titulo[256];
+        char *token, *delim = ",";
+        
+        sscanf(linha, "%d,%[^,],", &id, titulo);
+        
+        Vertice *novoVertice = CriarVertice(id, titulo);
+        *grafo = InsereVertice(*grafo, novoVertice);
+
+        
+        token = strtok(linha, delim); // ID
+        token = strtok(NULL, delim); // Título, NULL para continuar na mesma string
+        token = strtok(NULL, delim); // Primeiro par adjacente-distância
+
+        while (token != NULL) {
+            int adj;
+            float dist;
+            sscanf(token, "%d", &adj); // ID adjacente
+            token = strtok(NULL, delim); // Distância até ao adjacente, NULL para continuar na mesma string
+            sscanf(token, "%f", &dist); // Distância até ao adjacente
+
+            Adjacente* novoAdjacente = CriaAdjacente(adj, dist); // Cria novo adjacente
+            novoVertice = InsereAdjacente(novoVertice, id, novoAdjacente); // Insere novo adjacente na lista de adjacências do vértice
+
+            token = strtok(NULL, delim); // Próximo par adjacente-distância
+        }
+
+        totalVertices++;
+    }
+    return totalVertices;
+}
+
+
+/// @brief Carrega dados de transportes de um determinado ficheiro e passa-os para uma lista ligada.
+/// @param head Pointer para o pointer do header da lista de transportes.
+/// @param nomeFicheiro String com o nome do ficheiro que contem os dados dos transportes a ser carregado.
+/// @return Retorna o número de transportes carregados.
+int CarregarFicheiroTransportes(struct NodeTransporte** head, NodeTipoTransporte** headTipo, char* nomeFicheiro) {
+    FILE *ficheiro;
+    ficheiro = fopen(nomeFicheiro, "r");
+    int totalTransportes = 0;
+    if(ficheiro == NULL){
+        return 0;
+    }
+    totalTransportes = LerTransportesDeFicheiro(head,headTipo,ficheiro);
+    fclose(ficheiro);
+    return totalTransportes;
+}
+
+/// @brief Carrega dados de gestores de um determinado ficheiro e passa-os para uma lista ligada.
+/// @param head Pointer para o pointer do header da lista de gestores.
+/// @param nomeFicheiro String com o nome do ficheiro que contem os dados dos gestores a ser carregado.
+/// @return Retorna o número de gestores carregados.
+int CarregarFicheiroGestores(struct NodeGestores** head, char* nomeFicheiro) {
+    FILE *ficheiro;
+    ficheiro = fopen(nomeFicheiro, "r");
+    int totalGestores = 0;
+    if(ficheiro == NULL){
+        return 0;
+    }
+    totalGestores = LerGestoresDeFicheiro(head,ficheiro);
+    return totalGestores;
+}
+
+/// @brief Carrega dados de transações de um determinado ficheiro e passa-os para uma lista ligada.
+/// @param head Pointer para o pointer do header da lista de transações.
+/// @param nomeFicheiro String com o nome do ficheiro que contem os dados dos transações a ser carregado.
+/// @return Retorna o número de transações carregadas.
+int CarregarFicheiroTransacoes(struct NodeTransacoes** head, char* nomeFicheiro){
+    FILE *ficheiro;
+    ficheiro = fopen(nomeFicheiro, "r");
+    int totalTransacoes = 0;
+    if(ficheiro == NULL){
+        return 0;
+    }
+    totalTransacoes = LerTransacoesDeFicheiro(head,ficheiro);
+    return totalTransacoes;
+}
+
+
+int CarregarFicheiroTiposTransporte(NodeTipoTransporte** headTipos, char* nomeFicheiro) {
+    FILE *ficheiro;
+    ficheiro = fopen(nomeFicheiro, "r");
+    int totalTipos = 0;
+    if(ficheiro == NULL){
+        return 0;
+    }
+    totalTipos = LerTiposTransporteDeFicheiro(headTipos,ficheiro);
+    fclose(ficheiro);
+    return totalTipos;
+}
+
+
+
+
+/// @brief Lê os dados dos clientes do ficheiro e passa-os para uma lista ligada.
+/// @param headRef Pointer para o pointer do header da lista de clientes.
+/// @param ficheiro Ficheiro que contem os dados dos clientes a ser carregado.
+/// @return Retorna o número de clientes carregados.
+int LerClientesDeFicheiro(struct NodeClientes** headRef, FILE *ficheiro){
+    char linha[MAX_LINHA];
+    struct Clientes temp;
+    int totalClientes=0;
+    while (fgets(linha, MAX_LINHA, ficheiro) != NULL)
+    {
+            if(sscanf(linha,"%d\t%[^\t]\t%[^\t]\t%f\t%[^\t]\t%[^\t]\t%d", 
+                                                                    &temp.nif, 
+                                                                    temp.nome, 
+                                                                    temp.morada, 
+                                                                    &temp.saldo,
+                                                                    temp.login,
+                                                                    temp.password,
+                                                                    &temp.localCliente)==7){
+            if(InserirCliente(headRef, temp))
+                totalClientes++;
+        }
+            
+    }
+    return totalClientes;
+}
+
+/// @brief Lê os dados dos transportes do ficheiro e passa-os para uma lista ligada.
+/// @param headRef Pointer para o pointer do header da lista de transportes.
+/// @param ficheiro Ficheiro que contem os dados dos transportes a ser carregado.
+/// @return Retorna o número de transportes carregados.
+int LerTransportesDeFicheiro(struct NodeTransporte** headRef, NodeTipoTransporte** headTipos, FILE *ficheiro){
+    char linha[MAX_LINHA];
+    struct Transporte temp;
+    int totalTransportes=0;
+    
+    fgets(linha, MAX_LINHA, ficheiro); // Ignorar primeira linha
+    while (fgets(linha, MAX_LINHA, ficheiro) != NULL)
+    {
+        int idTipo;
+        if(sscanf(linha,"%d\t%d\t%d\t%d\t%d", 
+                                                    &temp.id, 
+                                                    &idTipo, 
+                                                    &temp.nivelBateria, 
+                                                    &temp.localizacao,
+                                                    &temp.estado)==5){
+            temp.tipo = ProcuraTipoTransporte(headTipos, idTipo);
+            if(temp.tipo != NULL && InserirTransporte(headRef,temp)) 
+                totalTransportes++;
+            else
+                return 0;
+        }
+    }
+
+    return totalTransportes;
+}
+
+
+
+/// @brief Lê os dados dos gestores do ficheiro e passa-os para uma lista ligada.
+/// @param headRef Pointer para o pointer do header da lista de gestores.
+/// @param ficheiro Ficheiro que contem os dados dos gestores a ser carregado.
+/// @return Retorna o número de gestores carregados.
+int LerGestoresDeFicheiro(struct NodeGestores** headRef, FILE *ficheiro){
+    char linha[MAX_LINHA];
+    struct Gestores temp;
+    int totalGestores=0;
+    while (fgets(linha, MAX_LINHA, ficheiro) != NULL)
+    {
+        if(sscanf(linha,"%[^\t]\t%s\n",temp.nome,temp.password)==2){
+            if(InserirGestor(headRef,temp))
+                totalGestores++;
+        }
+            
+    }
+    return totalGestores;
+}
+
+/// @brief Lê os dados das transações do ficheiro e passa-os para uma lista ligada.
+/// @param headRef Pointer para o pointer do header da lista de transações.
+/// @param ficheiro Ficheiro que contem os dados das transações a ser carregado.
+/// @return Retorna o número de transações carregadas.
+int LerTransacoesDeFicheiro(struct NodeTransacoes** headRef, FILE *ficheiro){
+    char linha[MAX_LINHA];
+    struct Transacoes temp;
+    int totalTransacoes=0;
+    while (fgets(linha, MAX_LINHA, ficheiro) != NULL)
+    {
+        if(sscanf(linha,"%d\t%d\t%d\t%d\n",
+                            &temp.idTransacao,
+                            &temp.idClienteAAlugar,
+                            &temp.idTransporte,
+                            &temp.tempoAlugado)==4){
+            if(InserirTransacoes(headRef,temp))
+                totalTransacoes++;
+        }
+            
+        }
+    return totalTransacoes;
+}
+
+int LerTiposTransporteDeFicheiro(NodeTipoTransporte** headRef, FILE *ficheiro){
+    char linha[MAX_LINHA];
+    TipoTransporte temp;
+    int totalTipos=0;
+    fgets(linha, MAX_LINHA, ficheiro); // Ignorar a linha do cabeçalho
+    while (fgets(linha, MAX_LINHA, ficheiro) != NULL)
+    {
+        if(sscanf(linha,"%d\t%[^\t]\t%f\t%f", 
+                                                    &temp.idTipo, 
+                                                    temp.nome, 
+                                                    &temp.peso, 
+                                                    &temp.precoPorKm)==4){
+                                                   
+            if(InserirTipoTransporte(headRef,temp))
+                totalTipos++;
+        }
+            
+    }
+
+    return totalTipos;
+}
+
+
 #endif
+
+
+TipoTransporte* ProcuraTipoTransporte(NodeTipoTransporte** head, int idTipo) {
+    NodeTipoTransporte* current = *head;
+    while(current != NULL) {
+        if(current->tipo.idTipo == idTipo) {
+            return &(current->tipo);
+        }
+        current = current->proximo;
+    }
+    return NULL; // Retorna NULL se o tipo de transporte não foi encontrado
+}

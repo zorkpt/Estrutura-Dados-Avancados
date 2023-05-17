@@ -10,7 +10,7 @@
  */
 
 #include "../Headers/transacoes.h"
-#include "../Headers/transportes.h"
+#include "../Headers/caminho.h"
 #include <stdlib.h>
 #include <stdio.h>
 
@@ -315,7 +315,7 @@ int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoe
                     AtualizaLocalCliente(ProcuraCliente(headClientes, nifClienteLogado), idLocalTermino);
                     AtualizaLocalTransporte(&currentTransporte->transporte, idLocalTermino);
                     float distancia = DistanciaCaminho(caminho);
-                    float valorTotal = CalculaValorTotal(distancia, currentTransporte->transporte.preco);
+                    float valorTotal = CalculaValorTotal(distancia, currentTransporte->transporte.tipo->precoPorKm);
                     int bateriaPerdida = CalculaBateriaPerdida(distancia);
                     AtualizaNivelBateria(&currentTransporte->transporte, bateriaPerdida);
                     MudaEstadoTransporte(&currentTransporte->transporte);
@@ -330,4 +330,16 @@ int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoe
         currentTransacao = currentTransacao->proximo;
     }
     return 0;
+}
+
+int VerificaSePodeAlugar(NodeTransacoes *headTransacoes, struct Clientes *cliente, int nifClienteLogado ){
+    // Verifica se o cliente está num transporte
+    if (ClienteEmTransporte(headTransacoes, nifClienteLogado)) {
+        return -1;
+    }
+    // Verifica se o cliente tem saldo suficiente
+    if (cliente->saldo <= 0) {
+        return 0;
+    }
+    return 1;
 }

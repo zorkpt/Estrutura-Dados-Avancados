@@ -1,5 +1,6 @@
 #ifndef GESTORES_HEADER_GUARD
 #define GESTORES_HEADER_GUARD
+#pragma once
 
 // ESTRUTURA GESTORES
 typedef struct Gestores{

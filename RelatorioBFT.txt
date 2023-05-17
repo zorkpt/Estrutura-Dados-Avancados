@@ -1,0 +1,25 @@
+Título: Relatório sobre a função BuscaEmLargura e a escolha do algoritmo
+
+Introdução:
+A função BuscaEmLargura implementa o algoritmo de busca em largura (Breadth-First Search - BFS) para encontrar o caminho mais curto entre dois vértices em um grafo. O objetivo deste relatório é explicar o funcionamento da função e justificar a escolha do algoritmo de busca em largura.
+
+Funcionamento da função BuscaEmLargura:
+A função BuscaEmLargura recebe um grafo, um vértice de origem e um vértice de destino. O grafo é representado por uma lista de vértices, onde cada vértice possui uma lista de adjacências. O objetivo da função é encontrar o caminho mais curto entre o vértice de origem e o vértice de destino e retornar esse caminho como uma lista encadeada de vértices.
+
+O algoritmo de busca em largura funciona visitando os vértices do grafo em camadas, começando pelo vértice de origem. A função utiliza uma fila para armazenar os vértices a serem visitados e processa os vértices na ordem em que são retirados da fila. Ao visitar um vértice, o algoritmo verifica todos os vértices adjacentes e os marca como visitados, adicionando-os à fila.
+
+Para cada vértice visitado, a função armazena a distância acumulada até aquele vértice e seu predecessor no caminho. Quando o vértice de destino é encontrado, a função constrói o caminho mais curto usando os predecessores e as distâncias armazenadas nos vértices visitados.
+
+Justificativa para a escolha do algoritmo de busca em largura:
+O algoritmo de busca em largura foi escolhido por ser um algoritmo eficiente e simples para encontrar o caminho mais curto em um grafo não ponderado. Algumas das razões para a escolha do algoritmo de busca em largura são:
+
+Eficiência: O algoritmo de busca em largura tem uma complexidade de tempo O(V + E), onde V é o número de vértices e E é o número de arestas no grafo. Essa complexidade torna o algoritmo eficiente para a maioria dos casos de uso.
+
+Simplicidade: O algoritmo de busca em largura é simples de entender e implementar. A implementação requer apenas uma estrutura de dados de fila e algumas variáveis para armazenar informações sobre os vértices visitados.
+
+Garantia de encontrar o caminho mais curto: O algoritmo de busca em largura garante que o caminho mais curto será encontrado, desde que o grafo seja não ponderado. Isso ocorre porque o algoritmo visita os vértices em camadas, avançando a partir do vértice de origem.
+
+Aplicabilidade em grafos com ciclos: A busca em largura pode ser aplicada a grafos que contêm ciclos, diferentemente de outros algoritmos de busca, como a busca em profundidade, que podem ficar presos em ciclos infinitos.
+
+Conclusão:
+A função BuscaEmLargura implementa o algoritmo de busca em largura de forma eficiente e eficaz. A escolha do algoritmo de busca em largura

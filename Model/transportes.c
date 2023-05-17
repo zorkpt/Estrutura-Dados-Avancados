@@ -8,13 +8,16 @@
  * @copyright Copyright (c) 2023
  * 
  */
-
-#include "../Headers/transportes.h"
 #include "../Headers/verificacoes.h"
+#include "../Headers/caminho.h"
+#include "../Headers/busca.h"
+#include "../Headers/grafo.h"
 #include <stdlib.h>
+#include <math.h>
 #include <stdio.h>
 #include <string.h>
 #define MAX_STRING 100
+#define limiteBateria 50
 
 
 
@@ -50,9 +53,9 @@ int MostrarTransportes(struct NodeTransporte* head) {
     while (current != NULL) {
         printf("%-5d %-20s %-10d %-10.2f %-20d %-10d\n",
                current->transporte.id,
-               current->transporte.tipo,
+               current->transporte.tipo->nome,
                current->transporte.nivelBateria,
-               current->transporte.preco,
+               current->transporte.tipo->precoPorKm,
                current->transporte.localizacao,
                current->transporte.estado);
         current = current->proximo;
@@ -95,13 +98,11 @@ int RemoverTransporte(struct NodeTransporte **head, int id) {
 /// @param transporte struct de Transporte a editar
 /// @param id ID do transporte para manter o mesmo
 /// @return Retorna 1 se a edição for bem sucedida, 0 caso contrário      
-int EditarTransporte(struct Transporte *transporte, int id, int estado, int nivelBateria, float preco, int localizacao, char *tipo){
+int EditarTransporte(struct Transporte *transporte, int id, int estado, int nivelBateria, float preco, int localizacao){
     transporte->estado = estado;
     transporte->nivelBateria = nivelBateria;
-    transporte->preco = preco;
+    transporte->tipo->precoPorKm = preco;
     transporte->localizacao = localizacao;
-    strcpy(transporte->tipo, tipo);
-    //Guarda o ID sem alterar
     transporte->id = id;
     return 1;
 }
@@ -163,32 +164,41 @@ struct NodeTransporte* ProcurarTransportesPorLocal(struct NodeTransporte* headTr
 /// @brief Ver todos os transportes disponiveis (estado = 0)
 /// @param headTransporte Pointer para o head da lista de NodeTransporte
 /// @return Retorna 1 se a operação for bem sucedida
-int VerTransportesDisponiveis(struct NodeTransporte* headTransporte) {
+int VerTransportesDisponiveis(struct NodeTransporte* headTransporte, struct Vertice* headGrafo, int localizacaoCliente) {
     struct NodeTransporte* current = headTransporte;
     //cabeçalho
-    printf("%-8s%-20s%-10s%-10s%-30s\n", "ID", "TIPO", "BATERIA", "PRECO/HORA", "LOCAL");    
-    while (current != NULL) {
-            if (current->transporte.estado == 0) {
-                printf("%-8d%-20s%-10d%-10.2f%-30d\n", 
-                    current->transporte.id, 
-                    current->transporte.tipo, 
-                    current->transporte.nivelBateria, 
-                    current->transporte.preco,
-                    current->transporte.localizacao
-                ); }
+    printf("Transportes disponiveis:\n");
+printf("%-8s%-20s%-10s%-15s%-30s%20s\n", "ID", "TIPO", "BATERIA", "PRECO/KM", "LOCAL", "DISTANCIA");    
+while (current != NULL) {
+    if (current->transporte.estado == 0) {
+        Caminho *caminho = BuscaEmLargura(headGrafo, localizacaoCliente, current->transporte.localizacao);
+        if (caminho != NULL) {
+            printf("%-8d%-20s%-10d€%-15.2f[%d] - %30.30s%15.2fm\n", 
+                        current->transporte.id, 
+                        current->transporte.tipo->nome,
+                        current->transporte.nivelBateria, 
+                        current->transporte.tipo->precoPorKm,
+                        current->transporte.localizacao,
+                        GetNomeLocal(headGrafo, current->transporte.localizacao),
+                        caminho->distanciaTotal);
+                    free(caminho);
+                }
+            }
         current = current->proximo;
     }
     return 1;
 }
+
+
 /// @brief Escreve os dados de um transporte 
 /// @param headTransporte Pointer para o head da lista de NodeTransporte
 /// @return Retorna uma struct Transporte com os dados inseridos
 struct Transporte EscreveTransporte(struct NodeTransporte* headTransporte, int id, char* tipo, int nivelBateria, float preco, int localizacao, int estado) {
     struct Transporte transporteTemp;
     transporteTemp.id = id;
-    strcpy(transporteTemp.tipo, tipo);
+  //  strcpy(transporteTemp.tipo, tipo); tipo_de_transporte
     transporteTemp.nivelBateria = nivelBateria;
-    transporteTemp.preco = preco;
+    transporteTemp.tipo->precoPorKm = preco;
     transporteTemp.localizacao = localizacao;
     transporteTemp.estado = estado;
     return transporteTemp;
@@ -280,8 +290,8 @@ int MostrarTransportesOrdenados(struct NodeTransporte *head) {
 /// @param tempoAluguer Tempo de aluguer em minutos
 /// @return Retorna o custo total do aluguer
 float CustoTotalAluguer(struct Transporte* transporte, int tempoAluguer) {
-    float tempoAluguerHoras = tempoAluguer / 60.0; // Convert minutos em horas
-    return transporte->preco * tempoAluguerHoras;
+    float tempoAluguerHoras = tempoAluguer / 60.0; // Converte minutos em horas
+    return transporte->tipo->precoPorKm * tempoAluguerHoras;
 }
 
 
@@ -294,5 +304,114 @@ int AlugarTransporteDisponivel(struct Transporte* transporte) {
     } else {
         return 0;
     }
+}
+
+
+
+NodeTransporte* TransportesParaRecolher(NodeTransporte *transportes) {
+    NodeTransporte *transportesParaRecolher = NULL;
+    
+    while(transportes){
+        if(transportes->transporte.nivelBateria < limiteBateria){
+            InserirTransporte(&transportesParaRecolher, transportes->transporte);
+        }
+        transportes = transportes->proximo;
+    }
+
+    return transportesParaRecolher;
+}
+
+
+
+/// @brief Limpa os campos visitado da estrutura de transportes
+/// @param grafo Um ponteiro para a estrutura transporte
+void LimparCamposTransportes(NodeTransporte *transporte) {
+    NodeTransporte *transporteAux = transporte;
+
+    while (transporteAux != NULL) {
+        transporteAux->transporte.visitado = 0;
+        transporteAux = transporteAux->proximo;
+    }
+}
+
+
+/// @brief Procura o transporte mais próximo de um cliente
+/// @param listaTransportes A lista de transportes disponíveis
+/// @param grafo O grafo que representa a mapa dos transportes
+/// @param localCliente O ID do vértice que representa o local do cliente
+/// @return Retorna um ponteiro para o transporte mais próximo ou NULL se nenhum transporte estiver disponível
+NodeTransporte *ProcuraTransporteMaisProximo(NodeTransporte *listaTransportes, Vertice *grafo, int localCliente) {
+    NodeTransporte *transporteAtual = listaTransportes;
+    NodeTransporte *transporteMaisProximo = NULL;
+    float menorDistancia = INFINITY;
+
+    while (transporteAtual != NULL) {
+        if (transporteAtual->transporte.estado == 0) { // Verifica se o transporte está disponível
+            Caminho *caminho = BuscaEmLargura(grafo, localCliente, transporteAtual->transporte.localizacao);
+            if(caminho == NULL) {
+                return NULL;
+            }
+            
+            float distancia = DistanciaCaminho(caminho);
+
+            if (distancia != INFINITY) {
+                if (distancia < menorDistancia) {
+                    menorDistancia = distancia;
+                    transporteMaisProximo = transporteAtual;
+                }
+            }
+        }
+        transporteAtual = transporteAtual->proximo;
+    }
+
+    return transporteMaisProximo;
+}
+
+
+// tipo_de_transporte
+// void ListarTransportesPorTipoERaio(struct NodeTransporte* headTransportes, struct Vertice* headGrafo, int localCliente, const char* tipo, float raio) {
+//     struct NodeTransporte* currentTransporte = headTransportes;
+
+//     printf("\nTransportes do tipo %s no raio de %.2f a partir do local %d:\n", tipo, raio, localCliente);
+
+//     while (currentTransporte != NULL) {
+//         if (strcmp(currentTransporte->transporte.tipo, tipo) == 0) {
+//             Caminho* caminho = BuscaEmLargura(headGrafo, localCliente, currentTransporte->transporte.localizacao);
+//             float distancia = DistanciaCaminho(caminho);
+//             if (distancia <= raio) {
+//                 printf("ID: %d - Localização: [%d] %s - Distância: %.2f\n",
+//                     currentTransporte->transporte.id,
+//                     currentTransporte->transporte.localizacao,
+//                     GetNomeLocal(headGrafo, currentTransporte->transporte.localizacao),
+//                     distancia);
+//             }
+//         }
+
+//         currentTransporte = currentTransporte->proximo;
+//     }
+
+// }
+
+
+int InserirTipoTransporte(struct NodeTipoTransporte** headRef, TipoTransporte tipoTransporte) {
+    struct NodeTipoTransporte* newNode = (struct NodeTipoTransporte*) malloc(sizeof(struct NodeTipoTransporte));
+    if (newNode == NULL) {
+        return 0;
+    }
+
+    newNode->tipo = tipoTransporte;
+    newNode->proximo = NULL;
+
+    if (*headRef == NULL) {
+        *headRef = newNode;
+    } else {
+        struct NodeTipoTransporte* current = *headRef;
+        while (current->proximo != NULL) {
+            current = current->proximo;
+        }
+        current->proximo = newNode;
+    }
+
+    return 1;
 }
 

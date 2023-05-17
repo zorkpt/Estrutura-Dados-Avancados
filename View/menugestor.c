@@ -28,6 +28,23 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
     int id;
     while(1)
     {   
+        // Verificar se o centro de recolha está definido
+        if (headVertice->idCentroRecolha == -1) {
+            ListarLocais(headVertice);
+            printf("\nATENÇÃO: O centro de recolha não está definido!\n");
+            printf("Por favor, defina o local para o centro de recolha:\n");
+            
+            int idLocal = VerificarInt();
+
+            if (ProcuraVertice(headVertice, idLocal)) {
+                headVertice->idCentroRecolha = idLocal;
+                printf("O centro de recolha foi definido para o local: [%d] %s\n", idLocal, GetNomeLocal(headVertice, idLocal));
+            } else {
+                printf("O local com ID: %d não existe. Por favor, insira um ID válido.\n", idLocal);
+                continue;
+            }
+        }
+
         int nif;
         int escolha = listaMenuGestor();
         switch (escolha)
@@ -154,9 +171,9 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             if (transporteEditar != NULL) {
                 printf("Transporte encontrado:\n");
                 printf("ID: %d\n", transporteEditar->id);
-                printf("Tipo: %s\n", transporteEditar->tipo);
+                //printf("Tipo: %s\n", transporteEditar->tipo);
                 printf("Bateria: %d\n", transporteEditar->nivelBateria);
-                printf("Preço / hora: %0.2f\n", transporteEditar->preco);
+                printf("Preço / hora: %0.2f\n", transporteEditar->tipo->precoPorKm);
                 printf("Localização: %d\n", transporteEditar->localizacao);
                 printf("Estado: %d\n", transporteEditar->estado);
             }
@@ -170,7 +187,7 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             localizacaoEditar = VerificarInt();
             printf("Estado do transporte: ");
             estadoEditar = VerificarInt();
-            if (EditarTransporte(transporteEditar, id, estadoEditar, nivelBateriaEditar, precoEditar, localizacaoEditar, tipoEditar)) { 
+            if (EditarTransporte(transporteEditar, id, estadoEditar, nivelBateriaEditar, precoEditar, localizacaoEditar)) { 
                 printf("Transporte Editado Com Sucesso!\n");
             } else {
                 printf("Operação cancelada.");
@@ -193,7 +210,7 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             if(!MostrarTransportes(headTransportes)) printf("Não existem transportes registados.");
             break;
         case 16:
-            VerTransportesDisponiveis(headTransportes);
+            VerTransportesDisponiveis(headTransportes,headVertice,headVertice->idCentroRecolha);
             break;
         case 17:
             MostrarTransportesOrdenados(headTransportes);
@@ -268,6 +285,37 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             if(!RemoverTransacao(&headTransacoes,idTransacao)) printf("Não foi encontrada nenhuma transação com o ID: %d",idTransacao);
             else printf("Transação com o ID: %d eliminada.",idTransacao);
             break;
+
+        case 99:
+            NodeTransporte *transportesParaRecolher = TransportesParaRecolher(headTransportes);
+            Caminho *caminho = GreedySearch(transportesParaRecolher, headVertice, 3);
+            printf("Caminho encontrado:\n");
+            
+            Caminho *aux = caminho;
+            int passo = 1;
+            while (aux != NULL) {
+                printf("Passo %d - ID do vértice: %d, Distância: %.2f, Distância total: %.2f\n", passo, aux->idVertice, aux->distancia, aux->distanciaTotal);
+                aux = aux->proximo;
+                passo++;
+            }
+            printf("Distância total: %.2f\n", caminho->distanciaTotal);
+            
+            // Imprimir a sequência de transportes recolhidos
+            printf("Sequência de transportes recolhidos:\n");
+            aux = caminho;
+            while (aux != NULL) {
+                NodeTransporte *nodeTransporte = ProcurarTransportesPorLocal(transportesParaRecolher, aux->idVertice);
+                if (nodeTransporte != NULL && !nodeTransporte->transporte.visitado) {
+                    printf("ID do transporte: %d\n", nodeTransporte->transporte.id);
+                    nodeTransporte->transporte.visitado = 1; // Marcar como visitado
+                }
+                aux = aux->proximo;
+            }
+            
+            break;
+
+
+
         case 0:
             if (!ExportarClientes(headClientes)) {
                 printf("Erro ao exportar dados dos Clientes.\n");

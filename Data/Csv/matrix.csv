@@ -10,14 +10,14 @@
 9,Rua Dom Antonio Barroso,8,1500,10,200,4,1000
 10,Igreja de Nossa Senhora do Terço,9,200,8,1700,4,1200
 11,Jardim das Barrocas - Passeio dos Assentos,2,50,21,100,22,200
-12,Rio Cávado,6,400,24,800,17,1000
+12,C_Centro de Recolha,6,400,24,800,17,1000
 13,Pelourinho de Barcelos,14,100,15,200,19,300
 14,Chafariz do Campo da Feira,13,100,15,100,19,200
 15,Monumento - Estatua Galo de Barcelos,13,200,14,100,19,100
 16,Solar do Benfeito e Capela de Santa Ana,8,2000,17,2200,18,2300
 17,Cruzeiro do Senhor do Galo,12,1000,16,2200,18,200
 18,Casa de Beça Meneses,17,200,20,100,19,200
-19,Largo de Apoio,13,300,14,200,15,100
+19,Largo de Apoio,13,300,14,200,21,100
 20,Parque da Cidade,21,500,22,550,23,600
 21,Capela de Nossa Senhora da Ponte,11,100,20,500,22,300
 22,Igreja de Santo André,11,200,20,550,21,300
@@ -54,6 +54,5 @@
 53,Igreja de São Pedro,51,400,52,300,54,250
 54,Mosteiro de Santa Clara,53,250,55,150,56,200
 55,Solar dos Peixotos,54,150,56,100,57,350
-55,Solar dos Peixotos,54,150,56,100,57,350
 56,Jardim da Rua de Santo António,54,200,55,100,57,200
-57,Igreja da Misericórdia,55,350,56,200,--,--
+57,Igreja da Misericórdia,55,350,56,200,44,300,43,200

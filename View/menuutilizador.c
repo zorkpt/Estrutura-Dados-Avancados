@@ -13,6 +13,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../Headers/menuutilizador.h"
+#include "../Headers/caminho.h"
+#include "../Headers/funcoes.h"
 #include "../Headers/verificacoes.h"
 #define MAX_LENGTH 100
 
@@ -76,12 +78,16 @@ int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headG
             // Caso 3: Alugar um meio de mobilidade elétrica
             case 3:
                 int idTransporte;
-                if (ClienteEmTransporte(headTransacoes, nifClienteLogado)) {
-                    printf("Já estás a utilizar um transporte. Termina a viagem atual antes de alugar outro.\n");
+                int podeAlugar = VerificaSePodeAlugar(headTransacoes, cliente, nifClienteLogado);
+                if(podeAlugar == -1){
+                    printf("Não podes alugar um transporte enquanto estiver num transporte.\n");
+                    break;
+                }else if(podeAlugar == 0) {
+                    printf("Não tens saldo suficiente para alugar um transporte.\n");
                     break;
                 }
 
-                VerTransportesDisponiveis(headTransportes);
+                VerTransportesDisponiveis(headTransportes,headGrafo,cliente->localCliente);
                 printf("Escolher um dos transportes disponiveis de momento: (ID) ");
                 idTransporte = VerificarInt();
                 transporteAlugar = ProcurarTransporte(headTransportes, idTransporte);
@@ -138,9 +144,8 @@ int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headG
             case 6:
                 NodeTransporte *transporteMaisProximo = ProcuraTransporteMaisProximo(headTransportes, headGrafo, cliente->localCliente);
                 if (transporteMaisProximo) {
-                    printf("O transporte mais próximo é:\n[%d] - %s - Localizado em [%d] %s\n",
+                    printf("O transporte mais próximo é:\n[%d] -  - Localizado em [%d] %s\n",
                         transporteMaisProximo->transporte.id,
-                        transporteMaisProximo->transporte.tipo,
                         transporteMaisProximo->transporte.localizacao, 
                         GetNomeLocal(headGrafo , transporteMaisProximo->transporte.localizacao));
                 } else {
@@ -171,13 +176,21 @@ int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headG
                 }
                 break;
 
+            case 9:
+                char tipo[MAX_LENGTH];
+                LerTextoInput("Tipo de transporte a procurar?\n",tipo, MAX_LENGTH);
+                printf("Raio de busca: ");
+                float raio = VerificarFloat();
+                // tipo_de_transporte
+              //  ListarTransportesPorTipoERaio(headTransportes, headGrafo, cliente->localCliente, tipo, raio);
+                break;
 
             // Caso 9: Exportar todos os dados e sair do programa
-            case 9:
+            case 10:
                 if (ExportarTodosDados(headClientes, headGestores, headTransportes, headTransacoes, headGrafo)) {
                     printf("Todos os dados foram exportados com sucesso.\n");
                     exit(0);
-                } else {
+                } else {    
                     printf("Erro ao exportar dados.\n");
                 }
                 break;

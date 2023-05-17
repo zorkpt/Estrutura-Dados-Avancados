@@ -1,7 +1,11 @@
 #ifndef MENUGESTOR_HEADER_GUARD
 #define MENUGESTOR_HEADER_GUARD
 #pragma once
-#include "verificacoes.h"
+#include "clientes.h"
+#include "gestores.h"
+#include "transportes.h"
+#include "transacoes.h"
+#include "grafo.h"
 
 int MenuGestor(struct NodeClientes* headClientes, 
                struct NodeGestores* headGestores, 

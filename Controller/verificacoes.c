@@ -113,20 +113,32 @@ int VerificaIdTransportes(struct NodeTransporte* head, int id) {
     return 0;
 }
 
-/// @brief Lê um texto do input do user e verifica se é válido.
-/// @param texto texto a ser mostrado ao user antes da inserção do input
-/// @param resultado resultado da leitura do input
-/// @param max_length inteiro que representa o tamanho máximo do input
-/// @return Retorna 1 se o input for válido
+
+ /// @brief Lê uma string de entrada do usuário com validação e remoção de caracteres indesejados.
+ /// @param texto Mensagem a ser exibida ao solicitar a entrada do usuário.
+ /// @param resultado Ponteiro para a string onde a entrada do usuário será armazenada.
+ /// @param max_length Comprimento máximo da string de entrada, incluindo o caractere nulo '\0'.
+ /// @return Retorna 1 se a entrada for lida com sucesso.
 int LerTextoInput(char *texto, char *resultado, int max_length) {
+    // Mostra a mensagem de entrada
     printf("%s", texto);
+
+    // Loop infinito até que uma entrada válida seja fornecida
     while (1) {
+        // Lê a entrada do usuário até o comprimento máximo especificado
         fgets(resultado, max_length, stdin);
+
+        // Determina o comprimento da string lida
         int len = strlen(resultado);
+
+        // Remove o caractere de nova linha '\n' do final da string, se presente
         if (len > 0 && resultado[len-1] == '\n') {
             resultado[len-1] = '\0';
         }
+
+        // Verifica se a entrada tem pelo menos um caractere (excluindo o caractere nulo)
         if (strlen(resultado) > 0) {
+            // Retorna 1 (sucesso) se a entrada for válida
             return 1;
         } else {
             printf("Entrada Inválida.\n%s", texto);

@@ -4,8 +4,7 @@
 #include "transportes.h"
 #include "clientes.h"
 #include "gestores.h"
-#include "transacoes.h"
-#include "grafo.h"
+
 
  
 int VerificarInt();

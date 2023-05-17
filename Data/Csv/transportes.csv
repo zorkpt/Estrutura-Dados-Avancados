@@ -1,10 +1,11 @@
-1	Trotinete Electrica	30	15	1	1
-2	E-Bike	100	20	12	1
-3	Carro Eletrico	85	50	25	0
-4	E-Bike	34	20	48	0
-5	Trotinete Electrica	21	15	23	0
-6	E-Bike	100	20	5	0
-7	Trotinete Electrica	40	15	11	0
-8	Trotinete Electrica	55	15	29	0
-9	E-Bike	32	20	27	0
-10	Trotinete Electrica	1	15	19	0
+ID  TIPO Bat local estado
+1	1	100	1	1
+2	1	100	12	1
+3	3	85	25	0
+4	2	34	1	0
+5	3	21	7	0
+6	3	10	5	0
+7	2	100	11	0
+8	1	10	29	0
+9	1	100	27	0
+10	2	10	19	0

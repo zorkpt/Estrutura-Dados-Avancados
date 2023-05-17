@@ -1,6 +1,7 @@
 #ifndef CLIENTES_HEADER_GUARD
 #define CLIENTES_HEADER_GUARD
 #define MAX_CHAR 50
+#pragma once
 // ESTRUTURA LISTA CLIENTES
 typedef struct Clientes{
     int nif;
