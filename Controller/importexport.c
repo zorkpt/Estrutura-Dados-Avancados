@@ -19,7 +19,7 @@
 #include "../Headers/transportes.h"
 #include "../Headers/transacoes.h"
 #include "../Headers/funcoes.h"
-
+#include "../Headers/viagem.h"
 
 #define ficheiroClientes "Data/Bin/clientes.bin"
 #define ficheiroGestores "Data/Bin/gestores.bin"
@@ -27,6 +27,8 @@
 #define ficheiroTransacoes "Data/Bin/transacoes.bin"
 #define ficheiroVertices "Data/Bin/grafo.bin"
 #define ficheiroArestas "Data/Bin/arestas.bin"
+#define ficheiroViagens "Data/Bin/viagens.bin"
+#define ficheiroTipoTransporte "Data/Bin/tipoTransporte.bin"
 
 #define csvClientes "Data/Csv/clients.csv"
 #define csvGestores "Data/Csv/gestores.csv"
@@ -156,6 +158,25 @@ int ExportarTransacoes(struct NodeTransacoes* listaTransacoes) {
     fclose(file);
     return 1;
 }
+
+/// @brief Exporta a lista de transacoes para um fichero binário.
+/// @param listaTransacoes Pointer para o header da lista de transacoes.
+/// @return Retorna 1 se a exportação for bem sucedida, caso contrário, retorna 0.
+int ExportarViagens(struct Viagem* listaViagem) {
+    FILE* file = fopen(ficheiroViagens, "wb");
+    if (file == NULL) {
+        return 0;
+    }
+
+    struct Viagem* current = listaViagem;
+    while (current != NULL) {
+        fwrite(&current, sizeof(struct NodeTransacoes), 1, file);
+        current = current->proxima;
+    }
+    fclose(file);
+    return 1;
+}
+
 
 /// @brief Carrega dados de clientes de um ficheiro binário.
 /// @param headClientes Pointer para o header da lista de clientes.

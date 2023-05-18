@@ -74,7 +74,6 @@ int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headG
                     }
                 }
                 break;
-
             // Caso 3: Alugar um meio de mobilidade elétrica
             case 3:
                 int idTransporte;
@@ -119,7 +118,7 @@ int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headG
                     if (localTermino == NULL) {
                         printf("Local não encontrado.\n");
                     } else {
-                        Caminho *caminho = BuscaEmLargura(headGrafo, cliente->localCliente, IdlocalTermino);
+                        Caminho *caminho = Dijkstra(headGrafo, cliente->localCliente, IdlocalTermino);
 
                         if (!TerminarAluguer(headTransportes, headTransacoes, headClientes, nifClienteLogado, IdlocalTermino, caminho)) {
                             printf("Erro ao terminar aluguer.\n");
@@ -132,12 +131,11 @@ int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headG
 
             // Caso 5: Visualizar histórico de alugueres
             case 5:
-                int totalTransacoes = MostrarHistoricoAlugueres(headTransacoes, nifClienteLogado);
-                if (totalTransacoes == 0) {
-                    printf("Sem dados para mostrar.\n");
-                } else {
-                    printf("\nA mostrar %d registos.", totalTransacoes);
+                if (cliente->historicoViagens == NULL) {
+                    printf("O cliente %s (NIF: %d) não tem nenhuma viagem registrada.\n", cliente->nome, cliente->nif);
+                    break;
                 }
+                MostrarHistoricoViagens(cliente);
                 break;
 
             // Caso 6: Procurar transporte mais próximo

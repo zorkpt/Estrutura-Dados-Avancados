@@ -142,7 +142,7 @@ void LimparCamposGrafo(Vertice *grafo) {
     while (verticeAux != NULL) {
         verticeAux->visitado = 0;
         verticeAux->predecessor = -1;
-        verticeAux->distancia = 0;
+        verticeAux->distancia = INFINITY;
         verticeAux = verticeAux->proximo;
     }
 }

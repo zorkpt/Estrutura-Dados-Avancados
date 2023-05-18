@@ -7,6 +7,7 @@
 typedef struct Fila {
     struct NodeFila *front;
     struct NodeFila *rear;
+    Vertice *vertice;
 } Fila;
 
 // Definição do tipo NodeFila
@@ -15,11 +16,15 @@ typedef struct NodeFila {
     struct NodeFila *proximo;
 } NodeFila;
 
+typedef struct FilaPrioridade {
+    Vertice *vertice;
+    struct FilaPrioridade *proximo;
+} FilaPrioridade;
 
 Fila* CriarFila();
-int Enfileirar(Fila *fila, Vertice *vertice);
-int EstaVazia(Fila *fila);
-Vertice* RetiraDaFila(Fila *fila);
-
+FilaPrioridade* CriarFilaPrioridade();
+Vertice* RetirarDaFila(FilaPrioridade **fila);
+int EstaVazia(FilaPrioridade *fila);
+FilaPrioridade* AdicionarNaFila(FilaPrioridade *fila, Vertice *vertice);
 
 #endif

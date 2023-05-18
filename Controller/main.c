@@ -62,7 +62,7 @@ int main() {
     }
     int origem = 1;
     int destino = 5;
-    Caminho *caminho = BuscaEmLargura(headVertice, origem, destino);
+    Caminho *caminho = Dijkstra(headVertice, origem, destino);
 
     if (caminho) {
         printf("Caminho encontrado entre %d e %d:\n", origem, destino);
@@ -89,7 +89,7 @@ int main() {
         MenuUtilizador(headClientes,headGestores,headTransportes,headTransacoes,headVertice,nifClienteLogado);
         break;
     case 2:
-        MenuGestor(headClientes,headGestores,headTransportes,headTransacoes, headVertice);
+        MenuGestor(headClientes,headGestores,headTransportes,headTipoTransporte, headTransacoes, headVertice);
         break;
 
     default:

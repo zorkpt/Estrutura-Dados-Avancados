@@ -2,6 +2,7 @@
 #define CLIENTES_HEADER_GUARD
 #define MAX_CHAR 50
 #pragma once
+#include "viagem.h"
 // ESTRUTURA LISTA CLIENTES
 typedef struct Clientes{
     int nif;
@@ -11,6 +12,7 @@ typedef struct Clientes{
     char login[MAX_CHAR];
     char password[MAX_CHAR];
     int localCliente;
+    Viagem* historicoViagens;
 } Clientes;
 typedef struct NodeClientes
 {

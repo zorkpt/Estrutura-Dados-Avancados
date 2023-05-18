@@ -9,7 +9,8 @@
 
 int MenuGestor(struct NodeClientes* headClientes, 
                struct NodeGestores* headGestores, 
-               struct NodeTransporte* headTransportes, 
+               struct NodeTransporte* headTransportes,
+               NodeTipoTransporte* headTipoTransporte,
                struct NodeTransacoes* headTransacoes,
                Vertice *headVertice);
 

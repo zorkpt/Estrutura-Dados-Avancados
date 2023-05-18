@@ -15,63 +15,58 @@ Fila* CriarFila() {
     return novaFila;
 }
 
-
-
-
-/// @brief Adiciona um elemento ao final da fila
-/// @param fila A fila à qual o elemento será adicionado
-/// @param vertice O vértice a ser adicionado à fila
-/// @return Retorna 1 se a operação for bem-sucedida e 0 se houver alguma falha
-int Enfileirar(Fila *fila, Vertice *vertice) {
-    NodeFila *novoNo = (NodeFila *)malloc(sizeof(NodeFila));
-    if (novoNo == NULL) {
-        return 0; // Retornar 0 se a alocação de memória falhar
-    }
-    novoNo->vertice = vertice;
-    novoNo->proximo = NULL;
-
-    if (fila->rear == NULL) {
-        fila->front = novoNo;
-        fila->rear = novoNo;
-    } else {
-        fila->rear->proximo = novoNo;
-        fila->rear = novoNo;
-    }
-    
-    return 1; // Retornar 1 se a operação for bem-sucedida
+FilaPrioridade* CriarFilaPrioridade() {
+    // Como a fila está vazia inicialmente, simplesmente retornamos NULL
+    return NULL;
 }
 
+// Função para adicionar um vértice à fila de prioridade
+FilaPrioridade* AdicionarNaFila(FilaPrioridade *fila, Vertice *vertice) {
+    FilaPrioridade *novo = malloc(sizeof(FilaPrioridade));
+    novo->vertice = vertice;
+    novo->proximo = NULL;
 
+    if (fila == NULL) {
+        return novo;
+    } else if (fila->vertice->distancia > vertice->distancia) {
+        novo->proximo = fila;
+        return novo;
+    } else {
+        FilaPrioridade *atual = fila;
+        while (atual->proximo != NULL && atual->proximo->vertice->distancia < vertice->distancia) {
+            atual = atual->proximo;
+        }
+        novo->proximo = atual->proximo;
+        atual->proximo = novo;
+        return fila;
+    }
+}
 
-/// @brief Remove o primeiro elemento da fila e retorna o vértice associado
-/// @param fila A fila da qual o elemento será removido
-/// @return Retorna o vértice associado ao elemento removido ou NULL se a fila estiver vazia
-Vertice* RetiraDaFila(Fila *fila) {
-    if (fila->front == NULL) {
+// Função para retirar e retornar o vértice na frente da fila de prioridade
+Vertice* RetirarDaFila(FilaPrioridade **fila) {
+    // Se a fila está vazia, não há vértice para retirar, então retorna NULL
+    if (*fila == NULL) {
         return NULL;
     }
 
-    NodeFila *noASerRemovido = fila->front;
-    Vertice *verticeRemovido = noASerRemovido->vertice;
+    // Retira o nó na frente da fila e obtém o vértice associado a ele
+    FilaPrioridade *retirar = *fila;
+    Vertice *vertice = retirar->vertice;
 
-    fila->front = noASerRemovido->proximo;
+    // Atualiza a frente da fila para o próximo nó e libetra a memória do nó retirado
+    *fila = retirar->proximo;
+    free(retirar);
 
-    if (fila->front == NULL) {
-        fila->rear = NULL;
-    }
-
-    free(noASerRemovido);
-    return verticeRemovido;
+    // Retorna o vértice associado ao nó retirado
+    return vertice;
 }
 
-
-
-/// @brief Verifica se a fila está vazia
-/// @param fila A fila que será verificada
-/// @return Retorna 1 se a fila estiver vazia, caso contrário retorna 0
-int EstaVazia(Fila *fila) {
-    if (fila->front == NULL) {
+// Função para verificar se a fila de prioridade está vazia
+int EstaVazia(FilaPrioridade *fila) {
+    // Se a fila está vazia, retorna 1 (verdadeiro), senão retorna 0 (falso)
+    if(fila == NULL) {
         return 1;
     }
     return 0;
 }
+

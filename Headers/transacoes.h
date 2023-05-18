@@ -1,7 +1,6 @@
 #ifndef TRANSACOES_HEADER_GUARD
 #define TRANSACOES_HEADER_GUARD
 #pragma once
-#include "clientes.h"
 #include "transportes.h"
 #include "caminho.h"
 
@@ -21,6 +20,7 @@ typedef struct NodeTransacoes
 }NodeTransacoes;
 
 
+
 int InserirTransacoes(struct NodeTransacoes** headRef, struct Transacoes transacoes);
 int MostrarTransacoes(struct NodeTransacoes* head);
 int MostrarTransacoesCliente(struct NodeTransacoes* head, int idCliente);
@@ -28,7 +28,7 @@ int EditarTransacao(struct Transacoes * transacao, int tempoAlugado, int idClien
 int RemoverTransacao(struct NodeTransacoes **head, int idTransacao);
 struct Transacoes* ProcurarTransacao(struct NodeTransacoes* head, int idTransacao);
 int ProximoIDTransacao(struct NodeTransacoes* headTransacoes);
-int MostrarHistoricoAlugueres(struct NodeTransacoes* headTransacoes, int nif);
+void MostrarHistoricoViagens(struct Clientes* cliente);
 int ClienteEmTransporte(struct NodeTransacoes* headTransacoes, int nif);
 int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, struct NodeClientes* headClientes, int nifClienteLogado, int idLocalTermino, Caminho* caminho);
 int AtualizarEstadoTransporte(struct Clientes* cliente, struct NodeTransporte* headTransportes, 

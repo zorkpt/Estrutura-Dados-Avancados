@@ -12,6 +12,7 @@
 #include "../Headers/menugestor.h"
 #include "../Headers/funcoes.h"
 #include "../Headers/verificacoes.h"
+#include "../Headers/caminho.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,7 +25,7 @@
 /// @param headGestores Pointer para o header da lista de gestores
 /// @param headTransportes Pointer para o header da lista de transportes
 /// @param headTransacoes Pointer para o header da lista de transacoes
-int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGestores, struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, Vertice *headVertice ){
+int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGestores, struct NodeTransporte* headTransportes, NodeTipoTransporte* headTipoTransporte, struct NodeTransacoes* headTransacoes, Vertice *headVertice ){
     int id;
     while(1)
     {   
@@ -218,6 +219,22 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
         case 18:
             //procurar por geocodigo
             break;
+        case 19:
+            ListarTiposTransporte(headTipoTransporte);
+            printf("Digite o ID do tipo de transporte que deseja alterar o preço: ");
+            int idTipo = VerificarInt();
+            
+            printf("Digite o novo preço por Km para esse tipo de transporte: ");
+            float novoPreco = VerificarFloat();
+            
+            int resultado = AlterarPrecoTransporte(headTipoTransporte, idTipo, novoPreco);
+
+            if (resultado) {
+                printf("O preço foi alterado com sucesso.\n");
+            } else {
+                printf("Não foi encontrado nenhum tipo de transporte com o ID fornecido.\n");
+            }
+            break;
         case 21: 
             struct Gestores gestorNovo;
             char nomeGestor[MAX_LENGTH];
@@ -300,18 +317,7 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             }
             printf("Distância total: %.2f\n", caminho->distanciaTotal);
             
-            // Imprimir a sequência de transportes recolhidos
-            printf("Sequência de transportes recolhidos:\n");
-            aux = caminho;
-            while (aux != NULL) {
-                NodeTransporte *nodeTransporte = ProcurarTransportesPorLocal(transportesParaRecolher, aux->idVertice);
-                if (nodeTransporte != NULL && !nodeTransporte->transporte.visitado) {
-                    printf("ID do transporte: %d\n", nodeTransporte->transporte.id);
-                    nodeTransporte->transporte.visitado = 1; // Marcar como visitado
-                }
-                aux = aux->proximo;
-            }
-            
+            ImprimirCaminho(caminho,3);
             break;
 
 

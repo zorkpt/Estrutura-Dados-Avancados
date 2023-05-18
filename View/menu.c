@@ -35,6 +35,7 @@ int listaMenuGestor(){
     printf("15. Ver todos Transportes\n");
     printf("16. Ver todos Transportes disponiveis\n");
     printf("17. Ver todos Transportes Sorted por Autonomia\n");
+    printf("19. Editar Preço de Tipo de Transporte\n");
     printf(" ------- GESTORES -------- \n");
     printf("21. Adicionar Gestor\n");
     printf("22. Eliminar Gestor\n");

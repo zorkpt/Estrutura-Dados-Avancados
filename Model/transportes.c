@@ -11,6 +11,7 @@
 #include "../Headers/verificacoes.h"
 #include "../Headers/caminho.h"
 #include "../Headers/busca.h"
+#include "../Headers/fila.h"
 #include "../Headers/grafo.h"
 #include <stdlib.h>
 #include <math.h>
@@ -18,7 +19,6 @@
 #include <string.h>
 #define MAX_STRING 100
 #define limiteBateria 50
-
 
 
 /// @brief Insere uma nova struct de Transportes na lista de NodeTransporte
@@ -171,7 +171,7 @@ int VerTransportesDisponiveis(struct NodeTransporte* headTransporte, struct Vert
 printf("%-8s%-20s%-10s%-15s%-30s%20s\n", "ID", "TIPO", "BATERIA", "PRECO/KM", "LOCAL", "DISTANCIA");    
 while (current != NULL) {
     if (current->transporte.estado == 0) {
-        Caminho *caminho = BuscaEmLargura(headGrafo, localizacaoCliente, current->transporte.localizacao);
+        Caminho *caminho = Dijkstra(headGrafo, localizacaoCliente, current->transporte.localizacao);
         if (caminho != NULL) {
             printf("%-8d%-20s%-10d€%-15.2f[%d] - %30.30s%15.2fm\n", 
                         current->transporte.id, 
@@ -347,7 +347,7 @@ NodeTransporte *ProcuraTransporteMaisProximo(NodeTransporte *listaTransportes, V
 
     while (transporteAtual != NULL) {
         if (transporteAtual->transporte.estado == 0) { // Verifica se o transporte está disponível
-            Caminho *caminho = BuscaEmLargura(grafo, localCliente, transporteAtual->transporte.localizacao);
+            Caminho *caminho = Dijkstra(grafo, localCliente, transporteAtual->transporte.localizacao);
             if(caminho == NULL) {
                 return NULL;
             }
@@ -376,7 +376,7 @@ NodeTransporte *ProcuraTransporteMaisProximo(NodeTransporte *listaTransportes, V
 
 //     while (currentTransporte != NULL) {
 //         if (strcmp(currentTransporte->transporte.tipo, tipo) == 0) {
-//             Caminho* caminho = BuscaEmLargura(headGrafo, localCliente, currentTransporte->transporte.localizacao);
+//             Caminho* caminho = Dijkstra(headGrafo, localCliente, currentTransporte->transporte.localizacao);
 //             float distancia = DistanciaCaminho(caminho);
 //             if (distancia <= raio) {
 //                 printf("ID: %d - Localização: [%d] %s - Distância: %.2f\n",
@@ -414,4 +414,69 @@ int InserirTipoTransporte(struct NodeTipoTransporte** headRef, TipoTransporte ti
 
     return 1;
 }
+
+Camiao* InicializarCamiao(float capacidadeMaxima) {
+    Camiao *camiao = (Camiao*)malloc(sizeof(Camiao));
+    camiao->capacidadeMaxima = capacidadeMaxima;
+    camiao->cargaAtual = 0.0;
+    return camiao;
+}
+
+
+int PodeAdicionarTransporte(Camiao *camiao, Transporte *transporte) {
+    // Retorna 1 (verdadeiro) se o peso do transporte for menor ou igual ao espaço disponível no camião, caso contrário retorna 0 (falso)
+    return transporte->tipo->peso <= (camiao->capacidadeMaxima - camiao->cargaAtual);
+}
+void AdicionarTransporte(Camiao *camiao, Transporte *transporte) {
+    camiao->cargaAtual += transporte->tipo->peso;
+}
+
+void DescarregarCamiao(Camiao *camiao) {
+    camiao->cargaAtual = 0.0;
+}
+
+
+void RecarregarTransportes(NodeTransporte* transportes) {
+    // Itera pelos transportes
+    for (NodeTransporte *transporteAux = transportes; transporteAux != NULL; transporteAux = transporteAux->proximo) {
+        // Define a bateria para 100
+        transporteAux->transporte.nivelBateria = 100;
+    }
+}
+
+void MoverTransportesParaCentro(NodeTransporte *transportes, int centroRecolha) {
+    NodeTransporte *aux = transportes;
+    while (aux != NULL) {
+        // Só move os transportes que já foram visitados
+        if (aux->transporte.visitado == 1) {
+            aux->transporte.localizacao = centroRecolha;
+        }
+        aux = aux->proximo;
+    }
+}
+
+
+void ListarTiposTransporte(NodeTipoTransporte* tiposTransporte) {
+    NodeTipoTransporte* aux = tiposTransporte;
+    printf("\nTipos de transporte:\n");
+    printf("---------------------\n");
+    printf("ID | Nome\t | Peso | Preço por Km\n");
+    while(aux != NULL) {
+        printf("%d %s %.2f %.2f\n", aux->tipo.idTipo, aux->tipo.nome, aux->tipo.peso, aux->tipo.precoPorKm);        
+        aux = aux->proximo;
+    }
+}
+int AlterarPrecoTransporte(NodeTipoTransporte *tiposTransporte, int idTipo, float novoPreco) {
+    NodeTipoTransporte *aux = tiposTransporte;
+    while (aux != NULL) {
+        if (aux->tipo.idTipo == idTipo) {
+            aux->tipo.precoPorKm = novoPreco;
+            return 1;  // Retorna 1 para indicar sucesso
+        }
+        aux = aux->proximo;
+    }
+
+    return 0;  // Retorna 0 se não encontrar o tipo de transporte
+}
+
 

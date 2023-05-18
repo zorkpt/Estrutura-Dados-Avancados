@@ -31,6 +31,12 @@ typedef struct NodeTransporte
     struct NodeTransporte *proximo;
 
 }NodeTransporte;
+typedef struct Camiao {
+    float capacidadeMaxima; // Capacidade máxima do camião em kg
+    float cargaAtual; // Carga atual do camião em kg
+    float cargaMaxima; // Carga maxima do camião
+} Camiao;
+
 
 
 int InserirTransporte(struct NodeTransporte** headRef, struct Transporte transporte);
@@ -54,7 +60,14 @@ NodeTransporte *ProcuraTransporteMaisProximo(NodeTransporte *listaTransportes, V
 void ListarTransportesPorTipoERaio(struct NodeTransporte* headTransportes, struct Vertice* headGrafo, int localCliente, const char* tipo, float raio);
 TipoTransporte* ProcuraTipoTransporte(NodeTipoTransporte** head, int idTipo);
 int InserirTipoTransporte(struct NodeTipoTransporte** headRef, TipoTransporte tipoTransporte);
+void RecarregarTransportes(NodeTransporte* transportes);
+void MoverTransportesParaCentro(NodeTransporte* transportes, int centroRecolha);
+void ListarTiposTransporte(NodeTipoTransporte* tiposTransporte);
+int AlterarPrecoTransporte(NodeTipoTransporte* tiposTransporte, int idTipo, float novoPreco);
 
-
-
+//funcs camiao
+int PodeAdicionarTransporte(Camiao *camiao, Transporte *transporte);
+void AdicionarTransporte(Camiao *camiao, Transporte *transporte);
+void DescarregarCamiao(Camiao *camiao);
+Camiao* InicializarCamiao(float capacidadeMaxima);
 #endif

@@ -8,11 +8,13 @@
  * @copyright Copyright (c) 2023
  * 
  */
-
+#include "../Headers/clientes.h"
+#include "../Headers/viagem.h"
 #include "../Headers/transacoes.h"
 #include "../Headers/caminho.h"
 #include <stdlib.h>
 #include <stdio.h>
+#include <string.h>
 
 /// @brief Insere uma nova struct de Transacoes na lista de NodeTransacoes
 /// @param headRef Pointer para o head **pointer** da lista de NodeTransacoes
@@ -158,25 +160,23 @@ int ProximoIDTransacao(struct NodeTransacoes* headTransacoes) {
 /// @param headTransacoes Pointer para o head da lista de NodeTransacoes
 /// @param nif NIF do cliente a procurar
 /// @return Retorna o número de alugueres encontrados
-int MostrarHistoricoAlugueres(struct NodeTransacoes* headTransacoes, int nif){
-    struct NodeTransacoes* current = headTransacoes;
-    if (current == NULL) {
-        return 0;
+void MostrarHistoricoViagens(Clientes* cliente) {
+    Viagem* viagemAtual = cliente->historicoViagens;
+    
+    printf("\nHistórico de viagens para o cliente %s (NIF: %d):\n", cliente->nome, cliente->nif);
+    printf("-------------------------------------------------------------------\n");
+    printf("| ID Transporte | Origem | Destino | Distância | Valor Pago | Custo Por Km | Transporte Utilizado\n");
+    while (viagemAtual != NULL) {
+        printf("| %13d | %6d | %7d | %9.2f | %10.2f | %12.2f | %s \n",
+            viagemAtual->idTransporte,
+            viagemAtual->origem,
+            viagemAtual->destino,
+            viagemAtual->distancia,
+            viagemAtual->valorPago,
+            viagemAtual->custoPorKm,
+            viagemAtual->tipoTransporte);
+        viagemAtual = viagemAtual->proxima;
     }
-    int count = 0;
-    // Cabeçalho da tabela
-    printf("ID Aluguer\tID Cliente\tID Transporte\tTempo Decorrido\n");
-    while (current != NULL) {
-        if (current->transacoes.idClienteAAlugar == nif) {
-            printf("%d\t%d\t%d\t%d\n",  current->transacoes.idTransacao, 
-                                        current->transacoes.idClienteAAlugar, 
-                                        current->transacoes.idTransporte, 
-                                        current->transacoes.tempoAlugado);
-            count++;
-        }
-        current = current->proximo;
-    }
-    return count;
 }
 
 
@@ -194,9 +194,6 @@ int ClienteEmTransporte(struct NodeTransacoes* headTransacoes, int nif) {
     }
     return 0; 
 }
-
-
-
 
 /// @brief Atualiza o estado de um transporte
 /// @param cliente struct de Clientes, passada para atualizar o saldo
@@ -226,13 +223,6 @@ int AtualizarEstadoTransporte(struct Clientes* cliente, struct NodeTransporte* h
         return 1;
     }
 }
-
-
-
-
-
-
-
 
 /// @brief Atualiza o local de um cliente
 /// @param cliente 
@@ -312,7 +302,8 @@ int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoe
             while (currentTransporte != NULL) {
                 if (currentTransporte->transporte.id == currentTransacao->transacoes.idTransporte) {
                     int localInicial = currentTransporte->transporte.localizacao;
-                    AtualizaLocalCliente(ProcuraCliente(headClientes, nifClienteLogado), idLocalTermino);
+                    Clientes* clienteAtual = ProcuraCliente(headClientes, nifClienteLogado);
+                    AtualizaLocalCliente(clienteAtual, idLocalTermino);
                     AtualizaLocalTransporte(&currentTransporte->transporte, idLocalTermino);
                     float distancia = DistanciaCaminho(caminho);
                     float valorTotal = CalculaValorTotal(distancia, currentTransporte->transporte.tipo->precoPorKm);
@@ -320,7 +311,19 @@ int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoe
                     AtualizaNivelBateria(&currentTransporte->transporte, bateriaPerdida);
                     MudaEstadoTransporte(&currentTransporte->transporte);
 
-                    AtualizaSaldoCliente(ProcuraCliente(headClientes, nifClienteLogado), valorTotal);
+                    AtualizaSaldoCliente(clienteAtual, valorTotal);
+
+                    // Cria uma nova viagem e adiciona-a ao histórico do cliente
+                    Viagem* novaViagem = (Viagem*)malloc(sizeof(Viagem));
+                    novaViagem->idTransporte = currentTransporte->transporte.id;
+                    novaViagem->origem = localInicial;
+                    strcpy(novaViagem->tipoTransporte, currentTransporte->transporte.tipo->nome);
+                    novaViagem->destino = idLocalTermino;
+                    novaViagem->valorPago = valorTotal;
+                    novaViagem->custoPorKm = currentTransporte->transporte.tipo->precoPorKm;
+                    novaViagem->distancia = distancia;
+                    novaViagem->proxima = clienteAtual->historicoViagens;
+                    clienteAtual->historicoViagens = novaViagem;
 
                     return 1;
                 }
