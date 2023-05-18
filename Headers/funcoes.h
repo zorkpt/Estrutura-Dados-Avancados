@@ -52,10 +52,14 @@ int ExportarClientes(struct NodeClientes* listaClientes);
 int ExportarGestores(struct NodeGestores* listaGestores);
 int ExportarTransportes(struct NodeTransporte* listaTransporte);
 int ExportarTransacoes(struct NodeTransacoes* listaTransacoes);
+int ExportarTiposTransporte(struct NodeTipoTransporte* listaTiposTransporte);
+int ExportarViagens(struct Viagem* listaViagem);
 int ExportaVertices(Vertice *grafo);
 int ExportaAdjacentes(Vertice *grafo);
 int CarregarBinarioVertices(Vertice** grafo);
 int CarregarBinarioAdjacentes(Vertice* grafo);
+int CarregarBinarioViagens(struct Viagem** headViagem);
+int CarregarBinarioTiposTransporte(struct NodeTipoTransporte** headTipoTransporte);
 
 
 

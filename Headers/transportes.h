@@ -2,6 +2,7 @@
 #define TRANSPORTES_HEADER_GUARD
 #pragma once
 #include "grafo.h"
+#include "viagem.h"
 #define MAX_TIPOS_TRANSPORTE 100
 
 
@@ -16,6 +17,7 @@ typedef struct NodeTipoTransporte {
     TipoTransporte tipo;
     struct NodeTipoTransporte* proximo;
 }NodeTipoTransporte;
+
 typedef struct Transporte{
     int id;
     TipoTransporte* tipo;
@@ -70,4 +72,6 @@ int PodeAdicionarTransporte(Camiao *camiao, Transporte *transporte);
 void AdicionarTransporte(Camiao *camiao, Transporte *transporte);
 void DescarregarCamiao(Camiao *camiao);
 Camiao* InicializarCamiao(float capacidadeMaxima);
+Viagem* CriarNovaViagem(int idTransporte, int origem, int destino, float valorPago, float custoPorKm, float distancia);
+int InserirViagem(Viagem** headViagem, Viagem viagem);
 #endif

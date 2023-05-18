@@ -310,18 +310,10 @@ int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoe
                     int bateriaPerdida = CalculaBateriaPerdida(distancia);
                     AtualizaNivelBateria(&currentTransporte->transporte, bateriaPerdida);
                     MudaEstadoTransporte(&currentTransporte->transporte);
-
                     AtualizaSaldoCliente(clienteAtual, valorTotal);
 
                     // Cria uma nova viagem e adiciona-a ao histórico do cliente
-                    Viagem* novaViagem = (Viagem*)malloc(sizeof(Viagem));
-                    novaViagem->idTransporte = currentTransporte->transporte.id;
-                    novaViagem->origem = localInicial;
-                    strcpy(novaViagem->tipoTransporte, currentTransporte->transporte.tipo->nome);
-                    novaViagem->destino = idLocalTermino;
-                    novaViagem->valorPago = valorTotal;
-                    novaViagem->custoPorKm = currentTransporte->transporte.tipo->precoPorKm;
-                    novaViagem->distancia = distancia;
+                    Viagem* novaViagem = CriarNovaViagem(currentTransporte->transporte.id, localInicial, idLocalTermino, valorTotal, currentTransporte->transporte.tipo->precoPorKm, distancia);
                     novaViagem->proxima = clienteAtual->historicoViagens;
                     clienteAtual->historicoViagens = novaViagem;
 
@@ -333,6 +325,22 @@ int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoe
         currentTransacao = currentTransacao->proximo;
     }
     return 0;
+}
+
+
+Viagem* CriarNovaViagem(int idTransporte, int origem, int destino, float valorPago, float custoPorKm, float distancia) {
+    Viagem* novaViagem = (Viagem*)malloc(sizeof(Viagem));
+    if (novaViagem == NULL) {
+        return NULL;
+    }
+    novaViagem->idTransporte = idTransporte;
+    novaViagem->origem = origem;
+    novaViagem->destino = destino;
+    novaViagem->valorPago = valorPago;
+    novaViagem->custoPorKm = custoPorKm;
+    novaViagem->distancia = distancia;
+    novaViagem->proxima = NULL;
+    return novaViagem;
 }
 
 int VerificaSePodeAlugar(NodeTransacoes *headTransacoes, struct Clientes *cliente, int nifClienteLogado ){

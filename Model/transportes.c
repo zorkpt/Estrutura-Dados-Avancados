@@ -27,6 +27,9 @@
 /// @return Retorna 1 se a inserção for bem sucedida, 0 caso contrário
 int InserirTransporte(struct NodeTransporte** headRef, struct Transporte transporte) {
     struct NodeTransporte* newNode = (struct NodeTransporte*) malloc(sizeof(struct NodeTransporte));
+    if (newNode == NULL) {
+        return 0;
+    }
     newNode->transporte = transporte;
     newNode->proximo = NULL;
 
@@ -39,6 +42,7 @@ int InserirTransporte(struct NodeTransporte** headRef, struct Transporte transpo
         }
         current->proximo = newNode;
     }
+    return 1;
 }
 
 /// @brief Mostra todos os Transportes da lista de NodeTransporte
@@ -480,3 +484,26 @@ int AlterarPrecoTransporte(NodeTipoTransporte *tiposTransporte, int idTipo, floa
 }
 
 
+int InserirViagem(Viagem** headViagem, Viagem viagem) {
+    // Aloca memória para um novo node de viagem.
+    Viagem* novaViagem = (Viagem*)malloc(sizeof(Viagem));
+    if(novaViagem == NULL) {
+        return 0;
+    }
+
+    // Copia os dados da viagem lida do ficheiro para o novo node.
+    *novaViagem = viagem;
+    novaViagem->proxima = NULL;
+
+    if (*headViagem == NULL) {
+        *headViagem = novaViagem; // A lista estava vazia, portanto, o novo node é o head.
+    } else {
+        // Encontra o último node na lista.
+        Viagem* atual = *headViagem;
+        while (atual->proxima != NULL) {
+            atual = atual->proxima;
+        }
+        // Insere o novo node no final da lista.
+        atual->proxima = novaViagem;
+    }
+}
