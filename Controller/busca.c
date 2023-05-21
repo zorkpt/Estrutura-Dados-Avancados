@@ -95,8 +95,6 @@ int ProcurarCentroRecolha(struct Vertice* headGrafo) {
     return -1;
 }
 
-
-
 /// @brief Encontra um caminho aproximado para recolher todos os transportes usando uma abordagem greedy.
 /// @param transportes Um ponteiro para a estrutura NodeTransporte que representa a lista de transportes a ser recolhida
 /// @param grafo Um ponteiro para a estrutura Vertice que representa o grafo
@@ -160,8 +158,6 @@ Caminho* GreedySearch(NodeTransporte *transportes, Vertice *grafo, int centroRec
     return caminho;
 }
 
-
-
 /// @brief Verifica se existem transportes não visitados na lista de transportes
 /// @param transportes Um ponteiro para a lista encadeada de estruturas NodeTransporte
 /// @return Retorna 1 se houver transportes não visitados, caso contrário retorna 0
@@ -177,5 +173,3 @@ int ExistemTransportesNaoVisitados(NodeTransporte *transportes) {
 
     return 0;
 }
-
-

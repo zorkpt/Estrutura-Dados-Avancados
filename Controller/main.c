@@ -23,6 +23,7 @@
 /// @brief função Main que inicializa as listas, carrega os dados e inicia o login/menu.
 /// @return 
 int main() {
+    printf("Cá estamos....\n");
 
     // Inicializar variáveis
     NodeClientes* headClientes = NULL;
@@ -31,7 +32,7 @@ int main() {
     NodeGestores* headGestores = NULL;
     NodeTransacoes* headTransacoes = NULL;
     Vertice *headVertice = NULL;
-
+    printf("Variáveis inicializadas.\n");
     int nifClienteLogado;
     // verificar se os ficheiros binários existem, se não existirem, carregar os dados dos ficheiros CSV, ou se não, não carrega nada
     int dadosCarregados = CarregarDados(&headClientes, &headTransportes, &headGestores, &headTransacoes, &headVertice, &headTipoTransporte);
@@ -86,7 +87,7 @@ int main() {
     switch(tipoMenu)
     {
     case 1:
-        MenuUtilizador(headClientes,headGestores,headTransportes,headTransacoes,headVertice,nifClienteLogado);
+        MenuUtilizador(headClientes,headGestores,headTransportes,headTransacoes,headVertice,nifClienteLogado, headTipoTransporte);
         break;
     case 2:
         MenuGestor(headClientes,headGestores,headTransportes,headTipoTransporte, headTransacoes, headVertice);

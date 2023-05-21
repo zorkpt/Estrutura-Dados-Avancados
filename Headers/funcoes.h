@@ -27,7 +27,7 @@ int CarregarFicheiroGrafo(Vertice **grafo, char *nomeFicheiro);
 int CarregarFicheiroTiposTransporte(NodeTipoTransporte** headTipos, char* nomeFicheiro);
 int CarregarBinarioClientes(struct NodeClientes** head);
 int CarregarBinarioGestores(struct NodeGestores** head);
-int CarregarBinarioTransportes(struct NodeTransporte** head);
+int CarregarBinarioTransportes(struct NodeTransporte** headTransportes);
 int CarregarBinarioTransacoes(struct NodeTransacoes** head);
 
 // Carregar dados de ficheiros CSV
@@ -47,7 +47,7 @@ int ListaMenuCliente();
 
 
 // Exportar dados para ficheiros binarios
-int ExportarTodosDados(NodeClientes *headClientes, NodeGestores *headGestores, NodeTransporte *headTransportes, NodeTransacoes *headTransacoes, Vertice *headGrafo);
+int ExportarTodosDados(NodeClientes *headClientes, NodeGestores *headGestores, NodeTransporte *headTransportes, NodeTransacoes *headTransacoes, Vertice *headGrafo, NodeTipoTransporte *headTipoTransporte);
 int ExportarClientes(struct NodeClientes* listaClientes);
 int ExportarGestores(struct NodeGestores* listaGestores);
 int ExportarTransportes(struct NodeTransporte* listaTransporte);

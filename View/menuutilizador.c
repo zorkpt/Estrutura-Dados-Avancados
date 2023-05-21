@@ -40,7 +40,7 @@ void MostrarCabecalhoCliente(Clientes *cliente, Vertice *headGrafo) {
 /// @return 
 int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headGestores, 
                 struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, Vertice* headGrafo,
-                int nifClienteLogado ){
+                int nifClienteLogado, NodeTipoTransporte* headTipoTransporte ){
     while (1) {
         struct Clientes *cliente = ProcuraCliente(headClientes, nifClienteLogado);
         struct Transporte *transporteAlugar;
@@ -185,7 +185,7 @@ int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headG
 
             // Caso 9: Exportar todos os dados e sair do programa
             case 10:
-                if (ExportarTodosDados(headClientes, headGestores, headTransportes, headTransacoes, headGrafo)) {
+                if (ExportarTodosDados(headClientes, headGestores, headTransportes, headTransacoes, headGrafo, headTipoTransporte)) {
                     printf("Todos os dados foram exportados com sucesso.\n");
                     exit(0);
                 } else {    

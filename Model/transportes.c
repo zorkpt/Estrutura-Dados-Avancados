@@ -30,6 +30,7 @@ int InserirTransporte(struct NodeTransporte** headRef, struct Transporte transpo
     if (newNode == NULL) {
         return 0;
     }
+
     newNode->transporte = transporte;
     newNode->proximo = NULL;
 
@@ -197,12 +198,14 @@ while (current != NULL) {
 /// @brief Escreve os dados de um transporte 
 /// @param headTransporte Pointer para o head da lista de NodeTransporte
 /// @return Retorna uma struct Transporte com os dados inseridos
-struct Transporte EscreveTransporte(struct NodeTransporte* headTransporte, int id, char* tipo, int nivelBateria, float preco, int localizacao, int estado) {
+struct Transporte EscreveTransporte(struct NodeTipoTransporte** headTipoTransporte, int id, int tipo, int nivelBateria, int localizacao, int estado) {
     struct Transporte transporteTemp;
     transporteTemp.id = id;
-  //  strcpy(transporteTemp.tipo, tipo); tipo_de_transporte
+    transporteTemp.tipo = ProcuraTipoTransporte(headTipoTransporte, tipo);
+    transporteTemp.idTipo = tipo; // Preserve idTipo.
+    printf("Tipo: %s\n", transporteTemp.tipo->nome);
+    printf("ID: %d\n", transporteTemp.idTipo);
     transporteTemp.nivelBateria = nivelBateria;
-    transporteTemp.tipo->precoPorKm = preco;
     transporteTemp.localizacao = localizacao;
     transporteTemp.estado = estado;
     return transporteTemp;

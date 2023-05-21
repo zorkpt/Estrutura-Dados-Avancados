@@ -9,6 +9,6 @@
 
 int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headGestores, 
                 struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, Vertice* headVertice,
-                int nifClienteLogado );
+                int nifClienteLogado, NodeTipoTransporte* headTipoTransporte );
                 
 #endif

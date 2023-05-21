@@ -21,26 +21,41 @@ FilaPrioridade* CriarFilaPrioridade() {
 }
 
 // Função para adicionar um vértice à fila de prioridade
+// Função para adicionar um vértice à fila de prioridade
 FilaPrioridade* AdicionarNaFila(FilaPrioridade *fila, Vertice *vertice) {
+    // Aloca memória para o novo elemento da fila
     FilaPrioridade *novo = malloc(sizeof(FilaPrioridade));
+    // Atribui o vértice passado como argumento ao novo elemento
     novo->vertice = vertice;
+    // Inicializa o próximo elemento como NULL
     novo->proximo = NULL;
 
+    // Se a fila está vazia, insere o novo elemento como o primeiro
     if (fila == NULL) {
         return novo;
-    } else if (fila->vertice->distancia > vertice->distancia) {
+    } 
+    // Se o vértice do primeiro elemento da fila tem uma distância maior que o vértice a ser adicionado,
+    // insere o novo elemento no início da fila
+    else if (fila->vertice->distancia > vertice->distancia) {
         novo->proximo = fila;
         return novo;
-    } else {
+    } 
+    // Caso contrário, insere o novo elemento na posição correta para manter a fila ordenada
+    else {
         FilaPrioridade *atual = fila;
+        // Percorre a fila até encontrar a posição correta para o novo elemento
+        // A posição correta é a primeira posição em que a distância do vértice atual é maior que a do vértice a ser adicionado
         while (atual->proximo != NULL && atual->proximo->vertice->distancia < vertice->distancia) {
             atual = atual->proximo;
         }
+        // Insere o novo elemento na posição encontrada
         novo->proximo = atual->proximo;
         atual->proximo = novo;
+        // Retorna o primeiro elemento da fila
         return fila;
     }
 }
+
 
 // Função para retirar e retornar o vértice na frente da fila de prioridade
 Vertice* RetirarDaFila(FilaPrioridade **fila) {

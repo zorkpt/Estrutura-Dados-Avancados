@@ -20,6 +20,7 @@ typedef struct NodeTipoTransporte {
 
 typedef struct Transporte{
     int id;
+    int idTipo;
     TipoTransporte* tipo;
     int nivelBateria;
     int localizacao;
@@ -31,8 +32,8 @@ typedef struct NodeTransporte
 {
     struct Transporte transporte;
     struct NodeTransporte *proximo;
-
 }NodeTransporte;
+
 typedef struct Camiao {
     float capacidadeMaxima; // Capacidade máxima do camião em kg
     float cargaAtual; // Carga atual do camião em kg
@@ -44,7 +45,7 @@ typedef struct Camiao {
 int InserirTransporte(struct NodeTransporte** headRef, struct Transporte transporte);
 int MostrarTransportes(struct NodeTransporte* head);
 int VerTransportesDisponiveis(struct NodeTransporte* headTransporte, struct Vertice* headGrafo, int localizacaoCliente);
-struct Transporte EscreveTransporte(struct NodeTransporte* headTransporte, int id, char* tipo, int nivelBateria, float preco, int localizacao, int estado);
+struct Transporte EscreveTransporte(struct NodeTipoTransporte** headTipoTransporte, int id, int tipo, int nivelBateria, int localizacao, int estado);
 struct Transporte* ProcurarTransporte(struct NodeTransporte* headRef, int id );    
 int RemoverTransporte(struct NodeTransporte **head, int id);
 int EditarTransporte(struct Transporte *transporte, int id, int estado, int nivelBateria, float preco, int localizacao);
@@ -72,6 +73,6 @@ int PodeAdicionarTransporte(Camiao *camiao, Transporte *transporte);
 void AdicionarTransporte(Camiao *camiao, Transporte *transporte);
 void DescarregarCamiao(Camiao *camiao);
 Camiao* InicializarCamiao(float capacidadeMaxima);
-Viagem* CriarNovaViagem(int idTransporte, int origem, int destino, float valorPago, float custoPorKm, float distancia);
+Viagem* CriarNovaViagem(int idTransporte, int origem, int destino, float valorPago, float custoPorKm, float distancia,char tipoTransporte[]);
 int InserirViagem(Viagem** headViagem, Viagem viagem);
 #endif

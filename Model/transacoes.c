@@ -313,7 +313,7 @@ int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoe
                     AtualizaSaldoCliente(clienteAtual, valorTotal);
 
                     // Cria uma nova viagem e adiciona-a ao histórico do cliente
-                    Viagem* novaViagem = CriarNovaViagem(currentTransporte->transporte.id, localInicial, idLocalTermino, valorTotal, currentTransporte->transporte.tipo->precoPorKm, distancia);
+                    Viagem* novaViagem = CriarNovaViagem(currentTransporte->transporte.id, localInicial, idLocalTermino, valorTotal, currentTransporte->transporte.tipo->precoPorKm, distancia, currentTransporte->transporte.tipo->nome);
                     novaViagem->proxima = clienteAtual->historicoViagens;
                     clienteAtual->historicoViagens = novaViagem;
 
@@ -328,7 +328,7 @@ int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoe
 }
 
 
-Viagem* CriarNovaViagem(int idTransporte, int origem, int destino, float valorPago, float custoPorKm, float distancia) {
+Viagem* CriarNovaViagem(int idTransporte, int origem, int destino, float valorPago, float custoPorKm, float distancia, char tipoTransporte[]) {
     Viagem* novaViagem = (Viagem*)malloc(sizeof(Viagem));
     if (novaViagem == NULL) {
         return NULL;
@@ -339,6 +339,7 @@ Viagem* CriarNovaViagem(int idTransporte, int origem, int destino, float valorPa
     novaViagem->valorPago = valorPago;
     novaViagem->custoPorKm = custoPorKm;
     novaViagem->distancia = distancia;
+    strcpy(novaViagem->tipoTransporte, tipoTransporte);
     novaViagem->proxima = NULL;
     return novaViagem;
 }

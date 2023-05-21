@@ -132,7 +132,7 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
 
         case 11:
             struct Transporte transporte;
-            char tipo[MAX_CHARS];
+            int tipo;
             int idTransporte, localizacao, nivelBateria, estado;
             float preco;
             printf("Insira os dados do novo transporte:\n");
@@ -143,14 +143,16 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             }
             printf("Nivel de Bateria: ");
             nivelBateria = VerificarInt();
-            LerTextoInput("Tipo de Transporte?", tipo, MAX_CHARS);
+            printf("Tipo: ");
+            tipo = VerificarInt();
             printf("Localização: ");
             localizacao = VerificarInt();
             printf("Estado: ");
             estado = VerificarInt();
             printf("Preço: ");
             preco = VerificarFloat();
-            transporte = EscreveTransporte(headTransportes, idTransporte, tipo, nivelBateria, preco, localizacao, estado);
+            
+            transporte = EscreveTransporte(&headTipoTransporte, idTransporte, tipo, nivelBateria, localizacao, estado);
             if(InserirTransporte(&headTransportes, transporte))
                 printf("Transporte adicionado com sucesso!\n");
                 else printf("Erro ao adicionar o transporte.");
@@ -335,6 +337,12 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             if (!ExportarTransacoes(headTransacoes)) {
                 printf("Erro ao exportar dados das Transações.\n");
             }else printf("Transacoes exportados com sucesso.\n");
+            if(!ExportarTiposTransporte(headTipoTransporte)) {
+                printf("Erro ao exportar dados dos Tipos de Transporte.\n");
+            }else printf("Tipos de Transporte exportados com sucesso.\n");
+            if(!ExportaVertices(headVertice)) {
+                printf("Erro ao exportar dados dos Vertices.\n");
+            }else printf("Vertices exportados com sucesso.\n");
             break;
         default:
             printf("\nInsere uma das opções mostradas.\n");

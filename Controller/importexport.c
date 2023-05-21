@@ -66,23 +66,41 @@ int CarregarCSV(struct NodeClientes** headClientes, struct NodeTransporte** head
 ///         0 se os dados forem carregados de ficheiros CSV, retorna -1 se os dados não forem carregados.
 int CarregarDados(struct NodeClientes** headClientes, struct NodeTransporte** headTransportes, 
                  struct NodeGestores** headGestores, struct NodeTransacoes** headTransacoes, Vertice** headGrafo, NodeTipoTransporte** headTipoTransporte) {
-    if (CarregarBinarioClientes(headClientes) &&
-        CarregarBinarioTransportes(headTransportes) &&
-        CarregarBinarioGestores(headGestores) &&
-        CarregarBinarioTransacoes(headTransacoes) &&
-        CarregarBinarioVertices(headGrafo) && 
-        CarregarBinarioAdjacentes(*headGrafo)) {
+    if (!CarregarBinarioClientes(headClientes)) {
+        printf("Error loading client binary data\n");
+    } else if (!CarregarBinarioTiposTransporte(headTipoTransporte)) {
+        printf("Error loading transport type binary data\n");
+    } else if (!CarregarBinarioTransportes(headTransportes)) {
+        printf("Error loading transport binary data\n");
+    } else if (!CarregarBinarioGestores(headGestores)) {
+        printf("Error loading manager binary data\n");
+    } else if (!CarregarBinarioTransacoes(headTransacoes)) {
+        printf("Error loading transaction binary data\n");
+    } else if (!CarregarBinarioVertices(headGrafo)) {
+        printf("Error loading vertex binary data\n");
+    } else if (!CarregarBinarioAdjacentes(*headGrafo)) {
+        printf("Error loading adjacency binary data\n");
+    } else {
+        // All binary data loaded successfully
         return 1;
     }
-    if(!CarregarCSV(headClientes, headTransportes, headGestores, headTransacoes, headGrafo, headTipoTransporte)) {
+
+    // If we reach this point, some binary loading has failed
+    printf("Attempting to load from CSV...\n");
+    if (!CarregarCSV(headClientes, headTransportes, headGestores, headTransacoes, headGrafo, headTipoTransporte)) {
+        printf("Error loading CSV data\n");
         return -1;
-    } else {
-        return 0;
     }
+
+    // CSV data loaded successfully after binary loading failed
+    return 0;
 }
 
-int ExportarTodosDados(NodeClientes *headClientes, NodeGestores *headGestores, NodeTransporte *headTransportes, NodeTransacoes *headTransacoes, Vertice *headGrafo) {
-    if (!ExportarClientes(headClientes) || !ExportarGestores(headGestores) || !ExportarTransportes(headTransportes) || !ExportarTransacoes(headTransacoes) || !ExportaVertices(headGrafo) || !ExportaAdjacentes(headGrafo)) {
+
+int ExportarTodosDados(NodeClientes *headClientes, NodeGestores *headGestores, NodeTransporte *headTransportes, NodeTransacoes *headTransacoes, Vertice *headGrafo, NodeTipoTransporte *headTipoTransportes) {
+    if (!ExportarClientes(headClientes) || !ExportarGestores(headGestores) || !ExportarTiposTransporte(headTipoTransportes) ||
+    !ExportarTransportes(headTransportes) || !ExportarTransacoes(headTransacoes) || 
+    !ExportaVertices(headGrafo) || !ExportaAdjacentes(headGrafo)) {
         return 0;
     }
     return 1;
@@ -97,39 +115,30 @@ int ExportarClientes(struct NodeClientes* listaClientes) {
     if (file == NULL) {
         return 0;
     }
-    printf("Exportando clientes para ficheiro binario...\n");
     struct NodeClientes* current = listaClientes;
-
     while (current != NULL) {
-        // Escreve os dados do cliente, exceto o ponteiro para as viagens.
-        fwrite(&current->cliente.nif, sizeof(int), 1, file);
-        fwrite(&current->cliente.nome, sizeof(char)*MAX_CHAR, 1, file);
-        fwrite(&current->cliente.morada, sizeof(char)*MAX_CHAR, 1, file);
-        fwrite(&current->cliente.saldo, sizeof(float), 1, file);
-        fwrite(&current->cliente.login, sizeof(char)*MAX_CHAR, 1, file);
-        fwrite(&current->cliente.password, sizeof(char)*MAX_CHAR, 1, file);
-        fwrite(&current->cliente.localCliente, sizeof(int), 1, file);
-        
-        // Agora, para cada viagem associada a este cliente...
-        struct Viagem* viagemAtual = current->cliente.historicoViagens;
-        while (viagemAtual != NULL) {
-            // Escreve os dados da viagem.
-            fwrite(&viagemAtual->idTransporte, sizeof(int), 1, file);
-            fwrite(&viagemAtual->origem, sizeof(int), 1, file);
-            fwrite(&viagemAtual->destino, sizeof(int), 1, file);
-            fwrite(&viagemAtual->valorPago, sizeof(float), 1, file);
-            fwrite(&viagemAtual->custoPorKm, sizeof(float), 1, file);
-            fwrite(&viagemAtual->distancia, sizeof(float), 1, file);
-        printf("Dentro do loop  - Exportando clientes para ficheiro binario...\n");    
+        fwrite(&current->cliente, sizeof(Clientes), 1, file);
+        // Contar o número de viagens
+        int numViagens = 0;
+        Viagem* viagemAtual = current->cliente.historicoViagens;
+        while(viagemAtual != NULL) {
+            numViagens++;
             viagemAtual = viagemAtual->proxima;
         }
-
+        // Escrever o número de viagens
+        fwrite(&numViagens, sizeof(int), 1, file);
+        // Escrever as viagens
+        viagemAtual = current->cliente.historicoViagens;
+        while(viagemAtual != NULL) {
+            fwrite(viagemAtual, sizeof(Viagem), 1, file);
+            viagemAtual = viagemAtual->proxima;
+        }
         current = current->proximo;
     }
-    printf("No Fim - Exportando clientes para ficheiro binario...\n");
     fclose(file);
     return 1;
 }
+
 
 
 /// @brief Exporta a lista de gestores para um fichero binário.
@@ -150,22 +159,46 @@ int ExportarGestores(struct NodeGestores* listaGestores) {
     return 1;
 }
 
-/// @brief Exporta a lista de transportes para um fichero binário.
-/// @param listaTransporte Pointer para o header da lista de transportes.
-/// @return Retorna 1 se a exportação for bem sucedida, caso contrário, retorna 0.
-int ExportarTransportes(struct NodeTransporte* listaTransporte) {
+int ExportarTransportes(struct NodeTransporte* listaTransportes) {
     FILE* file = fopen(ficheiroTransportes, "wb");
     if (file == NULL) {
         return 0;
     }
-    struct NodeTransporte* current = listaTransporte;
+
+    struct NodeTransporte* current = listaTransportes;
     while (current != NULL) {
-        fwrite(&current->transporte, sizeof(struct NodeTransporte), 1, file);
+        fwrite(&current->transporte.id, sizeof(int), 1, file);
+        fwrite(&current->transporte.idTipo, sizeof(int), 1, file);
+        fwrite(&current->transporte.nivelBateria, sizeof(int), 1, file);
+        fwrite(&current->transporte.localizacao, sizeof(int), 1, file);
+        fwrite(&current->transporte.estado, sizeof(int), 1, file);
+        fwrite(&current->transporte.visitado, sizeof(int), 1, file);
         current = current->proximo;
     }
+
     fclose(file);
     return 1;
 }
+
+
+
+int ExportarTiposTransporte(struct NodeTipoTransporte* listaTiposTransporte) {
+    FILE* file = fopen(ficheiroTipoTransporte, "wb");
+    if (file == NULL) {
+        return 0;
+    }
+
+    struct NodeTipoTransporte* current = listaTiposTransporte;
+    while (current != NULL) {
+        fwrite(&current->tipo, sizeof(TipoTransporte), 1, file);
+        current = current->proximo;
+    }
+
+    fclose(file);
+    return 1;
+}
+
+
 
 /// @brief Exporta a lista de transacoes para um fichero binário.
 /// @param listaTransacoes Pointer para o header da lista de transacoes.
@@ -185,55 +218,18 @@ int ExportarTransacoes(struct NodeTransacoes* listaTransacoes) {
     return 1;
 }
 
-/// @brief Exporta a lista de Viagens para um fichero binário.
-/// @param listaViagem Pointer para o header da lista de Viagens.
-/// @return Retorna 1 se a exportação for bem sucedida, caso contrário, retorna 0.
-int ExportarViagens(struct Viagem* listaViagem) {
-    FILE* file = fopen(ficheiroViagens, "wb");
-    if (file == NULL) {
-        return 0;
-    }
-
-    struct Viagem* current = listaViagem;
-    while (current != NULL) {
-        fwrite(current, sizeof(struct Viagem), 1, file);
-        current = current->proxima;
-    }
-    fclose(file);
-    return 1;
-}
-
-/// @brief Exporta a lista de TiposTransporte para um fichero binário.
-/// @param listaTiposTransporte Pointer para o header da lista de TiposTransporte.
-/// @return Retorna 1 se a exportação for bem sucedida, caso contrário, retorna 0.
-int ExportarTiposTransporte(struct NodeTipoTransporte* listaTiposTransporte) {
-    FILE* file = fopen(ficheiroTipoTransporte, "wb");
-    if (file == NULL) {
-        return 0;
-    }
-
-    struct NodeTipoTransporte* current = listaTiposTransporte;
-    while (current != NULL) {
-        fwrite(current, sizeof(struct TipoTransporte), 1, file);
-        current = current->proximo;
-    }
-    fclose(file);
-    return 1;
-}
-
 /// @brief Exporta a lista de vertices para um fichero binário.
 /// @param headTipoTransporte  Pointer para o header da lista de vertices.
 /// @return 1 se a exportação for bem sucedida, caso contrário, retorna 0.
-int CarregarBinarioTiposTransporte(struct NodeTipoTransporte** headTipoTransporte) {
+int CarregarBinarioTiposTransporte(struct NodeTipoTransporte** headTiposTransporte) {
     FILE* file = fopen(ficheiroTipoTransporte, "rb");
     if (file == NULL) {
         return 0;
     }
 
-    struct NodeTipoTransporte nodeTipoTransporte;
-    // Lê node a node do ficheiro binário e insere na lista.
-    while (fread(&nodeTipoTransporte, sizeof(struct NodeTipoTransporte), 1, file) == 1) {
-        InserirTipoTransporte(headTipoTransporte, nodeTipoTransporte.tipo);
+    TipoTransporte buffer;
+    while (fread(&buffer, sizeof(TipoTransporte), 1, file) == 1) {
+        InserirTipoTransporte(headTiposTransporte, buffer);
     }
 
     fclose(file);
@@ -265,37 +261,53 @@ int CarregarBinarioViagens(struct Viagem** headViagem) {
 int CarregarBinarioClientes(struct NodeClientes** headClientes) {
     FILE* file = fopen(ficheiroClientes, "rb");
     if (file == NULL) {
+        printf("XXXX FALHEI");
         return 0;
     }
 
-    struct NodeClientes nodeCliente;
-    // Lê node a node do ficheiro binário e insere na lista.
-    while (fread(&nodeCliente, sizeof(struct NodeClientes), 1, file) == 1) {
-        InserirCliente(headClientes, nodeCliente.cliente);
+    Clientes clienteBuffer;
+    while (fread(&clienteBuffer, sizeof(Clientes), 1, file) == 1) {
+        Viagem* headViagem = NULL;
+        // Ler o número de viagens
+        int numViagens;
+        fread(&numViagens, sizeof(int), 1, file);
+        // Ler as viagens
+        for (int i = 0; i < numViagens; i++) {
+            Viagem viagemBuffer;
+            fread(&viagemBuffer, sizeof(Viagem), 1, file);
+            Viagem* novaViagem = malloc(sizeof(Viagem));
+            *novaViagem = viagemBuffer;
+            novaViagem->proxima = headViagem;
+            headViagem = novaViagem;
+        }
+        clienteBuffer.historicoViagens = headViagem;
+        InserirCliente(headClientes, clienteBuffer);
     }
 
     fclose(file);
+    printf("XXXX CLIEntes SUCESSO");
     return 1;
 }
+
 
 /// @brief Carrega dados de transportes de um ficheiro binário.
 /// @param headTransportes Pointer para o header da lista de transportes.
 /// @return Retorna 1 se os dados forem carregados com sucesso, caso contrário, retorna 0.
-int CarregarBinarioTransportes(struct NodeTransporte** headTransportes) {
+int CarregarBinarioTransportes(NodeTransporte** headTransportes) {
     FILE* file = fopen(ficheiroTransportes, "rb");
     if (file == NULL) {
         return 0;
     }
 
-    struct NodeTransporte nodeTransporte;
-    // Lê node a node do ficheiro binário e insere na lista.
-    while (fread(&nodeTransporte, sizeof(struct NodeTransporte), 1, file) == 1) {
-        InserirTransporte(headTransportes, nodeTransporte.transporte);
+    Transporte transporteBuffer;
+    while (fread(&transporteBuffer, sizeof(Transporte), 1, file) == 1) {
+        InserirTransporte(headTransportes, transporteBuffer);
     }
 
     fclose(file);
     return 1;
 }
+
 
 /// @brief Carrega dados de gestores de um ficheiro binário.
 /// @param headGestores Pointer para o header da lista de gestores.
@@ -303,6 +315,7 @@ int CarregarBinarioTransportes(struct NodeTransporte** headTransportes) {
 int CarregarBinarioGestores(struct NodeGestores** headGestores) {
     FILE* file = fopen(ficheiroGestores, "rb");
     if (file == NULL) {
+        printf("XXXX GESTORES FALHEI");
         return 0;
     }
 
@@ -313,6 +326,7 @@ int CarregarBinarioGestores(struct NodeGestores** headGestores) {
     }
 
     fclose(file);
+    printf("XXXX GESTORES SUCESSO");
     return 1;
 }
 
@@ -322,6 +336,7 @@ int CarregarBinarioGestores(struct NodeGestores** headGestores) {
 int CarregarBinarioTransacoes(struct NodeTransacoes** headTransacoes) {
     FILE* file = fopen(ficheiroTransacoes, "rb");
     if (file == NULL) {
+        printf("XXXX TRANSACOES FALHEI");
         return 0;
     }
 
@@ -331,6 +346,7 @@ int CarregarBinarioTransacoes(struct NodeTransacoes** headTransacoes) {
     }
 
     fclose(file);
+    printf("XXXX TRANSACOES SUCESSO");
     return 1;
 }
 
@@ -379,6 +395,7 @@ int ExportaAdjacentes(Vertice *grafo) {
 int CarregarBinarioVertices(Vertice** grafo) {
     FILE* file = fopen(ficheiroVertices, "rb");
     if (file == NULL) {
+        printf("XXXX VERTICES FALHEI");
         return 0;
     }
 
@@ -390,12 +407,14 @@ int CarregarBinarioVertices(Vertice** grafo) {
     }
 
     fclose(file);
+    printf("XXXX VERTICES SUCESSO");
     return 1;
 }
 
 int CarregarBinarioAdjacentes(Vertice* grafo) {
     FILE* file = fopen(ficheiroArestas, "rb");
     if (file == NULL) {
+        printf("XXXX ADJACENTES FALHEI");
         return 0;
     }
 
@@ -409,6 +428,7 @@ int CarregarBinarioAdjacentes(Vertice* grafo) {
     }
 
     fclose(file);
+    printf("XXXX ADJACENTES SUCESSO");
     return 1;
 }
 
@@ -421,6 +441,7 @@ int CarregarBinarioAdjacentes(Vertice* grafo) {
 /// @param nomeFicheiro String com o nome do ficheiro que contem os dados dos clientes a ser carregado.
 /// @return Retorna o número de clientes carregados.
 int CarregarFicheiroClientes(struct NodeClientes** head, char *nomeFicheiro){
+    printf("A carregar ficheiro de clientes...\n");
     FILE *ficheiro;
     ficheiro = fopen(nomeFicheiro, "r");
     int totalClientes = 0;
@@ -495,6 +516,7 @@ int LerGrafoDeFicheiro(Vertice **grafo, FILE *ficheiro){
 /// @param nomeFicheiro String com o nome do ficheiro que contem os dados dos transportes a ser carregado.
 /// @return Retorna o número de transportes carregados.
 int CarregarFicheiroTransportes(struct NodeTransporte** head, NodeTipoTransporte** headTipo, char* nomeFicheiro) {
+    printf("A carregar ficheiro de transportes...\n");
     FILE *ficheiro;
     ficheiro = fopen(nomeFicheiro, "r");
     int totalTransportes = 0;
@@ -512,6 +534,7 @@ int CarregarFicheiroTransportes(struct NodeTransporte** head, NodeTipoTransporte
 /// @return Retorna o número de gestores carregados.
 int CarregarFicheiroGestores(struct NodeGestores** head, char* nomeFicheiro) {
     FILE *ficheiro;
+    printf("A carregar ficheiro de gestores...\n");
     ficheiro = fopen(nomeFicheiro, "r");
     int totalGestores = 0;
     if(ficheiro == NULL){
@@ -538,6 +561,7 @@ int CarregarFicheiroTransacoes(struct NodeTransacoes** head, char* nomeFicheiro)
 
 
 int CarregarFicheiroTiposTransporte(NodeTipoTransporte** headTipos, char* nomeFicheiro) {
+    printf("A carregar tipos de transporte...\n");
     FILE *ficheiro;
     ficheiro = fopen(nomeFicheiro, "r");
     int totalTipos = 0;
@@ -570,6 +594,7 @@ int LerClientesDeFicheiro(struct NodeClientes** headRef, FILE *ficheiro){
                                                                     temp.login,
                                                                     temp.password,
                                                                     &temp.localCliente)==7){
+            temp.historicoViagens = NULL; // Inicializar lista de viagens como NULL
             if(InserirCliente(headRef, temp))
                 totalClientes++;
         }
@@ -586,22 +611,23 @@ int LerTransportesDeFicheiro(struct NodeTransporte** headRef, NodeTipoTransporte
     char linha[MAX_LINHA];
     struct Transporte temp;
     int totalTransportes=0;
+    printf("Entre LerTransportesDeFicheiro\n");
     
     fgets(linha, MAX_LINHA, ficheiro); // Ignorar primeira linha
     while (fgets(linha, MAX_LINHA, ficheiro) != NULL)
     {
-        int idTipo;
+        printf("Linha: %s\n",linha);
+        
         if(sscanf(linha,"%d\t%d\t%d\t%d\t%d", 
                                                     &temp.id, 
-                                                    &idTipo, 
+                                                    &temp.idTipo, 
                                                     &temp.nivelBateria, 
                                                     &temp.localizacao,
                                                     &temp.estado)==5){
-            temp.tipo = ProcuraTipoTransporte(headTipos, idTipo);
-            if(temp.tipo != NULL && InserirTransporte(headRef,temp)) 
-                totalTransportes++;
-            else
-                return 0;
+        printf("idTipo: %d\n", temp.idTipo);
+        Transporte novoTransporte = EscreveTransporte(headTipos, temp.id, temp.idTipo, temp.nivelBateria, temp.localizacao, temp.estado);
+        if(InserirTransporte(headRef,novoTransporte))
+            totalTransportes++; 
         }
     }
 
