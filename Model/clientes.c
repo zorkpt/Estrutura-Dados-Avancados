@@ -18,7 +18,7 @@
 /// @brief Cria um novo node do tipo NodeClientes
 /// @param cliente Estrutura Clientes contendo os dados do cliente a ser atribuído ao novo node
 /// @return Retorna um novo node do tipo NodeClientes
-NodeClientes* criarNodeCliente(Clientes cliente) {
+NodeClientes* CriarNodeCliente(Clientes cliente) {
     NodeClientes* novoNode = (NodeClientes*) malloc(sizeof(NodeClientes));
     if (!novoNode) {
         return NULL;
@@ -36,7 +36,7 @@ NodeClientes* criarNodeCliente(Clientes cliente) {
 /// @return Retorna 1 se a inserção for bem sucedida, 0 caso contrário
 int InserirCliente(struct NodeClientes** headRef, struct Clientes cliente) {
     // Aloca memoria um novo NodeClientes e aloca os seus campos
-    struct NodeClientes* novoNode = criarNodeCliente(cliente);
+    struct NodeClientes* novoNode = CriarNodeCliente(cliente);
     if (!novoNode) {
         // Verifica se falha ao alocar node na memoria
         return 0;
@@ -200,4 +200,29 @@ int RealizarDeposito(struct Clientes* cliente, float valor) {
     }
     cliente->saldo += valor;
     return 1;
+}
+
+
+
+/// @brief Mostra o histórico de alugueres de um cliente
+/// @param headTransacoes Pointer para o head da lista de NodeTransacoes
+/// @param nif NIF do cliente a procurar
+/// @return Retorna o número de alugueres encontrados
+void MostrarHistoricoViagens(Clientes* cliente) {
+    Viagem* viagemAtual = cliente->historicoViagens;
+    
+    printf("\nHistórico de viagens para o cliente %s (NIF: %d):\n", cliente->nome, cliente->nif);
+    printf("-------------------------------------------------------------------\n");
+    printf("| ID Transporte | Origem | Destino | Distância | Valor Pago | Custo Por Km | Transporte Utilizado\n");
+    while (viagemAtual != NULL) {
+        printf("| %13d | %6d | %7d | %9.2f | %10.2f | %12.2f | %s \n",
+            viagemAtual->idTransporte,
+            viagemAtual->origem,
+            viagemAtual->destino,
+            viagemAtual->distancia,
+            viagemAtual->valorPago,
+            viagemAtual->custoPorKm,
+            viagemAtual->tipoTransporte);
+        viagemAtual = viagemAtual->proxima;
+    }
 }

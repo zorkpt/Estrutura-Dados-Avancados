@@ -16,7 +16,7 @@ typedef struct NodeGestores
 
 
 
-// novas e confirmadas
+// Funções associadas à estrutura Gestores
 int InserirGestor(struct NodeGestores** headRef, struct Gestores gestor);
 int MostrarGestores(struct NodeGestores* head);
 struct Gestores AdicionarGestor(struct NodeGestores* headRef, char nome[], char password[]);

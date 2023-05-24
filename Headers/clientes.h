@@ -1,10 +1,12 @@
 #ifndef CLIENTES_HEADER_GUARD
 #define CLIENTES_HEADER_GUARD
-#define MAX_CHAR 50
 #pragma once
 #include "viagem.h"
+
+#define MAX_CHAR 50
+
 // ESTRUTURA LISTA CLIENTES
-typedef struct Clientes{
+typedef struct Clientes {
     int nif;
     char nome[MAX_CHAR];
     char morada[MAX_CHAR];
@@ -14,23 +16,24 @@ typedef struct Clientes{
     int localCliente;
     Viagem* historicoViagens;
 } Clientes;
-typedef struct NodeClientes
-{
+
+typedef struct NodeClientes {
     Clientes cliente;
     struct NodeClientes *proximo;
 }NodeClientes;
 
-
-// FUNCOES CONFIRMADAS E A FUNCIONAR:
+// Funções associadas à estrutura Clientes
 int MostrarClientes( NodeClientes* head);
-NodeClientes* criarNodeCliente(Clientes cliente);
-int InserirCliente(struct NodeClientes** headRef, struct Clientes cliente);
+NodeClientes* CriarNodeCliente(Clientes cliente);
+int InserirCliente(struct NodeClientes** headRef, Clientes cliente);
 int RemoverCliente(struct NodeClientes **head, int nif);
-int EditarCliente(struct Clientes *cliente, char *nome, char *morada, char *login, char *password);
-struct Clientes AdicionarCliente(struct NodeClientes* headRef, char* nome, char* morada, int nif, float saldo, char* login, char* password, int localCliente);
-struct Clientes* ProcuraCliente(struct NodeClientes* headRef, int nif);
-int TemSaldoSuficiente(struct Clientes* cliente, float custoTotal);
-int AlterarSenha(struct Clientes* cliente, char novaSenha[]);
-int RealizarDeposito(struct Clientes* cliente, float valor);
-#endif
+int EditarCliente(Clientes *cliente, char *nome, char *morada, char *login, char *password);
+Clientes AdicionarCliente(NodeClientes* headRef, char* nome, char* morada, int nif, float saldo, char* login, char* password, int localCliente);
+Clientes* ProcuraCliente(NodeClientes* headRef, int nif);
+int TemSaldoSuficiente(Clientes* cliente, float custoTotal);
+int AlterarSenha(Clientes* cliente, char novaSenha[]);
+int RealizarDeposito(Clientes* cliente, float valor);
+void MostrarHistoricoViagens(struct Clientes* cliente);
 
+
+#endif

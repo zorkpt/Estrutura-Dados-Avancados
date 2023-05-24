@@ -10,9 +10,11 @@
  */
 
 #include "../Headers/menugestor.h"
-#include "../Headers/funcoes.h"
+#include "../Headers/importexport.h"
 #include "../Headers/verificacoes.h"
 #include "../Headers/caminho.h"
+#include "../Headers/transportes.h"
+#include "../Headers/viagem.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,7 +27,7 @@
 /// @param headGestores Pointer para o header da lista de gestores
 /// @param headTransportes Pointer para o header da lista de transportes
 /// @param headTransacoes Pointer para o header da lista de transacoes
-int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGestores, struct NodeTransporte* headTransportes, NodeTipoTransporte* headTipoTransporte, struct NodeTransacoes* headTransacoes, Vertice *headVertice ){
+int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGestores, struct NodeTransporte* headTransportes, NodeTipoTransporte* headTipoTransporte, struct NodeTransacoes* headTransacoes, Vertice *headVertice, Viagem *headViagem ){
     int id;
     while(1)
     {   
@@ -263,7 +265,8 @@ int MenuGestor(struct NodeClientes* headClientes, struct NodeGestores* headGesto
             if(!MostrarGestores(headGestores)) printf("Não existem gestores registados.");
             break;
         case 31:
-            int totalTransacoes = MostrarTransacoes(headTransacoes);
+            
+            int totalTransacoes = MostrarTransacoes(headTransacoes, headViagem);
             if(totalTransacoes == 0) printf("Não existem transacoes registadas.");
             else printf("Total de transacoes: %d",totalTransacoes);
             break;

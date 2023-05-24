@@ -12,6 +12,7 @@ int MenuGestor(struct NodeClientes* headClientes,
                struct NodeTransporte* headTransportes,
                NodeTipoTransporte* headTipoTransporte,
                struct NodeTransacoes* headTransacoes,
-               Vertice *headVertice);
+               Vertice *headVertice,
+               Viagem *headViagem);
 
 #endif

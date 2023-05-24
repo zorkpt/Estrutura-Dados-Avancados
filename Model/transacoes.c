@@ -40,10 +40,26 @@ int InserirTransacoes(struct NodeTransacoes** headRef, struct Transacoes transac
 /// @brief Mostra todos as Transações da lista de NodeTransacoes
 /// @param head Pointer para o head da lista de NodeTransacoes
 /// @return Retorna 1 se a lista não estiver vazia, 0 caso contrário
-int MostrarTransacoes(struct NodeTransacoes* head) {
+int MostrarTransacoes(struct NodeTransacoes* head, Viagem* headViagens) {
     if (head == NULL) {
         return 0;
     }
+
+    // printf("%-12s %-12s %-15s %s\n", "ID TRAN", "ID CLIENTE", "ID TRANSPORTE", "Tempo Decorrido");
+    // while(headViagens != NULL) {
+    //      printf("| %13d | %6d | %7d | %9.2f | %10.2f | %12.2f | %s \n",
+    //         headViagens->idTransporte,
+    //         headViagens->origem,
+    //         headViagens->destino,
+    //         headViagens->distancia,
+    //         headViagens->valorPago,
+    //         headViagens->custoPorKm,
+    //         headViagens->tipoTransporte);
+    //     headViagens = headViagens->proxima;
+    // }
+
+
+
     printf("%-12s %-12s %-15s %s\n", "ID TRAN", "ID CLIENTE", "ID TRANSPORTE", "Tempo Decorrido");
     struct NodeTransacoes* current = head;
     while (current != NULL) {
@@ -156,28 +172,7 @@ int ProximoIDTransacao(struct NodeTransacoes* headTransacoes) {
     return maiorID + 1;
 }
 
-/// @brief Mostra o histórico de alugueres de um cliente
-/// @param headTransacoes Pointer para o head da lista de NodeTransacoes
-/// @param nif NIF do cliente a procurar
-/// @return Retorna o número de alugueres encontrados
-void MostrarHistoricoViagens(Clientes* cliente) {
-    Viagem* viagemAtual = cliente->historicoViagens;
-    
-    printf("\nHistórico de viagens para o cliente %s (NIF: %d):\n", cliente->nome, cliente->nif);
-    printf("-------------------------------------------------------------------\n");
-    printf("| ID Transporte | Origem | Destino | Distância | Valor Pago | Custo Por Km | Transporte Utilizado\n");
-    while (viagemAtual != NULL) {
-        printf("| %13d | %6d | %7d | %9.2f | %10.2f | %12.2f | %s \n",
-            viagemAtual->idTransporte,
-            viagemAtual->origem,
-            viagemAtual->destino,
-            viagemAtual->distancia,
-            viagemAtual->valorPago,
-            viagemAtual->custoPorKm,
-            viagemAtual->tipoTransporte);
-        viagemAtual = viagemAtual->proxima;
-    }
-}
+
 
 
 /// @brief Verifica se um cliente está num transporte
@@ -266,7 +261,7 @@ void AtualizaSaldoCliente(struct Clientes* cliente, float valor) {
 /// @param preco 
 /// @return Valor total do aluguer
 float CalculaValorTotal(float distancia, float preco) {
-    return (distancia * preco)*0.01;
+    return (distancia * preco)*0.001;
 }
 
 /// @brief Calcula a bateria perdida com base na distância total

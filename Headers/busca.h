@@ -7,8 +7,6 @@
 #include <stdio.h>
 
 
-
-
 Caminho* GreedySearch(NodeTransporte *transportes, Vertice *grafo, int centroRecolha);
 Caminho* Dijkstra(Vertice *grafo, int origem, int destino);
 int ExistemTransportesNaoVisitados(NodeTransporte *transportes);

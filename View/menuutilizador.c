@@ -14,7 +14,7 @@
 #include <string.h>
 #include "../Headers/menuutilizador.h"
 #include "../Headers/caminho.h"
-#include "../Headers/funcoes.h"
+#include "../Headers/importexport.h"
 #include "../Headers/verificacoes.h"
 #define MAX_LENGTH 100
 
@@ -85,12 +85,13 @@ int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headG
                     printf("Não tens saldo suficiente para alugar um transporte.\n");
                     break;
                 }
-
+                
                 VerTransportesDisponiveis(headTransportes,headGrafo,cliente->localCliente);
                 printf("Escolher um dos transportes disponiveis de momento: (ID) ");
                 idTransporte = VerificarInt();
                 transporteAlugar = ProcurarTransporte(headTransportes, idTransporte);
 
+                // Verificar se o transporte existe e se está disponível
                 if (transporteAlugar != NULL && AlugarTransporteDisponivel(transporteAlugar)) {
                     int novoIdTransaccao = ProximoIDTransacao(headTransacoes);
                     if (!AtualizarEstadoTransporte(cliente, headTransportes, headTransacoes, idTransporte, novoIdTransaccao)) {
@@ -109,7 +110,7 @@ int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headG
                 if (!ClienteEmTransporte(headTransacoes, nifClienteLogado)) {
                     printf("Não estás a utilizar um transporte no momento.\n");
                 } else {
-                    Clientes *cliente = ProcuraCliente(headClientes, nifClienteLogado);
+                    //Clientes *cliente = ProcuraCliente(headClientes, nifClienteLogado);
                     int IdlocalTermino;
                     printf("Em que local Terminaste a viagem? ");
                     IdlocalTermino = VerificarInt();

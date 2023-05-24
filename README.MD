@@ -44,7 +44,7 @@ Para a fase 1 foi implementado:
 
 ### Headers
 - verificacoes.h: Ficheiro header com declarações de funções de verificação.
-- funcoes.h: Ficheiro header que contêm declarações de funções para várias funções utilitárias.
+- importexport.h: Ficheiro header que contêm declarações de funções para várias funções utilitárias.
 - clientes.h: Ficheiro header com declarações de funções e estruturas relacionadas aos clientes.
 - gestores.h: Ficheiro header com declarações de funções e estruturas relacionadas aos gestores.
 - transacoes.h: Ficheiro header com declarações de funções e estruturas relacionadas às transações.

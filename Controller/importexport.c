@@ -18,7 +18,7 @@
 #include "../Headers/gestores.h"
 #include "../Headers/transportes.h"
 #include "../Headers/transacoes.h"
-#include "../Headers/funcoes.h"
+#include "../Headers/importexport.h"
 #include "../Headers/viagem.h"
 
 #define ficheiroClientes "Data/Bin/clientes.bin"
@@ -65,38 +65,45 @@ int CarregarCSV(struct NodeClientes** headClientes, struct NodeTransporte** head
 /// @return Retorna 1 se os dados forem carregados com sucesso, retorna 
 ///         0 se os dados forem carregados de ficheiros CSV, retorna -1 se os dados não forem carregados.
 int CarregarDados(struct NodeClientes** headClientes, struct NodeTransporte** headTransportes, 
-                 struct NodeGestores** headGestores, struct NodeTransacoes** headTransacoes, Vertice** headGrafo, NodeTipoTransporte** headTipoTransporte) {
-    if (!CarregarBinarioClientes(headClientes)) {
-        printf("Error loading client binary data\n");
-    } else if (!CarregarBinarioTiposTransporte(headTipoTransporte)) {
-        printf("Error loading transport type binary data\n");
-    } else if (!CarregarBinarioTransportes(headTransportes)) {
-        printf("Error loading transport binary data\n");
-    } else if (!CarregarBinarioGestores(headGestores)) {
-        printf("Error loading manager binary data\n");
-    } else if (!CarregarBinarioTransacoes(headTransacoes)) {
-        printf("Error loading transaction binary data\n");
-    } else if (!CarregarBinarioVertices(headGrafo)) {
-        printf("Error loading vertex binary data\n");
-    } else if (!CarregarBinarioAdjacentes(*headGrafo)) {
-        printf("Error loading adjacency binary data\n");
-    } else {
-        // All binary data loaded successfully
+                 struct NodeGestores** headGestores, struct NodeTransacoes** headTransacoes, 
+                 Vertice** headGrafo, NodeTipoTransporte** headTipoTransporte, Viagem** headViagens) {
+    if(CarregarBinarioClientes(headClientes,headViagens) 
+           && CarregarBinarioTiposTransporte(headTipoTransporte) 
+           && CarregarBinarioTransportes(headTransportes, headTipoTransporte) 
+           && CarregarBinarioGestores(headGestores)
+           && CarregarBinarioTransacoes(headTransacoes)
+           && CarregarBinarioVertices(headGrafo)
+           && CarregarBinarioAdjacentes(*headGrafo))
+    {
+        // Dados carregados com sucesso dos ficheiros binários
         return 1;
     }
 
-    // If we reach this point, some binary loading has failed
-    printf("Attempting to load from CSV...\n");
+    // Criar uma função que limpe todas as estruturas caso alguns dos ficheiros binários sejam carregados
+
+    // Se os dados não forem carregados dos ficheiros binários, tentar carregar dos ficheiros CSV
     if (!CarregarCSV(headClientes, headTransportes, headGestores, headTransacoes, headGrafo, headTipoTransporte)) {
-        printf("Error loading CSV data\n");
         return -1;
     }
 
-    // CSV data loaded successfully after binary loading failed
+    // Dados carregados com sucesso dos ficheiros CSV
     return 0;
 }
 
-
+/// @brief Exporta todos os dados para arquivos binários. 
+/// 
+/// Esta função chama funções de exportação para cada tipo de dados. 
+/// Se qualquer uma dessas chamadas de função falhar, a função retornará 0.
+/// Caso contrário, retornará 1.
+/// 
+/// @param headClientes Ponteiro para o primeiro nó da lista de clientes.
+/// @param headGestores Ponteiro para o primeiro nó da lista de gestores.
+/// @param headTransportes Ponteiro para o primeiro nó da lista de transportes.
+/// @param headTransacoes Ponteiro para o primeiro nó da lista de transações.
+/// @param headGrafo Ponteiro para o primeiro nó do grafo.
+/// @param headTipoTransportes Ponteiro para o primeiro nó da lista de tipos de transportes.
+/// 
+/// @return Retorna 1 se todas as operações de exportação foram bem sucedidas, senão retorna 0.
 int ExportarTodosDados(NodeClientes *headClientes, NodeGestores *headGestores, NodeTransporte *headTransportes, NodeTransacoes *headTransacoes, Vertice *headGrafo, NodeTipoTransporte *headTipoTransportes) {
     if (!ExportarClientes(headClientes) || !ExportarGestores(headGestores) || !ExportarTiposTransporte(headTipoTransportes) ||
     !ExportarTransportes(headTransportes) || !ExportarTransacoes(headTransacoes) || 
@@ -107,9 +114,14 @@ int ExportarTodosDados(NodeClientes *headClientes, NodeGestores *headGestores, N
 }
 
 
-/// @brief Exporta a lista de clientes para um fichero binário.
-/// @param listaClientes Pointer para o header da lista de clientes.
-/// @return Retorna 1 se a exportação for bem sucedida, caso contrário, retorna 0.
+/// @brief Exporta a lista de clientes para um arquivo binário. 
+/// 
+/// Esta função percorre a lista de clientes e escreve cada cliente 
+/// e o seu histórico de viagens para um arquivo binário. 
+/// 
+/// @param listaClientes Ponteiro para o primeiro nó da lista de clientes.
+/// 
+/// @return Retorna 1 se a operação de exportação foi bem sucedida, senão retorna 0.
 int ExportarClientes(struct NodeClientes* listaClientes) {
     FILE* file = fopen(ficheiroClientes, "wb");
     if (file == NULL) {
@@ -258,10 +270,9 @@ int CarregarBinarioViagens(struct Viagem** headViagem) {
 /// @brief Carrega dados de clientes de um ficheiro binário.
 /// @param headClientes Pointer para o header da lista de clientes.
 /// @return Retorna 1 se os dados forem carregados com sucesso, caso contrário, retorna 0.
-int CarregarBinarioClientes(struct NodeClientes** headClientes) {
+int CarregarBinarioClientes(struct NodeClientes** headClientes, Viagem** headViagem) {
     FILE* file = fopen(ficheiroClientes, "rb");
     if (file == NULL) {
-        printf("XXXX FALHEI");
         return 0;
     }
 
@@ -285,7 +296,6 @@ int CarregarBinarioClientes(struct NodeClientes** headClientes) {
     }
 
     fclose(file);
-    printf("XXXX CLIEntes SUCESSO");
     return 1;
 }
 
@@ -293,14 +303,29 @@ int CarregarBinarioClientes(struct NodeClientes** headClientes) {
 /// @brief Carrega dados de transportes de um ficheiro binário.
 /// @param headTransportes Pointer para o header da lista de transportes.
 /// @return Retorna 1 se os dados forem carregados com sucesso, caso contrário, retorna 0.
-int CarregarBinarioTransportes(NodeTransporte** headTransportes) {
+int CarregarBinarioTransportes(NodeTransporte** headTransportes, NodeTipoTransporte** headTiposTransporte) {
     FILE* file = fopen(ficheiroTransportes, "rb");
     if (file == NULL) {
         return 0;
     }
 
     Transporte transporteBuffer;
-    while (fread(&transporteBuffer, sizeof(Transporte), 1, file) == 1) {
+    while (1) {
+        size_t result;
+        result = fread(&transporteBuffer.id, sizeof(int), 1, file);
+        result += fread(&transporteBuffer.idTipo, sizeof(int), 1, file);
+        result += fread(&transporteBuffer.nivelBateria, sizeof(int), 1, file);
+        result += fread(&transporteBuffer.localizacao, sizeof(int), 1, file);
+        result += fread(&transporteBuffer.estado, sizeof(int), 1, file);
+        result += fread(&transporteBuffer.visitado, sizeof(int), 1, file);
+
+        if (result != 6) {  // se não leu 6 itens, então chegou ao fim do arquivo ou ocorreu um erro
+            break;
+        }
+
+        // Encontrar o tipo de transporte e atribuir ao transporte
+        transporteBuffer.tipo = EncontrarTipoPorId(headTiposTransporte, transporteBuffer.idTipo);
+
         InserirTransporte(headTransportes, transporteBuffer);
     }
 
@@ -309,13 +334,13 @@ int CarregarBinarioTransportes(NodeTransporte** headTransportes) {
 }
 
 
+
 /// @brief Carrega dados de gestores de um ficheiro binário.
 /// @param headGestores Pointer para o header da lista de gestores.
 /// @return Retorna 1 se os dados forem carregados com sucesso, caso contrário, retorna 0.
 int CarregarBinarioGestores(struct NodeGestores** headGestores) {
     FILE* file = fopen(ficheiroGestores, "rb");
     if (file == NULL) {
-        printf("XXXX GESTORES FALHEI");
         return 0;
     }
 
@@ -326,7 +351,6 @@ int CarregarBinarioGestores(struct NodeGestores** headGestores) {
     }
 
     fclose(file);
-    printf("XXXX GESTORES SUCESSO");
     return 1;
 }
 

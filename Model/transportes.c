@@ -422,6 +422,19 @@ int InserirTipoTransporte(struct NodeTipoTransporte** headRef, TipoTransporte ti
     return 1;
 }
 
+TipoTransporte* EncontrarTipoPorId(NodeTipoTransporte** headTiposTransporte, int idTipo) {
+    NodeTipoTransporte* current = *headTiposTransporte;
+    while (current != NULL) {
+        if (current->tipo.idTipo == idTipo) {
+            return &current->tipo;
+        }
+        current = current->proximo;
+    }
+    return NULL;
+}
+
+
+
 Camiao* InicializarCamiao(float capacidadeMaxima) {
     Camiao *camiao = (Camiao*)malloc(sizeof(Camiao));
     camiao->capacidadeMaxima = capacidadeMaxima;

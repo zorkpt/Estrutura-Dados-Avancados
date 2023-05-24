@@ -12,36 +12,36 @@ typedef struct Transacoes{
     int ativo;
 } Transacoes;
 
-typedef struct NodeTransacoes
-{
+typedef struct NodeTransacoes {
     struct Transacoes transacoes;
     struct NodeTransacoes *proximo;
-
 }NodeTransacoes;
 
-
-
+// Funções para manipulação da estrutura Transacoes
 int InserirTransacoes(struct NodeTransacoes** headRef, struct Transacoes transacoes);
-int MostrarTransacoes(struct NodeTransacoes* head);
+int MostrarTransacoes(struct NodeTransacoes* head, Viagem* headViagens);
 int MostrarTransacoesCliente(struct NodeTransacoes* head, int idCliente);
 int EditarTransacao(struct Transacoes * transacao, int tempoAlugado, int idClienteAAlugar, int idTransporte);
 int RemoverTransacao(struct NodeTransacoes **head, int idTransacao);
 struct Transacoes* ProcurarTransacao(struct NodeTransacoes* head, int idTransacao);
 int ProximoIDTransacao(struct NodeTransacoes* headTransacoes);
-void MostrarHistoricoViagens(struct Clientes* cliente);
+
+// Funções para operações relacionadas às transações
 int ClienteEmTransporte(struct NodeTransacoes* headTransacoes, int nif);
 int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, struct NodeClientes* headClientes, int nifClienteLogado, int idLocalTermino, Caminho* caminho);
-int AtualizarEstadoTransporte(struct Clientes* cliente, struct NodeTransporte* headTransportes, 
-                            struct NodeTransacoes* headTransacoes, int idTransporte, 
-                            int novoIdTransacao);
-int CalculaBateriaPerdida(float distancia);
-float CalculaValorTotal(float distancia, float preco);
+Viagem* CriarNovaViagem(int idTransporte, int origem, int destino, float valorPago, float custoPorKm, float distancia, char tipoTransporte[]);
+
+// Funções para atualização de estados
+int AtualizarEstadoTransporte(struct Clientes* cliente, struct NodeTransporte* headTransportes, struct NodeTransacoes* headTransacoes, int idTransporte, int novoIdTransacao);
 void AtualizaSaldoCliente(struct Clientes* cliente, float valor);
 void MudaEstadoTransporte(struct Transporte* transporte);
 void AtualizaNivelBateria(Transporte *transporte, int bateriaPerdida);
 void AtualizaLocalTransporte(struct Transporte* transporte, int novoLocal);
 void AtualizaLocalCliente(struct Clientes* cliente, int novoLocal);
-int VerificaSePodeAlugar(NodeTransacoes *headTransacoes, struct Clientes *cliente, int nifClienteLogado );
 
+// Funções utilitárias
+int CalculaBateriaPerdida(float distancia);
+float CalculaValorTotal(float distancia, float preco);
+int VerificaSePodeAlugar(NodeTransacoes *headTransacoes, struct Clientes *cliente, int nifClienteLogado );
 
 #endif

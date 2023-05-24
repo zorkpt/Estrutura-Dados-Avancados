@@ -42,37 +42,51 @@ typedef struct Camiao {
 
 
 
-int InserirTransporte(struct NodeTransporte** headRef, struct Transporte transporte);
-int MostrarTransportes(struct NodeTransporte* head);
-int VerTransportesDisponiveis(struct NodeTransporte* headTransporte, struct Vertice* headGrafo, int localizacaoCliente);
+// Funções relacionadas à estrutura Transporte
 struct Transporte EscreveTransporte(struct NodeTipoTransporte** headTipoTransporte, int id, int tipo, int nivelBateria, int localizacao, int estado);
-struct Transporte* ProcurarTransporte(struct NodeTransporte* headRef, int id );    
-int RemoverTransporte(struct NodeTransporte **head, int id);
+struct Transporte* ProcurarTransporte(struct NodeTransporte* headRef, int id );
 int EditarTransporte(struct Transporte *transporte, int id, int estado, int nivelBateria, float preco, int localizacao);
-int CopiarLista(struct NodeTransporte *head, struct NodeTransporte **copiedHead);
-int OrdenarListaDecrescente(struct NodeTransporte *head);
-int MostrarTransportes(struct NodeTransporte *head);
-int MostrarTransportesOrdenados(struct NodeTransporte *head);
-struct NodeTransporte* ProcurarTransportesPorLocal(struct NodeTransporte* headTransportes, int local);
-float CustoTotalAluguer(struct Transporte* transporte, int tempoAluguer);
-int AlugarTransporteDisponivel(struct Transporte* transporte);
 int EditarTransporteID(struct NodeTransporte *headTransporte, int id);
-NodeTransporte* TransportesParaRecolher(NodeTransporte *transportes);
+int InserirViagem(Viagem** headViagem, Viagem viagem);
 void LimparCamposTransportes(NodeTransporte *transporte);
-NodeTransporte *ProcuraTransporteMaisProximo(NodeTransporte *listaTransportes, Vertice *grafo, int localCliente);
-void ListarTransportesPorTipoERaio(struct NodeTransporte* headTransportes, struct Vertice* headGrafo, int localCliente, const char* tipo, float raio);
-TipoTransporte* ProcuraTipoTransporte(NodeTipoTransporte** head, int idTipo);
-int InserirTipoTransporte(struct NodeTipoTransporte** headRef, TipoTransporte tipoTransporte);
-void RecarregarTransportes(NodeTransporte* transportes);
-void MoverTransportesParaCentro(NodeTransporte* transportes, int centroRecolha);
-void ListarTiposTransporte(NodeTipoTransporte* tiposTransporte);
-int AlterarPrecoTransporte(NodeTipoTransporte* tiposTransporte, int idTipo, float novoPreco);
 
-//funcs camiao
+// Funções relacionadas à estrutura NodeTransporte
+int InserirTransporte(struct NodeTransporte** headRef, struct Transporte transporte);
+int RemoverTransporte(struct NodeTransporte **head, int id);
+NodeTransporte* ProcurarTransportesPorLocal(struct NodeTransporte* headTransportes, int local);
+struct NodeTransporte *ProcuraTransporteMaisProximo(NodeTransporte *listaTransportes, Vertice *grafo, int localCliente);
+
+// Funções relacionadas a mostrar/ordenar listas de transportes
+int MostrarTransportes(struct NodeTransporte* head);
+int MostrarTransportesOrdenados(struct NodeTransporte *head);
+int VerTransportesDisponiveis(struct NodeTransporte* headTransporte, struct Vertice* headGrafo, int localizacaoCliente);
+
+// Funções relacionadas à estrutura Camiao
 int PodeAdicionarTransporte(Camiao *camiao, Transporte *transporte);
 void AdicionarTransporte(Camiao *camiao, Transporte *transporte);
-void DescarregarCamiao(Camiao *camiao);
 Camiao* InicializarCamiao(float capacidadeMaxima);
-Viagem* CriarNovaViagem(int idTransporte, int origem, int destino, float valorPago, float custoPorKm, float distancia,char tipoTransporte[]);
-int InserirViagem(Viagem** headViagem, Viagem viagem);
+
+// Funções de operação de lista
+int CopiarLista(struct NodeTransporte *head, struct NodeTransporte **copiedHead);
+int OrdenarListaDecrescente(struct NodeTransporte *head);
+
+// Funções de operação de algoritmo de pesquisa
+void RecarregarTransportes(NodeTransporte* transportes);
+void MoverTransportesParaCentro(NodeTransporte* transportes, int centroRecolha);
+NodeTransporte* TransportesParaRecolher(NodeTransporte *transportes);
+
+// Outras funções de transporte
+float CustoTotalAluguer(struct Transporte* transporte, int tempoAluguer);
+int AlugarTransporteDisponivel(struct Transporte* transporte);
+void ListarTransportesPorTipoERaio(struct NodeTransporte* headTransportes, struct Vertice* headGrafo, int localCliente, const char* tipo, float raio);
+
+
+// Funções relacionadas à estrutura TipoTransporte
+TipoTransporte* ProcuraTipoTransporte(NodeTipoTransporte** head, int idTipo);
+int InserirTipoTransporte(struct NodeTipoTransporte** headRef, TipoTransporte tipoTransporte);
+void ListarTiposTransporte(NodeTipoTransporte* tiposTransporte);
+int AlterarPrecoTransporte(NodeTipoTransporte* tiposTransporte, int idTipo, float novoPreco);
+TipoTransporte* EncontrarTipoPorId(NodeTipoTransporte** headTiposTransporte, int idTipo);
+
+
 #endif
