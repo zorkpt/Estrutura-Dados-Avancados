@@ -1,9 +1,9 @@
 /**
  * @file importexport.c
  * @author Hugo Poças
- * @brief 
+ * @brief Este ficheiro contém as funções que permitem carregar dados de ficheiros CSV e binários.
  * @version 0.1
- * @date 18-03-2023
+ * @date 27-05-2023
  * 
  * @copyright Copyright (c) 2023
  * 
@@ -36,6 +36,8 @@
 #define csvTransacoes "Data/Csv/transacoes.csv"
 #define csvGrafo "Data/Csv/matrix.csv"
 #define csvTipoTransportes "Data/Csv/tipostransportes.csv"
+// Número maximo de caracteres que cada linha pode conter
+#define MAX_LINHA 1024
 
 /// @brief Se todos os ficheiros CSV forem carregados com sucesso, retorna 1, caso contrário, retorna 0.
 /// @param headClientes 
@@ -278,7 +280,7 @@ int CarregarBinarioClientes(struct NodeClientes** headClientes, Viagem** headVia
 
     Clientes clienteBuffer;
     while (fread(&clienteBuffer, sizeof(Clientes), 1, file) == 1) {
-        Viagem* headViagem = NULL;
+        Viagem* headViagemCliente = NULL; // Guarda a cabeça da lista de viagens do cliente atual
         // Ler o número de viagens
         int numViagens;
         fread(&numViagens, sizeof(int), 1, file);
@@ -288,16 +290,28 @@ int CarregarBinarioClientes(struct NodeClientes** headClientes, Viagem** headVia
             fread(&viagemBuffer, sizeof(Viagem), 1, file);
             Viagem* novaViagem = malloc(sizeof(Viagem));
             *novaViagem = viagemBuffer;
-            novaViagem->proxima = headViagem;
-            headViagem = novaViagem;
+            novaViagem->proxima = headViagemCliente;
+            headViagemCliente = novaViagem;
+
+            // Atualiza a lista global de viagens
+            if (*headViagem == NULL) {
+                *headViagem = novaViagem;
+            } else {
+                Viagem *aux = *headViagem;
+                while (aux->proxima != NULL) {
+                    aux = aux->proxima;
+                }
+                aux->proxima = novaViagem;
+            }
         }
-        clienteBuffer.historicoViagens = headViagem;
+        clienteBuffer.historicoViagens = headViagemCliente;
         InserirCliente(headClientes, clienteBuffer);
     }
 
     fclose(file);
     return 1;
 }
+
 
 
 /// @brief Carrega dados de transportes de um ficheiro binário.
@@ -360,7 +374,6 @@ int CarregarBinarioGestores(struct NodeGestores** headGestores) {
 int CarregarBinarioTransacoes(struct NodeTransacoes** headTransacoes) {
     FILE* file = fopen(ficheiroTransacoes, "rb");
     if (file == NULL) {
-        printf("XXXX TRANSACOES FALHEI");
         return 0;
     }
 
@@ -370,7 +383,6 @@ int CarregarBinarioTransacoes(struct NodeTransacoes** headTransacoes) {
     }
 
     fclose(file);
-    printf("XXXX TRANSACOES SUCESSO");
     return 1;
 }
 
@@ -378,8 +390,7 @@ int CarregarBinarioTransacoes(struct NodeTransacoes** headTransacoes) {
 int ExportaVertices(Vertice *grafo) {
     FILE *file = fopen(ficheiroVertices, "wb");
     if (file == NULL) {
-        perror("Erro ao abrir o arquivo");
-        exit(1);
+        return 0;
     }
 
     Vertice *aux = grafo;
@@ -396,8 +407,7 @@ int ExportaVertices(Vertice *grafo) {
 int ExportaAdjacentes(Vertice *grafo) {
     FILE *file = fopen(ficheiroArestas, "wb");
     if (file == NULL) {
-        perror("Erro ao abrir o arquivo");
-        exit(1);
+        return 0;
     }
 
     Vertice *aux = grafo;
@@ -419,7 +429,6 @@ int ExportaAdjacentes(Vertice *grafo) {
 int CarregarBinarioVertices(Vertice** grafo) {
     FILE* file = fopen(ficheiroVertices, "rb");
     if (file == NULL) {
-        printf("XXXX VERTICES FALHEI");
         return 0;
     }
 
@@ -431,14 +440,12 @@ int CarregarBinarioVertices(Vertice** grafo) {
     }
 
     fclose(file);
-    printf("XXXX VERTICES SUCESSO");
     return 1;
 }
 
 int CarregarBinarioAdjacentes(Vertice* grafo) {
     FILE* file = fopen(ficheiroArestas, "rb");
     if (file == NULL) {
-        printf("XXXX ADJACENTES FALHEI");
         return 0;
     }
 
@@ -452,12 +459,8 @@ int CarregarBinarioAdjacentes(Vertice* grafo) {
     }
 
     fclose(file);
-    printf("XXXX ADJACENTES SUCESSO");
     return 1;
 }
-
-// Número maximo de caracteres que cada linha pode conter
-#define MAX_LINHA 1024
 
 
 /// @brief Carrega dados de clientes de um determinado ficheiro e passa-os para uma lista ligada.
@@ -465,7 +468,6 @@ int CarregarBinarioAdjacentes(Vertice* grafo) {
 /// @param nomeFicheiro String com o nome do ficheiro que contem os dados dos clientes a ser carregado.
 /// @return Retorna o número de clientes carregados.
 int CarregarFicheiroClientes(struct NodeClientes** head, char *nomeFicheiro){
-    printf("A carregar ficheiro de clientes...\n");
     FILE *ficheiro;
     ficheiro = fopen(nomeFicheiro, "r");
     int totalClientes = 0;
@@ -540,7 +542,6 @@ int LerGrafoDeFicheiro(Vertice **grafo, FILE *ficheiro){
 /// @param nomeFicheiro String com o nome do ficheiro que contem os dados dos transportes a ser carregado.
 /// @return Retorna o número de transportes carregados.
 int CarregarFicheiroTransportes(struct NodeTransporte** head, NodeTipoTransporte** headTipo, char* nomeFicheiro) {
-    printf("A carregar ficheiro de transportes...\n");
     FILE *ficheiro;
     ficheiro = fopen(nomeFicheiro, "r");
     int totalTransportes = 0;
@@ -558,7 +559,6 @@ int CarregarFicheiroTransportes(struct NodeTransporte** head, NodeTipoTransporte
 /// @return Retorna o número de gestores carregados.
 int CarregarFicheiroGestores(struct NodeGestores** head, char* nomeFicheiro) {
     FILE *ficheiro;
-    printf("A carregar ficheiro de gestores...\n");
     ficheiro = fopen(nomeFicheiro, "r");
     int totalGestores = 0;
     if(ficheiro == NULL){
@@ -585,7 +585,6 @@ int CarregarFicheiroTransacoes(struct NodeTransacoes** head, char* nomeFicheiro)
 
 
 int CarregarFicheiroTiposTransporte(NodeTipoTransporte** headTipos, char* nomeFicheiro) {
-    printf("A carregar tipos de transporte...\n");
     FILE *ficheiro;
     ficheiro = fopen(nomeFicheiro, "r");
     int totalTipos = 0;
@@ -635,20 +634,16 @@ int LerTransportesDeFicheiro(struct NodeTransporte** headRef, NodeTipoTransporte
     char linha[MAX_LINHA];
     struct Transporte temp;
     int totalTransportes=0;
-    printf("Entre LerTransportesDeFicheiro\n");
     
     fgets(linha, MAX_LINHA, ficheiro); // Ignorar primeira linha
     while (fgets(linha, MAX_LINHA, ficheiro) != NULL)
-    {
-        printf("Linha: %s\n",linha);
-        
+    {        
         if(sscanf(linha,"%d\t%d\t%d\t%d\t%d", 
                                                     &temp.id, 
                                                     &temp.idTipo, 
                                                     &temp.nivelBateria, 
                                                     &temp.localizacao,
                                                     &temp.estado)==5){
-        printf("idTipo: %d\n", temp.idTipo);
         Transporte novoTransporte = EscreveTransporte(headTipos, temp.id, temp.idTipo, temp.nivelBateria, temp.localizacao, temp.estado);
         if(InserirTransporte(headRef,novoTransporte))
             totalTransportes++; 
@@ -702,6 +697,10 @@ int LerTransacoesDeFicheiro(struct NodeTransacoes** headRef, FILE *ficheiro){
     return totalTransacoes;
 }
 
+/// @brief Lê os tipos de transporte de um ficheiro e adiciona-os a uma lista.
+/// @param headRef é um duplo ponteiro para a cabeça da lista de tipos de transporte.
+/// @param ficheiro é o arquivo do qual os tipos de transporte serão lidos.
+/// @return O total de tipos de transporte lidos e inseridos na lista.
 int LerTiposTransporteDeFicheiro(NodeTipoTransporte** headRef, FILE *ficheiro){
     char linha[MAX_LINHA];
     TipoTransporte temp;
@@ -725,9 +724,10 @@ int LerTiposTransporteDeFicheiro(NodeTipoTransporte** headRef, FILE *ficheiro){
 }
 
 
-#endif
-
-
+/// @brief Procura um tipo de transporte na lista com base no seu id.
+/// @param head é um duplo ponteiro para a cabeça da lista de tipos de transporte.
+/// @param idTipo é o ID do tipo de transporte que estamos procurando.
+/// @return Um ponteiro para o tipo de transporte, se encontrado. Caso contrário, retorna NULL.
 TipoTransporte* ProcuraTipoTransporte(NodeTipoTransporte** head, int idTipo) {
     NodeTipoTransporte* current = *head;
     while(current != NULL) {
@@ -738,3 +738,6 @@ TipoTransporte* ProcuraTipoTransporte(NodeTipoTransporte** head, int idTipo) {
     }
     return NULL; // Retorna NULL se o tipo de transporte não foi encontrado
 }
+
+
+#endif

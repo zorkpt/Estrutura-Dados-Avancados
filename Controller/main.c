@@ -1,7 +1,7 @@
 /**
  * @file main.c
  * @author Hugo Poças
- * @brief 
+ * @brief Este ficheiro contém a função main, que inicializa as listas, carrega os dados e inicia o login/menu.
  * @version 0.2
  * @date 24-05-2023
  * 
@@ -42,11 +42,13 @@ int main() {
     } else {
         printf("Erro ao carregar dados.\n");
     }
-    headVertice->idCentroRecolha = ProcurarCentroRecolha(headVertice);
+
+    // Procurar o ID do centro de recolha
+    headVertice->idCentroRecolha = ProcurarCentroRecolha(headVertice); 
 
 
 //testes
-
+ //ListarLocais(headVertice);
     //  // Print the graph
   //  PrintGrafo(headVertice);
 

@@ -46,7 +46,7 @@ typedef struct Camiao {
 struct Transporte EscreveTransporte(struct NodeTipoTransporte** headTipoTransporte, int id, int tipo, int nivelBateria, int localizacao, int estado);
 struct Transporte* ProcurarTransporte(struct NodeTransporte* headRef, int id );
 int EditarTransporte(struct Transporte *transporte, int id, int estado, int nivelBateria, float preco, int localizacao);
-int EditarTransporteID(struct NodeTransporte *headTransporte, int id);
+int EdtarEstadoTransporte(struct NodeTransporte *headTransporte, int id);
 int InserirViagem(Viagem** headViagem, Viagem viagem);
 void LimparCamposTransportes(NodeTransporte *transporte);
 
@@ -71,8 +71,8 @@ int CopiarLista(struct NodeTransporte *head, struct NodeTransporte **copiedHead)
 int OrdenarListaDecrescente(struct NodeTransporte *head);
 
 // Funções de operação de algoritmo de pesquisa
-void RecarregarTransportes(NodeTransporte* transportes);
-void MoverTransportesParaCentro(NodeTransporte* transportes, int centroRecolha);
+void RecarregarTransportes(NodeTransporte* transportesARecolher, NodeTransporte* transportesOriginais);
+void MoverTransportesParaCentro(NodeTransporte *transportesARecolher, NodeTransporte* transportesOriginais, int centroRecolha);
 NodeTransporte* TransportesParaRecolher(NodeTransporte *transportes);
 
 // Outras funções de transporte

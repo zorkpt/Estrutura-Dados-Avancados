@@ -3,13 +3,14 @@
 #pragma once
 #include "transportes.h"
 #include "caminho.h"
+#include "grafo.h"
 
 typedef struct Transacoes{
     int idTransacao;
     int idClienteAAlugar;
     int idTransporte;
     int tempoAlugado;
-    int ativo;
+    int ativo; // 0 - Terminado, 1 - Em transporte
 } Transacoes;
 
 typedef struct NodeTransacoes {
@@ -19,7 +20,7 @@ typedef struct NodeTransacoes {
 
 // Funções para manipulação da estrutura Transacoes
 int InserirTransacoes(struct NodeTransacoes** headRef, struct Transacoes transacoes);
-int MostrarTransacoes(struct NodeTransacoes* head, Viagem* headViagens);
+int MostrarTransacoes(struct Vertice* grafo, Viagem* headViagens);
 int MostrarTransacoesCliente(struct NodeTransacoes* head, int idCliente);
 int EditarTransacao(struct Transacoes * transacao, int tempoAlugado, int idClienteAAlugar, int idTransporte);
 int RemoverTransacao(struct NodeTransacoes **head, int idTransacao);

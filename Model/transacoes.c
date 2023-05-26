@@ -1,9 +1,9 @@
 /**
  * @file transacoes.c
  * @author Hugo Poças
- * @brief 
- * @version 0.1
- * @date 18-03-2023
+ * @brief Este ficheiro contém as funções de transações.
+ * @version 0.2
+ * @date 27-05-2023
  * 
  * @copyright Copyright (c) 2023
  * 
@@ -15,6 +15,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#define ERR_CLIENTE_EM_TRANSPORTE -1
+#define ERR_SALDO_INSUFICIENTE 0
+#define CLIENTE_PODE_ALUGAR 1
+const float FACTOR_METRO_PARA_KM = 0.001f;
 
 /// @brief Insere uma nova struct de Transacoes na lista de NodeTransacoes
 /// @param headRef Pointer para o head **pointer** da lista de NodeTransacoes
@@ -40,38 +44,29 @@ int InserirTransacoes(struct NodeTransacoes** headRef, struct Transacoes transac
 /// @brief Mostra todos as Transações da lista de NodeTransacoes
 /// @param head Pointer para o head da lista de NodeTransacoes
 /// @return Retorna 1 se a lista não estiver vazia, 0 caso contrário
-int MostrarTransacoes(struct NodeTransacoes* head, Viagem* headViagens) {
-    if (head == NULL) {
+int MostrarTransacoes(Vertice* grafo, Viagem* headViagens) {
+    if (grafo == NULL) {
         return 0;
     }
-
-    // printf("%-12s %-12s %-15s %s\n", "ID TRAN", "ID CLIENTE", "ID TRANSPORTE", "Tempo Decorrido");
-    // while(headViagens != NULL) {
-    //      printf("| %13d | %6d | %7d | %9.2f | %10.2f | %12.2f | %s \n",
-    //         headViagens->idTransporte,
-    //         headViagens->origem,
-    //         headViagens->destino,
-    //         headViagens->distancia,
-    //         headViagens->valorPago,
-    //         headViagens->custoPorKm,
-    //         headViagens->tipoTransporte);
-    //     headViagens = headViagens->proxima;
-    // }
-
-
-
-    printf("%-12s %-12s %-15s %s\n", "ID TRAN", "ID CLIENTE", "ID TRANSPORTE", "Tempo Decorrido");
-    struct NodeTransacoes* current = head;
-    while (current != NULL) {
-        printf("%-12d %-12d %-15d %d\n",
-               current->transacoes.idTransacao,
-               current->transacoes.idClienteAAlugar,
-               current->transacoes.idTransporte,
-               current->transacoes.tempoAlugado);
-        current = current->proximo;
+    printf("%-13s %-54s %-54s %-9s %-10s %-12s %s \n",
+            "ID TRANS", "ORIGEM", "DESTINO", "DISTANCIA", 
+            "VALOR PAGO", "CUSTO POR KM", "TIPO TRANSPORTE");
+    while (headViagens != NULL) {
+        printf("| %5d | [%d] %-50s | [%d] %-50s | %9.2f | %10.2f | %12.2f | %s \n",
+            headViagens->idTransporte,
+            headViagens->origem,
+            GetNomeLocal(grafo,headViagens->origem),
+            headViagens->destino,
+            GetNomeLocal(grafo,headViagens->destino),
+            headViagens->distancia,
+            headViagens->valorPago,
+            headViagens->custoPorKm,
+            headViagens->tipoTransporte);
+        headViagens = headViagens->proxima;
     }
     return 1;
 }
+
 
 /// @brief Mostra as transações de um cliente específico
 /// @param head Pointer para o head da lista de NodeTransacoes
@@ -173,8 +168,6 @@ int ProximoIDTransacao(struct NodeTransacoes* headTransacoes) {
 }
 
 
-
-
 /// @brief Verifica se um cliente está num transporte
 /// @param headTransacoes Pointer para o head da lista de NodeTransacoes
 /// @param nif NIF do cliente a procurar
@@ -191,7 +184,7 @@ int ClienteEmTransporte(struct NodeTransacoes* headTransacoes, int nif) {
 }
 
 /// @brief Atualiza o estado de um transporte
-/// @param cliente struct de Clientes, passada para atualizar o saldo
+/// @param cliente struct de Clientes
 /// @param headTransportes Pointer para o head da lista de NodeTransporte, passada para atualizar o estado do transporte
 /// @param headTransacoes Pointer para o head da lista das transacoes, passada para para atualizar o estado da transacao
 /// @param idTransporte ID do transporte a ser atualizado
@@ -202,7 +195,7 @@ int ClienteEmTransporte(struct NodeTransacoes* headTransacoes, int nif) {
 int AtualizarEstadoTransporte(struct Clientes* cliente, struct NodeTransporte* headTransportes, 
                             struct NodeTransacoes* headTransacoes, int idTransporte, 
                             int novoIdTransacao) {
-    if(!EditarTransporteID(headTransportes,idTransporte)) {
+    if(!EdtarEstadoTransporte(headTransportes,idTransporte)) {
         return 0;
     }
     // Criada nova transacção
@@ -261,7 +254,7 @@ void AtualizaSaldoCliente(struct Clientes* cliente, float valor) {
 /// @param preco 
 /// @return Valor total do aluguer
 float CalculaValorTotal(float distancia, float preco) {
-    return (distancia * preco)*0.001;
+    return (distancia * preco) * FACTOR_METRO_PARA_KM;
 }
 
 /// @brief Calcula a bateria perdida com base na distância total
@@ -271,10 +264,7 @@ int CalculaBateriaPerdida(float distancia) {
     // Implementação da lógica de cálculo da bateria perdida com base na distância total
     int bateriaPerdida = 0;
 
-    // Fator de conversão para bateria perdida por unidade de distância
-    float fatorConversao = 0.001; 
-
-    bateriaPerdida = (int)(distancia * fatorConversao);
+    bateriaPerdida = (int)(distancia * FACTOR_METRO_PARA_KM);
 
     return bateriaPerdida;
 }
@@ -323,30 +313,57 @@ int TerminarAluguer(struct NodeTransporte* headTransportes, struct NodeTransacoe
 }
 
 
+
+/// @brief Cria uma nova Viagem
+/// @param idTransporte ID do transporte usado na viagem
+/// @param origem Local de origem da viagem
+/// @param destino Local de destino da viagem
+/// @param valorPago Valor pago pela viagem
+/// @param custoPorKm Custo por quilometro do transporte
+/// @param distancia Distancia da viagem
+/// @param tipoTransporte Tipo de transporte usado na viagem
+/// @return Retorna um ponteiro para a nova Viagem ou NULL se a alocação de memória falhar
 Viagem* CriarNovaViagem(int idTransporte, int origem, int destino, float valorPago, float custoPorKm, float distancia, char tipoTransporte[]) {
+    // Aloca memória para a nova viagem
     Viagem* novaViagem = (Viagem*)malloc(sizeof(Viagem));
     if (novaViagem == NULL) {
         return NULL;
     }
+    
+    // Inicializa os valores da nova viagem
     novaViagem->idTransporte = idTransporte;
     novaViagem->origem = origem;
     novaViagem->destino = destino;
     novaViagem->valorPago = valorPago;
     novaViagem->custoPorKm = custoPorKm;
     novaViagem->distancia = distancia;
+    
+    // Copia o tipo de transporte para a nova viagem
     strcpy(novaViagem->tipoTransporte, tipoTransporte);
+
     novaViagem->proxima = NULL;
+
     return novaViagem;
 }
 
-int VerificaSePodeAlugar(NodeTransacoes *headTransacoes, struct Clientes *cliente, int nifClienteLogado ){
-    // Verifica se o cliente está num transporte
+
+/// @brief Verifica se um cliente está apto a alugar um transporte.
+/// @param headTransacoes Ponteiro para o início da lista de transações.
+/// @param cliente Ponteiro para o cliente que se deseja verificar.
+/// @param nifClienteLogado NIF do cliente que está logado no sistema.
+/// @return Retorna um código de erro:
+///         - 1: Se o cliente está apto a alugar um transporte.
+///          - ERR_CLIENTE_EM_TRANSPORTE: Se o cliente já está num transporte.
+///          - ERR_SALDO_INSUFICIENTE: Se o cliente não tem saldo suficiente.
+int VerificaSePodeAlugar(NodeTransacoes *headTransacoes, struct Clientes *cliente, int nifClienteLogado ) {
+    // Verifica se o cliente já está num transporte
     if (ClienteEmTransporte(headTransacoes, nifClienteLogado)) {
-        return -1;
+        return ERR_CLIENTE_EM_TRANSPORTE;
     }
     // Verifica se o cliente tem saldo suficiente
     if (cliente->saldo <= 0) {
-        return 0;
+        return ERR_SALDO_INSUFICIENTE;
     }
-    return 1;
+    // Se não houver nenhum erro, retorna 1
+    return CLIENTE_PODE_ALUGAR;
 }

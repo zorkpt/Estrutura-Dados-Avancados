@@ -1,7 +1,7 @@
 /**
  * @file clientes.c
  * @author Hugo Poças
- * @brief 
+ * @brief Este ficheiro contém as funções de clientes.
  * @version 0.1
  * @date 18-03-2023
  * 

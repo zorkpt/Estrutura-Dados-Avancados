@@ -1,8 +1,8 @@
 /**
  * @file verificacoes.c
  * @author Hugo Poças
- * @brief 
- * @version 0.1
+ * @brief Este ficheiro contém as funções de verificação.
+ * @version 0.2
  * @date 18-03-2023
  * 
  * @copyright Copyright (c) 2023

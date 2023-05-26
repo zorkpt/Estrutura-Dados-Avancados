@@ -1,9 +1,9 @@
 /**
  * @file menuutilizador.c
  * @author Hugo Poças
- * @brief 
- * @version 0.1
- * @date 18-03-2023
+ * @brief Funções de menu do utilizador.
+ * @version 0.2
+ * @date 27-05-2023
  * 
  * @copyright Copyright (c) 2023
  * 
@@ -44,7 +44,6 @@ int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headG
     while (1) {
         struct Clientes *cliente = ProcuraCliente(headClientes, nifClienteLogado);
         struct Transporte *transporteAlugar;
-
         MostrarCabecalhoCliente(cliente, headGrafo);
         int escolha = ListaMenuCliente();
 
@@ -175,13 +174,13 @@ int MenuUtilizador(struct NodeClientes* headClientes, struct NodeGestores* headG
                 }
                 break;
 
+            // Caso 9: Listar transportes por tipo e raio
             case 9:
                 char tipo[MAX_LENGTH];
                 LerTextoInput("Tipo de transporte a procurar?\n",tipo, MAX_LENGTH);
                 printf("Raio de busca: ");
                 float raio = VerificarFloat();
-                // tipo_de_transporte
-              //  ListarTransportesPorTipoERaio(headTransportes, headGrafo, cliente->localCliente, tipo, raio);
+                ListarTransportesPorTipoERaio(headTransportes, headGrafo, cliente->localCliente, tipo, raio);
                 break;
 
             // Caso 9: Exportar todos os dados e sair do programa

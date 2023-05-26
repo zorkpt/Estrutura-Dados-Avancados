@@ -1,3 +1,14 @@
+/**
+ * @file grafo.c
+ * @author Hugo Poças
+ * @brief Este ficheiro contém as funções de criação e manipulação do grafo.
+ * @version 0.2
+ * @date 27-05-2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -120,9 +131,9 @@ void PrintGrafo(Vertice *grafo) {
 }
 
 /// @brief Função para saber o nome do local a partir do id
-/// @param grafo 
-/// @param localID 
-/// @return 
+/// @param grafo ponteiro para o grafo
+/// @param localID id do local
+/// @return string com o nome do local
 const char* GetNomeLocal(Vertice *grafo, int localID) {
     Vertice *current = grafo;
     while (current != NULL) {
@@ -171,15 +182,20 @@ Vertice* ProcuraVertice(Vertice *grafo, int idVertice) {
     return NULL;
 }
 
-
+/// @brief Imprime a lista de todos os locais (cidades) disponíveis no grafo.
+/// @param headVertice é o vértice inicial do grafo a partir do qual a função começa a percorrer o grafo.
 void ListarLocais(Vertice *headVertice) {
+    // Se o grafo está vazio (i.e., não há vértices), imprimir uma mensagem indicando isso.
     if (headVertice == NULL) {
         printf("Sem dados.\n");
-        
+        return;
     }
-    
+
+    // Iniciar a partir do vértice inicial do grafo.
     Vertice *aux = headVertice;
     printf("\nLocais disponíveis:\n");
+    
+    // Percorrer todo o grafo, imprimindo o ID e o nome da cidade de cada vértice.
     while (aux != NULL) {
         printf("[%d] %s\n", aux->idVertice, aux->cidade);
         aux = aux->proximo;

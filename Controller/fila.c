@@ -1,3 +1,14 @@
+/**
+ * @file fila.c
+ * @author Hugo Poças
+ * @brief Este ficheiro contém as funções de fila.
+ * @version 0.2
+ * @date 27-05-2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include <stdlib.h>
 #include "../Headers/fila.h"
 #define PREFIX_CR "CR_"

@@ -1,9 +1,9 @@
 /**
  * @file transportes.c
  * @author Hugo Poças
- * @brief 
- * @version 0.1
- * @date 18-03-2023
+ * @brief Ficheiro que contém as funções relativas aos transportes.
+ * @version 0.2
+ * @date 27-05-2023
  * 
  * @copyright Copyright (c) 2023
  * 
@@ -116,7 +116,7 @@ int EditarTransporte(struct Transporte *transporte, int id, int estado, int nive
 /// @param headTransporte Pointer para o head da lista de NodeTransporte
 /// @param id ID do transporte a editar
 /// @return Retorna 1 se a edição for bem sucedida, 0 caso contrário
-int EditarTransporteID(struct NodeTransporte *headTransporte, int id){ 
+int EdtarEstadoTransporte(struct NodeTransporte *headTransporte, int id){ 
     struct NodeTransporte* current = headTransporte;
     while (headTransporte != NULL) {
             if (headTransporte->transporte.id == id) {
@@ -127,7 +127,6 @@ int EditarTransporteID(struct NodeTransporte *headTransporte, int id){
     }
     return 0;
 }
-
 
 
 /// @brief  Procura um transporte na lista de NodeTransporte
@@ -144,6 +143,8 @@ struct Transporte* ProcurarTransporte(struct NodeTransporte* headRef, int id ){
     }
     return NULL;
 }
+
+
 /// @brief Procura um transporte na lista de NodeTransporte por localização
 /// @param headTransportes Pointer para o head da lista de NodeTransporte
 /// @param local Localização a procurar
@@ -173,24 +174,24 @@ int VerTransportesDisponiveis(struct NodeTransporte* headTransporte, struct Vert
     struct NodeTransporte* current = headTransporte;
     //cabeçalho
     printf("Transportes disponiveis:\n");
-printf("%-8s%-20s%-10s%-15s%-30s%20s\n", "ID", "TIPO", "BATERIA", "PRECO/KM", "LOCAL", "DISTANCIA");    
-while (current != NULL) {
-    if (current->transporte.estado == 0) {
-        Caminho *caminho = Dijkstra(headGrafo, localizacaoCliente, current->transporte.localizacao);
-        if (caminho != NULL) {
-            printf("%-8d%-20s%-10d€%-15.2f[%d] - %30.30s%15.2fm\n", 
-                        current->transporte.id, 
-                        current->transporte.tipo->nome,
-                        current->transporte.nivelBateria, 
-                        current->transporte.tipo->precoPorKm,
-                        current->transporte.localizacao,
-                        GetNomeLocal(headGrafo, current->transporte.localizacao),
-                        caminho->distanciaTotal);
-                    free(caminho);
+    printf("%-8s%-20s%-10s%-15s%-30s%20s\n", "ID", "TIPO", "BATERIA", "PRECO/KM", "LOCAL", "DISTANCIA");    
+    while (current != NULL) {
+        if (current->transporte.estado == 0) {
+            Caminho *caminho = Dijkstra(headGrafo, localizacaoCliente, current->transporte.localizacao);
+            if (caminho != NULL) {
+                printf("%-8d%-20s%-10d€%-15.2f[%d] - %30.30s%15.2fm\n", 
+                            current->transporte.id, 
+                            current->transporte.tipo->nome,
+                            current->transporte.nivelBateria, 
+                            current->transporte.tipo->precoPorKm,
+                            current->transporte.localizacao,
+                            GetNomeLocal(headGrafo, current->transporte.localizacao),
+                            caminho->distanciaTotal);
+                        free(caminho);
+                    }
                 }
-            }
-        current = current->proximo;
-    }
+            current = current->proximo;
+        }
     return 1;
 }
 
@@ -314,22 +315,6 @@ int AlugarTransporteDisponivel(struct Transporte* transporte) {
 }
 
 
-
-NodeTransporte* TransportesParaRecolher(NodeTransporte *transportes) {
-    NodeTransporte *transportesParaRecolher = NULL;
-    
-    while(transportes){
-        if(transportes->transporte.nivelBateria < limiteBateria){
-            InserirTransporte(&transportesParaRecolher, transportes->transporte);
-        }
-        transportes = transportes->proximo;
-    }
-
-    return transportesParaRecolher;
-}
-
-
-
 /// @brief Limpa os campos visitado da estrutura de transportes
 /// @param grafo Um ponteiro para a estrutura transporte
 void LimparCamposTransportes(NodeTransporte *transporte) {
@@ -375,43 +360,57 @@ NodeTransporte *ProcuraTransporteMaisProximo(NodeTransporte *listaTransportes, V
 }
 
 
-// tipo_de_transporte
-// void ListarTransportesPorTipoERaio(struct NodeTransporte* headTransportes, struct Vertice* headGrafo, int localCliente, const char* tipo, float raio) {
-//     struct NodeTransporte* currentTransporte = headTransportes;
 
-//     printf("\nTransportes do tipo %s no raio de %.2f a partir do local %d:\n", tipo, raio, localCliente);
+/// @brief Lista os transportes de um determinado tipo que estão dentro de um certo raio a partir de um local.
+/// @param headTransportes Ponteiro para o início da lista de transportes.
+/// @param headGrafo Ponteiro para o início do grafo que representa a rede de locais.
+/// @param localCliente Local do cliente.
+/// @param tipo Nome do tipo de transporte desejado.
+/// @param raio Raio máximo de distância a partir do local do cliente.
+void ListarTransportesPorTipoERaio(struct NodeTransporte* headTransportes, struct Vertice* headGrafo, int localCliente, const char* tipo, float raio) {
+    struct NodeTransporte* currentTransporte = headTransportes;
 
-//     while (currentTransporte != NULL) {
-//         if (strcmp(currentTransporte->transporte.tipo, tipo) == 0) {
-//             Caminho* caminho = Dijkstra(headGrafo, localCliente, currentTransporte->transporte.localizacao);
-//             float distancia = DistanciaCaminho(caminho);
-//             if (distancia <= raio) {
-//                 printf("ID: %d - Localização: [%d] %s - Distância: %.2f\n",
-//                     currentTransporte->transporte.id,
-//                     currentTransporte->transporte.localizacao,
-//                     GetNomeLocal(headGrafo, currentTransporte->transporte.localizacao),
-//                     distancia);
-//             }
-//         }
+    printf("\nTransportes do tipo %s no raio de %.2f a partir do local %d:\n", tipo, raio, localCliente);
 
-//         currentTransporte = currentTransporte->proximo;
-//     }
+    while (currentTransporte != NULL) {
+        if (strcmp(currentTransporte->transporte.tipo->nome, tipo) == 0) {
+            Caminho* caminho = Dijkstra(headGrafo, localCliente, currentTransporte->transporte.localizacao);
+            float distancia = DistanciaCaminho(caminho);
+            if (distancia <= raio) {
+                printf("ID: %d - Localização: [%d] %s - Distância: %.2f\n",
+                    currentTransporte->transporte.id,
+                    currentTransporte->transporte.localizacao,
+                    GetNomeLocal(headGrafo, currentTransporte->transporte.localizacao),
+                    distancia);
+            }
+        }
 
-// }
-
-
-int InserirTipoTransporte(struct NodeTipoTransporte** headRef, TipoTransporte tipoTransporte) {
-    struct NodeTipoTransporte* newNode = (struct NodeTipoTransporte*) malloc(sizeof(struct NodeTipoTransporte));
-    if (newNode == NULL) {
-        return 0;
+        currentTransporte = currentTransporte->proximo;
     }
 
+}
+
+
+/// @brief Insere um novo tipo de transporte na lista ligada.
+/// @param headRef Ponteiro para o ponteiro da cabeça da lista ligada.
+/// @param tipoTransporte A estrutura TipoTransporte a ser adicionada à lista.
+/// @return 1 se a operação foi bem-sucedida, 0 em caso de falha (por exemplo, falta de memória).
+int InserirTipoTransporte(struct NodeTipoTransporte** headRef, TipoTransporte tipoTransporte) {
+    // Aloca memória para um novo nó.
+    struct NodeTipoTransporte* newNode = (struct NodeTipoTransporte*) malloc(sizeof(struct NodeTipoTransporte));
+    if (newNode == NULL) {
+        return 0; // Falha na alocação de memória.
+    }
+
+    // Inicializa o novo nó com os valores fornecidos.
     newNode->tipo = tipoTransporte;
     newNode->proximo = NULL;
 
     if (*headRef == NULL) {
+        // Se a lista estiver vazia, insere o novo nó no início.
         *headRef = newNode;
     } else {
+        // Senão, insere o novo nó no final da lista.
         struct NodeTipoTransporte* current = *headRef;
         while (current->proximo != NULL) {
             current = current->proximo;
@@ -419,9 +418,14 @@ int InserirTipoTransporte(struct NodeTipoTransporte** headRef, TipoTransporte ti
         current->proximo = newNode;
     }
 
-    return 1;
+    return 1; // Operação bem-sucedida.
 }
 
+
+/// @brief Procura na lista ligada de tipos de transporte um tipo específico através do seu id.
+/// @param headTiposTransporte Ponteiro para o ponteiro da cabeça da lista ligada.
+/// @param idTipo O id do tipo de transporte a ser procurado.
+/// @return Ponteiro para o tipo de transporte encontrado ou NULL se não for encontrado.
 TipoTransporte* EncontrarTipoPorId(NodeTipoTransporte** headTiposTransporte, int idTipo) {
     NodeTipoTransporte* current = *headTiposTransporte;
     while (current != NULL) {
@@ -434,48 +438,74 @@ TipoTransporte* EncontrarTipoPorId(NodeTipoTransporte** headTiposTransporte, int
 }
 
 
-
+/// @brief Cria e inicializa um novo camião com uma capacidade máxima especificada.
+/// @param capacidadeMaxima A capacidade máxima do camião a ser criado.
+/// @return Ponteiro para o novo camião criado.
 Camiao* InicializarCamiao(float capacidadeMaxima) {
     Camiao *camiao = (Camiao*)malloc(sizeof(Camiao));
+    if(camiao == NULL) {
+        return NULL;
+    }
     camiao->capacidadeMaxima = capacidadeMaxima;
     camiao->cargaAtual = 0.0;
     return camiao;
 }
 
 
+/// @brief Verifica se um determinado transporte pode ser adicionado a um camião, com base no peso do transporte e na capacidade disponível no camião.
+/// @param camiao O camião a ser verificado.
+/// @param transporte O transporte que se quer adicionar ao camião.
+/// @return 1 (verdadeiro) se o transporte puder ser adicionado, 0 (falso) caso contrário.
 int PodeAdicionarTransporte(Camiao *camiao, Transporte *transporte) {
     // Retorna 1 (verdadeiro) se o peso do transporte for menor ou igual ao espaço disponível no camião, caso contrário retorna 0 (falso)
     return transporte->tipo->peso <= (camiao->capacidadeMaxima - camiao->cargaAtual);
 }
+
+
+/// @brief Adiciona um transporte a um camião, aumentando a carga atual do camião com o peso do transporte.
+/// @param camiao O camião ao qual o transporte será adicionado.
+/// @param transporte O transporte a ser adicionado ao camião.
 void AdicionarTransporte(Camiao *camiao, Transporte *transporte) {
     camiao->cargaAtual += transporte->tipo->peso;
 }
 
+
+/// @brief Descarrega todo o transporte de um camião, resetando a carga atual do camião para 0.
+/// @param camiao O camião a ser descarregado.
 void DescarregarCamiao(Camiao *camiao) {
     camiao->cargaAtual = 0.0;
 }
 
 
-void RecarregarTransportes(NodeTransporte* transportes) {
-    // Itera pelos transportes
-    for (NodeTransporte *transporteAux = transportes; transporteAux != NULL; transporteAux = transporteAux->proximo) {
-        // Define a bateria para 100
-        transporteAux->transporte.nivelBateria = 100;
-    }
-}
-
-void MoverTransportesParaCentro(NodeTransporte *transportes, int centroRecolha) {
-    NodeTransporte *aux = transportes;
-    while (aux != NULL) {
-        // Só move os transportes que já foram visitados
-        if (aux->transporte.visitado == 1) {
-            aux->transporte.localizacao = centroRecolha;
+/// @brief Recarrega todos os transportes em uma lista ligada, resetando o nível de bateria de cada transporte para 100.
+/// @param transportesARecolher A lista ligada de transportes a serem recarregados.
+/// @param transportesOriginais A lista ligada original de transportes para a qual os transportes recarregados serão retornados.
+void RecarregarTransportes(NodeTransporte* transportesARecolher, NodeTransporte* transportesOriginais) {
+    for (NodeTransporte *transporteAux = transportesARecolher; transporteAux != NULL; transporteAux = transporteAux->proximo) {
+        Transporte* transporteOriginal = ProcurarTransporte(transportesOriginais, transporteAux->transporte.id);
+        if (transporteOriginal != NULL) {
+            transporteOriginal->nivelBateria = 100;
         }
-        aux = aux->proximo;
     }
 }
 
 
+/// @brief Move todos os transportes em uma lista ligada para um centro de coleta especificado.
+/// @param transportesARecolher A lista ligada de transportes a serem movidos.
+/// @param transportesOriginais A lista ligada original de transportes dos quais os transportes movidos são derivados.
+/// @param centroRecolha O id do centro de coleta para o qual os transportes serão movidos.
+void MoverTransportesParaCentro(NodeTransporte* transportesARecolher, NodeTransporte* transportesOriginais, int centroRecolha) {
+    for (NodeTransporte *transporteAux = transportesARecolher; transporteAux != NULL; transporteAux = transporteAux->proximo) {
+        Transporte* transporteOriginal = ProcurarTransporte(transportesOriginais, transporteAux->transporte.id);
+        if (transporteOriginal != NULL) {
+            transporteOriginal->localizacao = centroRecolha;
+        }
+    }
+}
+
+
+/// @brief Imprime na tela uma lista de tipos de transporte.
+/// @param tiposTransporte A lista ligada de tipos de transporte a ser impressa.
 void ListarTiposTransporte(NodeTipoTransporte* tiposTransporte) {
     NodeTipoTransporte* aux = tiposTransporte;
     printf("\nTipos de transporte:\n");
@@ -486,6 +516,14 @@ void ListarTiposTransporte(NodeTipoTransporte* tiposTransporte) {
         aux = aux->proximo;
     }
 }
+
+
+
+/// @brief Altera o preço por km de um tipo específico de transporte.
+/// @param tiposTransporte A lista ligada de tipos de transporte.
+/// @param idTipo O id do tipo de transporte cujo preço por km deve ser alterado.
+/// @param novoPreco O novo preço por km.
+/// @return 1 se o tipo de transporte foi encontrado e seu preço foi alterado, 0 caso contrário.
 int AlterarPrecoTransporte(NodeTipoTransporte *tiposTransporte, int idTipo, float novoPreco) {
     NodeTipoTransporte *aux = tiposTransporte;
     while (aux != NULL) {
@@ -500,6 +538,10 @@ int AlterarPrecoTransporte(NodeTipoTransporte *tiposTransporte, int idTipo, floa
 }
 
 
+/// @brief Insere uma nova viagem na lista ligada de viagens.
+/// @param headViagem Ponteiro para o ponteiro da cabeça da lista de viagens.
+/// @param viagem A viagem a ser inserida.
+/// @return 1 se a viagem foi inserida com sucesso, 0 caso contrário (por exemplo, se a memória não pôde ser alocada para o novo nó da lista).
 int InserirViagem(Viagem** headViagem, Viagem viagem) {
     // Aloca memória para um novo node de viagem.
     Viagem* novaViagem = (Viagem*)malloc(sizeof(Viagem));

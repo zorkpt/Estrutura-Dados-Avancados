@@ -1,3 +1,14 @@
+/**
+ * @file caminho.c
+ * @author Hugo Poças
+ * @brief Este ficheiro contém as funções de caminho.
+ * @version 0.2
+ * @date 27-05-2023
+ * 
+ * @copyright Copyright (c) 2023
+ * 
+ */
+
 #include "../Headers/caminho.h"
 #include "../Headers/grafo.h"
 #include <stdlib.h>
@@ -34,7 +45,6 @@ float DistanciaCaminho(Caminho *caminho) {
 /// @param caminho Um ponteiro para a estrutura Caminho que representa o caminho a ser Libertado
 void FreeCaminho(Caminho *caminho) {
     Caminho *aux;
-
     while (caminho != NULL) {
         aux = caminho;
         caminho = caminho->proximo;
@@ -75,17 +85,29 @@ Caminho* ConcatenarCaminhos(Caminho *caminho1, Caminho *caminho2) {
 }
 
 
+/// @brief Cria um único caminho (lista de vértices) com o vértice de origem dado
+/// @param origem O ID do vértice de origem
+/// @return Um ponteiro para o caminho criado
 Caminho* CaminhoUnicoVertice(int origem) {
-    Caminho* caminho = malloc(sizeof(Caminho));
+    // Alocando memória para o novo caminho
+    Caminho* caminho = (Caminho*) malloc(sizeof(Caminho));
+    if (caminho == NULL) {
+        return NULL;  // Retornar NULL se a alocação de memória falhar
+    }
+
+    // Inicializando o caminho com os valores fornecidos
     caminho->idVertice = origem;
     caminho->distancia = 0.0;
-    caminho->proximo = NULL;
     caminho->distanciaTotal = 0.0;
+    caminho->proximo = NULL;
     return caminho;
 }
 
 
-// Função para construir o caminho de retorno a partir do vértice de destino
+/// @brief Constrói o caminho de retorno a partir de um vértice de destino no grafo
+/// @param grafo O grafo que contém o vértice de destino
+/// @param destino O ID do vértice de destino
+/// @return Um ponteiro para o caminho construído
 Caminho* ConstruirCaminho(Vertice* grafo, int destino) {
     // Procura o vértice de destino no grafo
     Vertice* verticeDestino = ProcuraVertice(grafo, destino);
@@ -104,12 +126,14 @@ Caminho* ConstruirCaminho(Vertice* grafo, int destino) {
 
     // Continua até que não haja mais predecessores
     while (atual != NULL) {
-        // Cria um novo elemento no caminho
-        Caminho* novoCaminho = malloc(sizeof(Caminho));
+        // Cria um novo elemento no caminho usando a função CriarCaminho
+        Caminho* novoCaminho = CriarCaminho(atual->idVertice, atual->distancia);
 
-        // Define o ID do vértice e a distância para este vértice
-        novoCaminho->idVertice = atual->idVertice;
-        novoCaminho->distancia = atual->distancia;
+        // Se a alocação falhou, liberar a memória já alocada e retornar NULL
+        if (novoCaminho == NULL) {
+            FreeCaminho(caminho);
+            return NULL;
+        }
 
         // Define o próximo elemento do caminho como o caminho atual
         novoCaminho->proximo = caminho;
@@ -118,10 +142,10 @@ Caminho* ConstruirCaminho(Vertice* grafo, int destino) {
         caminho = novoCaminho;
 
         // Move para o predecessor do vértice atual se houver um, caso contrário, define atual como NULL
-        if (atual->predecessor == -1) {
-            atual = NULL;
-        } else {
+        if (atual->predecessor != -1) {
             atual = ProcuraVertice(grafo, atual->predecessor);
+        } else {
+            atual = NULL;
         }
     }
 
@@ -134,34 +158,46 @@ Caminho* ConstruirCaminho(Vertice* grafo, int destino) {
 
 
 
+/// @brief Imprime o caminho percorrido pelo camião
+/// @param caminho O caminho percorrido pelo camião
+/// @param centroRecolha A localização do centro de recolha
 void ImprimirCaminho(Caminho *caminho, int centroRecolha) {
+    // Verifica se o caminho é nulo
     if (caminho == NULL) {
         printf("Caminho não encontrado.\n");
         return;
     }
 
+    // Inicializa a contagem de passos e a distância total
     int passo = 1;
     float distanciaTotal = caminho->distanciaTotal;
     int localizacaoAtual = caminho->idVertice;
+    int deixouCentroRecolha = 0;
 
     printf("Caminho encontrado:\n");
 
+    // Percorre o caminho
     for (Caminho *aux = caminho; aux != NULL; aux = aux->proximo) {
         int idVertice = aux->idVertice;
         float distancia = aux->distancia;
         
-
-        if (localizacaoAtual == centroRecolha && idVertice != centroRecolha) {
+        // Verifica a localização atual e a próxima para determinar a ação do caminhão
+        if (localizacaoAtual == centroRecolha && idVertice != centroRecolha && !deixouCentroRecolha) {
             printf("O camião deixou o centro de recolha e se dirigiu ao vértice %d\n", idVertice);
-        } else if (localizacaoAtual != centroRecolha && idVertice == centroRecolha) {
+            deixouCentroRecolha = 1;
+        } else if (localizacaoAtual != centroRecolha && idVertice == centroRecolha && (aux->proximo == NULL || aux->proximo->idVertice == centroRecolha)) {
             printf("O camião retornou ao centro de recolha para descarregar os transportes recolhidos\n");
+            deixouCentroRecolha = 0;
         } else if (localizacaoAtual != centroRecolha && idVertice != centroRecolha) {
             printf("O camião se moveu do vértice %d para o vértice %d com a distância de %.2f\n", localizacaoAtual, idVertice, distancia);
         }
 
+        // Atualiza a localização atual para a próxima no caminho
         localizacaoAtual = idVertice;
         passo++;
     }
 
+    // Imprime a distância total percorrida
     printf("Distância total: %.2f\n", distanciaTotal);
 }
+

@@ -11,7 +11,7 @@ Caminho* GreedySearch(NodeTransporte *transportes, Vertice *grafo, int centroRec
 Caminho* Dijkstra(Vertice *grafo, int origem, int destino);
 int ExistemTransportesNaoVisitados(NodeTransporte *transportes);
 int ProcurarCentroRecolha(struct Vertice* headGrafo);
-
-
+NodeTransporte* TransportesARecolher(NodeTransporte* transportes);
+void AdicionarTransporteALista(NodeTransporte** headTransporte, Transporte transporte);
 
 #endif

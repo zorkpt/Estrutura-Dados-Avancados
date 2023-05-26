@@ -1,9 +1,9 @@
 /**
  * @file menu.c
  * @author Hugo Poças
- * @brief 
- * @version 0.1
- * @date 18-03-2023
+ * @brief Funções de menu.
+ * @version 0.2
+ * @date 27-05-2023
  * 
  * @copyright Copyright (c) 2023
  * 
@@ -48,7 +48,7 @@ int listaMenuGestor(){
     printf("0. Guardar Dados\n");
     printf("Escolhe uma opção: ");
     
-    escolha = VerificarInt(escolha);
+    escolha = VerificarInt();
 
     return escolha;
 }
@@ -69,7 +69,7 @@ int ListaMenuCliente(){
     printf("8. Alterar Senha\n");
     printf("9. Procurar Transportes por Tipo/Raio\n");
     printf("10. Sair\n");
-    escolha = VerificarInt(escolha);
+    escolha = VerificarInt();
     return escolha;
 }
 
