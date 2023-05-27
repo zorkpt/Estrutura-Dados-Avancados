@@ -204,8 +204,6 @@ struct Transporte EscreveTransporte(struct NodeTipoTransporte** headTipoTranspor
     transporteTemp.id = id;
     transporteTemp.tipo = ProcuraTipoTransporte(headTipoTransporte, tipo);
     transporteTemp.idTipo = tipo; // Preserve idTipo.
-    printf("Tipo: %s\n", transporteTemp.tipo->nome);
-    printf("ID: %d\n", transporteTemp.idTipo);
     transporteTemp.nivelBateria = nivelBateria;
     transporteTemp.localizacao = localizacao;
     transporteTemp.estado = estado;

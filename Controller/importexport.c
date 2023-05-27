@@ -2,7 +2,7 @@
  * @file importexport.c
  * @author Hugo Poças
  * @brief Este ficheiro contém as funções que permitem carregar dados de ficheiros CSV e binários.
- * @version 0.1
+ * @version 0.2
  * @date 27-05-2023
  * 
  * @copyright Copyright (c) 2023
@@ -505,7 +505,7 @@ int LerGrafoDeFicheiro(Vertice **grafo, FILE *ficheiro){
     fgets(linha, MAX_LINHA, ficheiro); // Pular a primeira linha (cabeçalho)
     while(fgets(linha, MAX_LINHA, ficheiro) != NULL){
         int id;
-        char titulo[256];
+        char titulo[MAX_CHAR];
         char *token, *delim = ",";
         
         sscanf(linha, "%d,%[^,],", &id, titulo);
@@ -583,7 +583,10 @@ int CarregarFicheiroTransacoes(struct NodeTransacoes** head, char* nomeFicheiro)
     return totalTransacoes;
 }
 
-
+/// @brief Carrega dados de tipos de transporte de um determinado ficheiro e passa-os para uma lista ligada.
+/// @param headTipos 
+/// @param nomeFicheiro 
+/// @return retorna o número de tipos de transporte carregados.
 int CarregarFicheiroTiposTransporte(NodeTipoTransporte** headTipos, char* nomeFicheiro) {
     FILE *ficheiro;
     ficheiro = fopen(nomeFicheiro, "r");

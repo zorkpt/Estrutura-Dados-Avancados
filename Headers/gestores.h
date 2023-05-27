@@ -4,8 +4,8 @@
 
 // ESTRUTURA GESTORES
 typedef struct Gestores{
-    char nome[50];
-    char password[50];
+    char nome[MAX_CHAR];
+    char password[MAX_CHAR];
 } Gestores;
 
 typedef struct NodeGestores

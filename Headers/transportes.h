@@ -73,7 +73,6 @@ int OrdenarListaDecrescente(struct NodeTransporte *head);
 // Funções de operação de algoritmo de pesquisa
 void RecarregarTransportes(NodeTransporte* transportesARecolher, NodeTransporte* transportesOriginais);
 void MoverTransportesParaCentro(NodeTransporte *transportesARecolher, NodeTransporte* transportesOriginais, int centroRecolha);
-NodeTransporte* TransportesParaRecolher(NodeTransporte *transportes);
 
 // Outras funções de transporte
 float CustoTotalAluguer(struct Transporte* transporte, int tempoAluguer);

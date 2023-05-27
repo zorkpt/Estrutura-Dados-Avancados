@@ -22,6 +22,12 @@
 #define CAPACIDADE_CAMIAO 10
 #define PREFIX_CR "CR_" // Prefixo do Centro de recolha
 
+/// @brief Executa o algoritmo de Dijkstra para encontrar o caminho mais curto entre dois vértices em um grafo.
+/// @param grafo O grafo no qual a busca deve ser realizada.
+/// @param origem O vértice de origem.
+/// @param destino O vértice de destino.
+/// @return Retorna um ponteiro para um objeto Caminho que contém o caminho mais curto do vértice de origem para o vértice de destino. 
+///         Se não existir um caminho, retorna NULL.
 Caminho* Dijkstra(Vertice* grafo, int origem, int destino) {
     // Se origem e destino são iguais, retorna um caminho com um único vértice e distância 0
     if (origem == destino) {
