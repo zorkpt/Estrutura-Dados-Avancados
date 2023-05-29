@@ -51,6 +51,8 @@ Caminho* Dijkstra(Vertice* grafo, int origem, int destino) {
 
     // Cria a fila de prioridade e adiciona o vértice de origem
     FilaPrioridade* fila = CriarFilaPrioridade();
+
+    // Adiciona o vértice de origem na fila
     fila = AdicionarNaFila(fila, verticeOrigem);
     
     // Loop enquanto a fila não estiver vazia

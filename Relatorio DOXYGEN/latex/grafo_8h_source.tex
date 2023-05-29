@@ -1,0 +1,46 @@
+\doxysection{grafo.\+h}
+\hypertarget{grafo_8h_source}{}\label{grafo_8h_source}\index{Headers/grafo.h@{Headers/grafo.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ GRAFO\_HEADER\_GUARD}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ GRAPO\_HEADER\_GUARD}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#define\ MAX\_ID\ 100}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ <stdio.h>}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structAdjacente}{Adjacente}}\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keywordtype}{int}\ idVertice;}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keywordtype}{float}\ distancia;}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structAdjacente}{Adjacente}}\ *proximo;}
+\DoxyCodeLine{00013\ \}\mbox{\hyperlink{structAdjacente}{Adjacente}};}
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{comment}{//\ ESTRUTURA\ GRAFO}}
+\DoxyCodeLine{00017\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structVertice}{Vertice}}\{}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keywordtype}{int}\ idVertice;}
+\DoxyCodeLine{00019\ \ \ \ \ \textcolor{keywordtype}{char}\ cidade[MAX\_ID];}
+\DoxyCodeLine{00020\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structVertice}{Vertice}}\ *proximo;}
+\DoxyCodeLine{00021\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structAdjacente}{Adjacente}}\ *adjacentes;}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{int}\ visitado;}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{int}\ predecessor;}
+\DoxyCodeLine{00024\ \ \ \ \ \textcolor{keywordtype}{float}\ distancia;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{int}\ numAdjacentes;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{int}\ idCentroRecolha;}
+\DoxyCodeLine{00027\ \}\mbox{\hyperlink{structVertice}{Vertice}};}
+\DoxyCodeLine{00028\ }
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{comment}{//\ CONFIRMADAS}}
+\DoxyCodeLine{00031\ \mbox{\hyperlink{structVertice}{Vertice}}*\ CriarVertice(\textcolor{keywordtype}{int}\ idVertice,\ \textcolor{keywordtype}{char}\ cidade[]);}
+\DoxyCodeLine{00032\ \mbox{\hyperlink{structVertice}{Vertice}}*\ InsereVertice(\mbox{\hyperlink{structVertice}{Vertice}}\ *grafo,\ \mbox{\hyperlink{structVertice}{Vertice}}*\ novo);}
+\DoxyCodeLine{00033\ \mbox{\hyperlink{structAdjacente}{Adjacente}}\ *CriaAdjacente(\textcolor{keywordtype}{int}\ idVertice,\ \textcolor{keywordtype}{float}\ distancia);}
+\DoxyCodeLine{00034\ \mbox{\hyperlink{structVertice}{Vertice}}*\ InsereAdjacente(\mbox{\hyperlink{structVertice}{Vertice}}\ *grafo,\ \textcolor{keywordtype}{int}\ origem,\ \mbox{\hyperlink{structAdjacente}{Adjacente}}*\ novoAdjacente);}
+\DoxyCodeLine{00035\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ GetNomeLocal(\mbox{\hyperlink{structVertice}{Vertice}}\ *grafo,\ \textcolor{keywordtype}{int}\ location\_id);\ \ \ }
+\DoxyCodeLine{00036\ \textcolor{keywordtype}{void}\ LimparCamposGrafo(\mbox{\hyperlink{structVertice}{Vertice}}\ *grafo);}
+\DoxyCodeLine{00037\ \textcolor{keywordtype}{void}\ PrintGrafo(\mbox{\hyperlink{structVertice}{Vertice}}\ *grafo);}
+\DoxyCodeLine{00038\ \mbox{\hyperlink{structVertice}{Vertice}}*\ ProcuraVertice(\mbox{\hyperlink{structVertice}{Vertice}}\ *grafo,\ \textcolor{keywordtype}{int}\ idVertice);}
+\DoxyCodeLine{00039\ \textcolor{keywordtype}{void}\ ListarLocais(\mbox{\hyperlink{structVertice}{Vertice}}\ *headVertice);}
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

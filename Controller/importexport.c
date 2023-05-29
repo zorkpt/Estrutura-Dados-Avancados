@@ -120,7 +120,9 @@ int ExportarTodosDados(NodeClientes *headClientes, NodeGestores *headGestores, N
 /// 
 /// Esta função percorre a lista de clientes e escreve cada cliente 
 /// e o seu histórico de viagens para um arquivo binário. 
-/// 
+/// A logica usada aqui é a mesma usada na função CarregarBinarioClientes().
+/// Primeiro, escreve-se o cliente para o arquivo, depois conta-se o número de viagens,
+/// escreve-se o número de viagens para o arquivo e, em seguida, escreve-se cada viagem para o arquivo.
 /// @param listaClientes Ponteiro para o primeiro nó da lista de clientes.
 /// 
 /// @return Retorna 1 se a operação de exportação foi bem sucedida, senão retorna 0.
@@ -139,7 +141,7 @@ int ExportarClientes(struct NodeClientes* listaClientes) {
             numViagens++;
             viagemAtual = viagemAtual->proxima;
         }
-        // Escrever o número de viagens
+        // Escrever o número de viagens para o ficheiro
         fwrite(&numViagens, sizeof(int), 1, file);
         // Escrever as viagens
         viagemAtual = current->cliente.historicoViagens;
@@ -386,7 +388,9 @@ int CarregarBinarioTransacoes(struct NodeTransacoes** headTransacoes) {
     return 1;
 }
 
-
+/// @brief Exporta os vértices do grafo para um ficheiro binário.
+/// @param grafo Ponteiro para a cabeça do grafo
+/// @return Retorna 1 em caso de sucesso, e 0 em caso de falha
 int ExportaVertices(Vertice *grafo) {
     FILE *file = fopen(ficheiroVertices, "wb");
     if (file == NULL) {
@@ -404,6 +408,9 @@ int ExportaVertices(Vertice *grafo) {
     return 1;
 }
 
+/// @brief Exporta as arestas (vértices adjacentes) do grafo para um ficheiro binário.
+/// @param grafo Ponteiro para a cabeça do grafo
+/// @return Retorna 1 em caso de sucesso, e 0 em caso de falha
 int ExportaAdjacentes(Vertice *grafo) {
     FILE *file = fopen(ficheiroArestas, "wb");
     if (file == NULL) {
@@ -426,6 +433,9 @@ int ExportaAdjacentes(Vertice *grafo) {
     return 1;
 }
 
+/// @brief Carrega os vértices do grafo a partir de um ficheiro binário.
+/// @param grafo Ponteiro para o ponteiro da cabeça do grafo
+/// @return Retorna 1 em caso de sucesso, e 0 em caso de falha
 int CarregarBinarioVertices(Vertice** grafo) {
     FILE* file = fopen(ficheiroVertices, "rb");
     if (file == NULL) {
@@ -443,6 +453,9 @@ int CarregarBinarioVertices(Vertice** grafo) {
     return 1;
 }
 
+/// @brief Carrega as arestas (vértices adjacentes) do grafo a partir de um ficheiro binário.
+/// @param grafo Ponteiro para a cabeça do grafo
+/// @return Retorna 1 em caso de sucesso, e 0 em caso de falha
 int CarregarBinarioAdjacentes(Vertice* grafo) {
     FILE* file = fopen(ficheiroArestas, "rb");
     if (file == NULL) {
@@ -494,15 +507,15 @@ int CarregarFicheiroGrafo(Vertice **grafo, char *nomeFicheiro){
     return totalVertices;
 }
 
-/// @brief 
-/// @param grafo 
-/// @param ficheiro 
-/// @return 
+/// @brief Função que lê um grafo de um ficheiro e preenche a estrutura de dados do grafo
+/// @param grafo Ponteiro para o ponteiro da cabeça do grafo a ser preenchido
+/// @param ficheiro Ponteiro para o ficheiro a ser lido
+/// @return Retorna o total de vértices lidos do ficheiro
 int LerGrafoDeFicheiro(Vertice **grafo, FILE *ficheiro){
     char linha[MAX_LINHA];
     int totalVertices = 0;
 
-    fgets(linha, MAX_LINHA, ficheiro); // Pular a primeira linha (cabeçalho)
+    fgets(linha, MAX_LINHA, ficheiro); // Saltar a primeira linha (cabeçalho)
     while(fgets(linha, MAX_LINHA, ficheiro) != NULL){
         int id;
         char titulo[MAX_CHAR];

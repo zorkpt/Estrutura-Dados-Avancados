@@ -18,11 +18,11 @@ typedef struct Vertice{
 	char cidade[MAX_ID];
 	struct Vertice *proximo;
 	struct Adjacente *adjacentes;
-	int visitado;
-	int predecessor;
-	float distancia;
-	int numAdjacentes;
-	int idCentroRecolha;
+	int visitado; // Usado para o algoritmo de Dijkstra
+	int predecessor; // Usado para o algoritmo de Dijkstra
+	float distancia; // Usado para o algoritmo de Dijkstra
+	int numAdjacentes; // Usado para o algoritmo de Dijkstra
+	int idCentroRecolha; // Usado para o algoritmo de GreedySearch
 }Vertice;
 
 // Funções associadas à estrutura Vertice

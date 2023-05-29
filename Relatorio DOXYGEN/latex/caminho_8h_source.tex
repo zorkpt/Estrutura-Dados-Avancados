@@ -1,0 +1,29 @@
+\doxysection{caminho.\+h}
+\hypertarget{caminho_8h_source}{}\label{caminho_8h_source}\index{Headers/caminho.h@{Headers/caminho.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ CAMINHO\_HEADER\_GUARD}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ CAMINHO\_HEADER\_GUARD}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}grafo.h"{}}}
+\DoxyCodeLine{00005\ }
+\DoxyCodeLine{00006\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structCaminho}{Caminho}}\ \{}
+\DoxyCodeLine{00007\ \ \ \ \ \textcolor{keywordtype}{int}\ idVertice;}
+\DoxyCodeLine{00008\ \ \ \ \ \textcolor{keywordtype}{float}\ distancia;}
+\DoxyCodeLine{00009\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structCaminho}{Caminho}}\ *proximo;}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keywordtype}{float}\ distanciaTotal;}
+\DoxyCodeLine{00011\ \}\ \mbox{\hyperlink{structCaminho}{Caminho}};}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00014\ }
+\DoxyCodeLine{00015\ \mbox{\hyperlink{structCaminho}{Caminho}}*\ CriarCaminho(\textcolor{keywordtype}{int}\ idVertice,\ \textcolor{keywordtype}{float}\ distancia);}
+\DoxyCodeLine{00016\ \textcolor{keywordtype}{float}\ DistanciaCaminho(\mbox{\hyperlink{structCaminho}{Caminho}}\ *caminho);}
+\DoxyCodeLine{00017\ \mbox{\hyperlink{structCaminho}{Caminho}}*\ ConcatenarCaminhos(\mbox{\hyperlink{structCaminho}{Caminho}}\ *caminho1,\ \mbox{\hyperlink{structCaminho}{Caminho}}\ *caminho2);}
+\DoxyCodeLine{00018\ \textcolor{keywordtype}{void}\ FreeCaminho(\mbox{\hyperlink{structCaminho}{Caminho}}\ *caminho);}
+\DoxyCodeLine{00019\ \mbox{\hyperlink{structCaminho}{Caminho}}*\ CaminhoUnicoVertice(\textcolor{keywordtype}{int}\ origem);}
+\DoxyCodeLine{00020\ \mbox{\hyperlink{structCaminho}{Caminho}}*\ ConstruirCaminho(\mbox{\hyperlink{structVertice}{Vertice}}*\ grafo,\ \textcolor{keywordtype}{int}\ destino);}
+\DoxyCodeLine{00021\ \textcolor{keywordtype}{void}\ ImprimirCaminho(\mbox{\hyperlink{structCaminho}{Caminho}}*\ caminho,\ \textcolor{keywordtype}{int}\ centroRecolha);}
+\DoxyCodeLine{00022\ }
+\DoxyCodeLine{00023\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}

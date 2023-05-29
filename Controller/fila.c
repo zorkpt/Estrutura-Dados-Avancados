@@ -27,7 +27,7 @@ Fila* CriarFila() {
 }
 
 FilaPrioridade* CriarFilaPrioridade() {
-    // Como a fila está vazia inicialmente, simplesmente retornamos NULL
+    // Iniciar a fila como NULL
     return NULL;
 }
 

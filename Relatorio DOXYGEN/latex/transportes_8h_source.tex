@@ -1,0 +1,84 @@
+\doxysection{transportes.\+h}
+\hypertarget{transportes_8h_source}{}\label{transportes_8h_source}\index{Headers/transportes.h@{Headers/transportes.h}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ TRANSPORTES\_HEADER\_GUARD}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ TRANSPORTES\_HEADER\_GUARD}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}grafo.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}viagem.h"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#define\ MAX\_TIPOS\_TRANSPORTE\ 100}}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structTipoTransporte}{TipoTransporte}}\ \{}
+\DoxyCodeLine{00010\ \ \ \ \ \textcolor{keywordtype}{int}\ idTipo;}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keywordtype}{char}\ nome[50];}
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keywordtype}{float}\ peso;}
+\DoxyCodeLine{00013\ \ \ \ \ \textcolor{keywordtype}{float}\ precoPorKm;}
+\DoxyCodeLine{00014\ \}\ \mbox{\hyperlink{structTipoTransporte}{TipoTransporte}};}
+\DoxyCodeLine{00015\ }
+\DoxyCodeLine{00016\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structNodeTipoTransporte}{NodeTipoTransporte}}\ \{}
+\DoxyCodeLine{00017\ \ \ \ \ \mbox{\hyperlink{structTipoTransporte}{TipoTransporte}}\ tipo;}
+\DoxyCodeLine{00018\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structNodeTipoTransporte}{NodeTipoTransporte}}*\ proximo;}
+\DoxyCodeLine{00019\ \}\mbox{\hyperlink{structNodeTipoTransporte}{NodeTipoTransporte}};}
+\DoxyCodeLine{00020\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structTransporte}{Transporte}}\{}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keywordtype}{int}\ id;}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keywordtype}{int}\ idTipo;}
+\DoxyCodeLine{00024\ \ \ \ \ \mbox{\hyperlink{structTipoTransporte}{TipoTransporte}}*\ tipo;}
+\DoxyCodeLine{00025\ \ \ \ \ \textcolor{keywordtype}{int}\ nivelBateria;}
+\DoxyCodeLine{00026\ \ \ \ \ \textcolor{keywordtype}{int}\ localizacao;}
+\DoxyCodeLine{00027\ \ \ \ \ \textcolor{keywordtype}{int}\ estado;}
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{int}\ visitado;}
+\DoxyCodeLine{00029\ \}\ \mbox{\hyperlink{structTransporte}{Transporte}};}
+\DoxyCodeLine{00030\ }
+\DoxyCodeLine{00031\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}}
+\DoxyCodeLine{00032\ \{}
+\DoxyCodeLine{00033\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structTransporte}{Transporte}}\ transporte;}
+\DoxyCodeLine{00034\ \ \ \ \ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}\ *proximo;}
+\DoxyCodeLine{00035\ \}\mbox{\hyperlink{structNodeTransporte}{NodeTransporte}};}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \textcolor{keyword}{typedef}\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structCamiao}{Camiao}}\ \{}
+\DoxyCodeLine{00038\ \ \ \ \ \textcolor{keywordtype}{float}\ capacidadeMaxima;\ \textcolor{comment}{//\ Capacidade\ máxima\ do\ camião\ em\ kg}}
+\DoxyCodeLine{00039\ \ \ \ \ \textcolor{keywordtype}{float}\ cargaAtual;\ \textcolor{comment}{//\ Carga\ atual\ do\ camião\ em\ kg}}
+\DoxyCodeLine{00040\ \ \ \ \ \textcolor{keywordtype}{float}\ cargaMaxima;\ \textcolor{comment}{//\ Carga\ maxima\ do\ camião}}
+\DoxyCodeLine{00041\ \}\ \mbox{\hyperlink{structCamiao}{Camiao}};}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ }
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{keywordtype}{int}\ InserirTransporte(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}**\ headRef,\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structTransporte}{Transporte}}\ transporte);}
+\DoxyCodeLine{00046\ \textcolor{keywordtype}{int}\ MostrarTransportes(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}*\ head);}
+\DoxyCodeLine{00047\ \textcolor{keywordtype}{int}\ VerTransportesDisponiveis(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}*\ headTransporte,\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structVertice}{Vertice}}*\ headGrafo,\ \textcolor{keywordtype}{int}\ localizacaoCliente);}
+\DoxyCodeLine{00048\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structTransporte}{Transporte}}\ EscreveTransporte(struct\ \mbox{\hyperlink{structNodeTipoTransporte}{NodeTipoTransporte}}**\ headTipoTransporte,\ \textcolor{keywordtype}{int}\ id,\ \textcolor{keywordtype}{int}\ tipo,\ \textcolor{keywordtype}{int}\ nivelBateria,\ \textcolor{keywordtype}{int}\ localizacao,\ \textcolor{keywordtype}{int}\ estado);}
+\DoxyCodeLine{00049\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structTransporte}{Transporte}}*\ ProcurarTransporte(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}*\ headRef,\ \textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id}\ );\ \ \ \ }
+\DoxyCodeLine{00050\ \textcolor{keywordtype}{int}\ RemoverTransporte(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}\ **head,\ \textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00051\ \textcolor{keywordtype}{int}\ EditarTransporte(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structTransporte}{Transporte}}\ *transporte,\ \textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id},\ \textcolor{keywordtype}{int}\ estado,\ \textcolor{keywordtype}{int}\ nivelBateria,\ \textcolor{keywordtype}{float}\ preco,\ \textcolor{keywordtype}{int}\ localizacao);}
+\DoxyCodeLine{00052\ \textcolor{keywordtype}{int}\ CopiarLista(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}\ *head,\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}\ **copiedHead);}
+\DoxyCodeLine{00053\ \textcolor{keywordtype}{int}\ OrdenarListaDecrescente(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}\ *head);}
+\DoxyCodeLine{00054\ \textcolor{keywordtype}{int}\ MostrarTransportes(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}\ *head);}
+\DoxyCodeLine{00055\ \textcolor{keywordtype}{int}\ MostrarTransportesOrdenados(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}\ *head);}
+\DoxyCodeLine{00056\ \textcolor{keyword}{struct\ }\mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}*\ ProcurarTransportesPorLocal(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}*\ headTransportes,\ \textcolor{keywordtype}{int}\ local);}
+\DoxyCodeLine{00057\ \textcolor{keywordtype}{float}\ CustoTotalAluguer(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structTransporte}{Transporte}}*\ transporte,\ \textcolor{keywordtype}{int}\ tempoAluguer);}
+\DoxyCodeLine{00058\ \textcolor{keywordtype}{int}\ AlugarTransporteDisponivel(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structTransporte}{Transporte}}*\ transporte);}
+\DoxyCodeLine{00059\ \textcolor{keywordtype}{int}\ EditarTransporteID(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}\ *headTransporte,\ \textcolor{keywordtype}{int}\ \textcolor{keywordtype}{id});}
+\DoxyCodeLine{00060\ \mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}*\ TransportesParaRecolher(\mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}\ *transportes);}
+\DoxyCodeLine{00061\ \textcolor{keywordtype}{void}\ LimparCamposTransportes(\mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}\ *transporte);}
+\DoxyCodeLine{00062\ \mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}\ *ProcuraTransporteMaisProximo(\mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}\ *listaTransportes,\ \mbox{\hyperlink{structVertice}{Vertice}}\ *grafo,\ \textcolor{keywordtype}{int}\ localCliente);}
+\DoxyCodeLine{00063\ \textcolor{keywordtype}{void}\ ListarTransportesPorTipoERaio(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}*\ headTransportes,\ \textcolor{keyword}{struct}\ \mbox{\hyperlink{structVertice}{Vertice}}*\ headGrafo,\ \textcolor{keywordtype}{int}\ localCliente,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ tipo,\ \textcolor{keywordtype}{float}\ raio);}
+\DoxyCodeLine{00064\ \mbox{\hyperlink{structTipoTransporte}{TipoTransporte}}*\ ProcuraTipoTransporte(\mbox{\hyperlink{structNodeTipoTransporte}{NodeTipoTransporte}}**\ head,\ \textcolor{keywordtype}{int}\ idTipo);}
+\DoxyCodeLine{00065\ \textcolor{keywordtype}{int}\ InserirTipoTransporte(\textcolor{keyword}{struct}\ \mbox{\hyperlink{structNodeTipoTransporte}{NodeTipoTransporte}}**\ headRef,\ \mbox{\hyperlink{structTipoTransporte}{TipoTransporte}}\ tipoTransporte);}
+\DoxyCodeLine{00066\ \textcolor{keywordtype}{void}\ RecarregarTransportes(\mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}*\ transportes);}
+\DoxyCodeLine{00067\ \textcolor{keywordtype}{void}\ MoverTransportesParaCentro(\mbox{\hyperlink{structNodeTransporte}{NodeTransporte}}*\ transportes,\ \textcolor{keywordtype}{int}\ centroRecolha);}
+\DoxyCodeLine{00068\ \textcolor{keywordtype}{void}\ ListarTiposTransporte(\mbox{\hyperlink{structNodeTipoTransporte}{NodeTipoTransporte}}*\ tiposTransporte);}
+\DoxyCodeLine{00069\ \textcolor{keywordtype}{int}\ AlterarPrecoTransporte(\mbox{\hyperlink{structNodeTipoTransporte}{NodeTipoTransporte}}*\ tiposTransporte,\ \textcolor{keywordtype}{int}\ idTipo,\ \textcolor{keywordtype}{float}\ novoPreco);}
+\DoxyCodeLine{00070\ }
+\DoxyCodeLine{00071\ \textcolor{comment}{//funcs\ camiao}}
+\DoxyCodeLine{00072\ \textcolor{keywordtype}{int}\ PodeAdicionarTransporte(\mbox{\hyperlink{structCamiao}{Camiao}}\ *camiao,\ \mbox{\hyperlink{structTransporte}{Transporte}}\ *transporte);}
+\DoxyCodeLine{00073\ \textcolor{keywordtype}{void}\ AdicionarTransporte(\mbox{\hyperlink{structCamiao}{Camiao}}\ *camiao,\ \mbox{\hyperlink{structTransporte}{Transporte}}\ *transporte);}
+\DoxyCodeLine{00074\ \textcolor{keywordtype}{void}\ DescarregarCamiao(\mbox{\hyperlink{structCamiao}{Camiao}}\ *camiao);}
+\DoxyCodeLine{00075\ \mbox{\hyperlink{structCamiao}{Camiao}}*\ InicializarCamiao(\textcolor{keywordtype}{float}\ capacidadeMaxima);}
+\DoxyCodeLine{00076\ \mbox{\hyperlink{structViagem}{Viagem}}*\ CriarNovaViagem(\textcolor{keywordtype}{int}\ idTransporte,\ \textcolor{keywordtype}{int}\ origem,\ \textcolor{keywordtype}{int}\ destino,\ \textcolor{keywordtype}{float}\ valorPago,\ \textcolor{keywordtype}{float}\ custoPorKm,\ \textcolor{keywordtype}{float}\ distancia,\textcolor{keywordtype}{char}\ tipoTransporte[]);}
+\DoxyCodeLine{00077\ \textcolor{keywordtype}{int}\ InserirViagem(\mbox{\hyperlink{structViagem}{Viagem}}**\ headViagem,\ \mbox{\hyperlink{structViagem}{Viagem}}\ viagem);}
+\DoxyCodeLine{00078\ \textcolor{preprocessor}{\#endif}}
+
+\end{DoxyCode}
