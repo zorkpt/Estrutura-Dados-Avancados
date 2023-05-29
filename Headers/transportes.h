@@ -8,7 +8,7 @@
 
 typedef struct TipoTransporte {
     int idTipo;
-    char nome[MAX_CHAR];
+    char nome[50];
     float peso;
     float precoPorKm;
 } TipoTransporte;
