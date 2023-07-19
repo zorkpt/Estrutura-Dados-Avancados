@@ -1,5 +1,5 @@
 # Projecto de Avaliação - Estruturas de Dados Avançadas 
-## Hugo Poças 26339
+## Hugo Poças
 
 Desenvolver uma solução de software para agilizar a gestão da mobilidade urbana (registro, uso) num contexto de smart city, usando estruturas de dados dinâmicas, armazenamento de ficheiros, modularização e documentação adequada.
 
